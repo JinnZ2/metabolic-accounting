@@ -66,6 +66,16 @@ signal criteria at threshold 0.7).
 - `competence`
 - `rationality`
 
+First audit committed: `term_audit/audits/disability.py`. The audit
+splits the term into three distinct measurements (A: environment-person
+mismatch, B: task-and-condition-bounded capacity, C: substrate damage
+relative to individual baseline), scores each independently, and
+documents five linkages between them. Load-bearing finding: B does not
+imply C — bounded-capacity failure does not imply substrate damage.
+The collapsed usage relocates environmental and structural failures
+into individuals; the audit's `collapsed_usage_audit()` function names
+this explicitly.
+
 ## Tier 5 — social and behavioral measurements
 
 - `crime`
