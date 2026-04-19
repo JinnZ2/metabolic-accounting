@@ -23,8 +23,19 @@ addresses.
 - `economic_growth`
 - `gross_domestic_product`
 
-First audit committed: `term_audit/audits/money.py` (money fails 7 of 7
-signal criteria at threshold 0.7).
+Audits committed:
+
+- `term_audit/audits/money.py` — money fails 7 of 7 signal criteria
+  at threshold 0.7.
+- `term_audit/audits/value.py` — 'value' decomposed into three
+  distinct measurements: V_A use-value (partial signal, 5/7),
+  V_B exchange-value (fails unit_invariant / referent_stable /
+  conservation_or_law), V_C substrate-value (signal, 7/7). Five
+  linkages documented, including the load-bearing NEGATIVE B → C:
+  exchange-value substitutes for substrate-value, which is the
+  mechanism by which the Tier 1 stack (money, capital, GDP, etc.)
+  inherits its failure — they all operate on the
+  exchange-value-dominated collapsed token.
 
 ## Tier 2 — labor and human-worth measurements
 
