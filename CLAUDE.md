@@ -75,6 +75,8 @@ Without `site`/`step_result`, `compute_flow` still works (backward-compatible pa
 - `STATUS.md` — current session state: tests passing, bugs fixed, hidden variables still open, what the framework does NOT do. **Update this** when you change verified behavior.
 - `docs/EQUATIONS.md` — every equation in the scaffold, tagged `[CORE] / [PLACEHOLDER] / [HEURISTIC] / [FRAGILE]`. Read before changing any formula; `[PLACEHOLDER]` and `[FRAGILE]` are explicitly waiting to be replaced.
 - `docs/AUDIT_01..04.md` — audit reports. `AUDIT_04.md` covers the tier-vector Bug 1/4 fixes and scopes the still-open Bugs 2 (regulatory crosswalk has no social/labor frameworks) and 3 (mitigation has no community-specific leverage patterns). New audits append (`AUDIT_05.md`, etc.); do not overwrite prior ones.
+- `docs/RELATED.md` — relationship to the three companion repos (TAF as organism-agnostic parent, PhysicsGuard as claim verifier, Logic-Ferret as narrative auditor). No runtime dependencies between repos; links are structural (shared invariants) not code-level.
+- `docs/SCHEMAS.md` — data types this repo exposes for cross-framework consumption (`ExergyFlow`, `GlucoseFlow`, `BasinState`, `Tier`/`TierAssignment`, `Verdict`) with units and invariants. Companion tools read this to construct matching local types without importing from this repo.
 - `docs/LITERATURE.md` — citations backing the thermodynamic framing.
 
 ## Navigation — where to start by intent
@@ -94,6 +96,7 @@ Land on the right file without grepping blind. Each row lists the primary file a
 | Work with cohorts / distributional load | `distributional/access.py` | `distributional/institutional.py`, `tests/test_distributional.py`, `tests/test_tier_vector.py` |
 | Understand reserves + first-law closure | `reserves/site.py` (`step()`) | `reserves/pools.py`, `thermodynamics/exergy.py` |
 | Check literature anchors for a metric | `docs/LITERATURE.md` | the relevant basin file in `basin_states/` |
+| Understand how this repo relates to TAF / PhysicsGuard / Logic-Ferret | `docs/RELATED.md` | `docs/SCHEMAS.md` for the cross-framework data contract |
 
 ## Do not silently rewrite these
 

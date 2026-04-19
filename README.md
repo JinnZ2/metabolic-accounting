@@ -154,3 +154,31 @@ output.
 - [`docs/LITERATURE.md`](./docs/LITERATURE.md) — citations backing the
   thermodynamic and social-substrate framing (Sciubba, Joergensen, Case &
   Deaton, Kim 2024, and others).
+- [`docs/RELATED.md`](./docs/RELATED.md) — relationship to companion
+  frameworks (TAF as parent, PhysicsGuard as verifier, Logic-Ferret as
+  narrative auditor).
+- [`docs/SCHEMAS.md`](./docs/SCHEMAS.md) — the data types this repo
+  exposes for cross-framework consumption, with invariants and units.
+
+## Related work
+
+This repo is one of four companion frameworks. Each operates at a
+different layer of abstraction; none depends on the others at runtime.
+See [`docs/RELATED.md`](./docs/RELATED.md) for the full mapping.
+
+- **[thermodynamic-accountability-framework](https://github.com/JinnZ2/thermodynamic-accountability-framework)**
+  — the organism-agnostic parent: five axioms of energy accounting
+  (conservation, entropy, prediction-error minimization, organism
+  agnosticism, measurement priority). `metabolic-accounting` is its
+  specialization for living systems and ecological basins.
+- **[PhysicsGuard](https://github.com/JinnZ2/PhysicsGuard)**
+  — a claim verifier that translates natural-language claims into
+  physical constraint equations and returns CLEAN / SUSPECT /
+  CORRUPTED. Enforces the same class of invariants
+  (`docs/SCHEMAS.md` §Invariants) this repo enforces locally via
+  `thermodynamics/exergy.py`.
+- **[Logic-Ferret](https://github.com/JinnZ2/Logic-Ferret)**
+  — a fallacy detector for text and transcripts. Use alongside, not
+  inside: run `metabolic-accounting` against site data, then run
+  Logic-Ferret against a firm's public communications, and compare
+  the two outputs for narrative–physics mismatch.
