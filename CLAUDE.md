@@ -100,6 +100,7 @@ Land on the right file without grepping blind. Each row lists the primary file a
 | **Reason about money / capital / investment / any economic term** | `docs/SCOPING_ECONOMIC_TERMS.md` (**read first**) | `term_audit/scoping.py`, `term_audit/audits/money.py` |
 | **See the tiered list of terms we are auditing** | `docs/TERMS_TO_AUDIT.md` | `term_audit/tiers.py::find_tier(term)` |
 | Understand the dynamics that capture measurement systems | `term_audit/status_extraction.py` | `tests/test_status_extraction.py`, `term_audit/audits/disability.py` |
+| **Defend the framework against attacks** | `docs/PREEMPTING_ATTACKS.md` | `term_audit/falsification.py`, `term_audit/contradictions.py`, `term_audit/counter_hypotheses.py` |
 | Understand how this repo relates to TAF / PhysicsGuard / Logic-Ferret | `docs/RELATED.md` | `docs/SCHEMAS.md` for the cross-framework data contract |
 
 ## Do not silently rewrite these
@@ -116,6 +117,7 @@ These files either encode a historical record, a literature anchor, or a safety 
 - `thermodynamics/exergy.py` — the Gouy-Stodola invariant (`Exd ≥ 0`) is enforced here. Don't relax `check_nonnegative_destruction` or `check_closure` to make a test pass; if closure fails, the physics is wrong upstream.
 - `docs/SCOPING_ECONOMIC_TERMS.md` and `term_audit/scoping.py::SCOPING_DIMENSIONS` — the scoping discipline that prevents training-bias re-anchoring to currency. Don't quietly drop dimensions or loosen `DeclaredScope` validators. Removing a dimension silently weakens the framework's resistance to narrative strip. Add new dimensions at the end; mark obsolete ones deprecated rather than deleting.
 - `docs/TERMS_TO_AUDIT.md` and `term_audit/tiers.py` — the seven-tier list of terms the framework rubs against. The Tier 4 environment-vs-person framing and the Tier 6 AI-drift note are load-bearing handoffs for future sessions; `tests/test_tiers.py` tripwires against silent removal. Add terms to tiers as coverage grows; do not reorganize tiers without a commit message explaining why.
+- `docs/PREEMPTING_ATTACKS.md` and the modules it points at (`term_audit/falsification.py`, `term_audit/contradictions.py`, `term_audit/counter_hypotheses.py`, plus the `measurement_layer()` / `incentive_layer()` methods on `TermAudit`) — the framework's defensive posture. Test 10 of `tests/test_preemption.py` asserts the `distinction_as_coordination` counter-hypothesis stays falsified; if you intend to support it, update the model AND the audit notes — that is not a soft change.
 
 When in doubt, read the module docstring first — every module in this repo leads with a docstring that states its invariants. If your change violates one, either update the docstring with a stated reason or stop and ask.
 

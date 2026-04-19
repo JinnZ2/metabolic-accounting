@@ -55,6 +55,26 @@ from .status_extraction import (
     FALSIFIABLE_PREDICTIONS,
     example_run,
 )
+from .falsification import (
+    BoundaryCondition,
+    FalsifiablePrediction,
+    PredictionRegistry,
+    PREDICTION_STATUS_VALUES,
+)
+from .contradictions import (
+    Claim,
+    Contradiction,
+    check_contradictions,
+    MUTUALLY_EXCLUSIVE,
+    KNOWN_CONTRADICTIONS,
+    known_contradictions_check,
+)
+from .counter_hypotheses import (
+    CounterHypothesis,
+    ALL_COUNTER_HYPOTHESES,
+    DISTINCTION_AS_COORDINATION,
+    CAPTURE_REVERSIBLE_BY_DESIGN,
+)
 
 __all__ = [
     "SIGNAL_CRITERIA",
@@ -83,5 +103,19 @@ __all__ = [
     "StatusExtractionModel",
     "FALSIFIABLE_PREDICTIONS",
     "example_run",
+    "BoundaryCondition",
+    "FalsifiablePrediction",
+    "PredictionRegistry",
+    "PREDICTION_STATUS_VALUES",
+    "Claim",
+    "Contradiction",
+    "check_contradictions",
+    "MUTUALLY_EXCLUSIVE",
+    "KNOWN_CONTRADICTIONS",
+    "known_contradictions_check",
+    "CounterHypothesis",
+    "ALL_COUNTER_HYPOTHESES",
+    "DISTINCTION_AS_COORDINATION",
+    "CAPTURE_REVERSIBLE_BY_DESIGN",
 ]
 

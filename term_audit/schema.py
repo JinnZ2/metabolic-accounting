@@ -12,7 +12,7 @@ CC0. Stdlib only.
 """
 
 from dataclasses import dataclass, field
-from typing import List, Dict, Optional
+from typing import Any, List, Dict, Optional
 
 
 # ---------------------------------------------------------------------------
@@ -67,12 +67,29 @@ class SignalScore:
 
 @dataclass
 class StandardSetter:
-    """Who defines the standard for this term, and what incentives shape it."""
+    """Who defines the standard for this term, and what incentives shape it.
+
+    The pair (incentive_structure, loss_if_audited) makes the
+    standard-setter's stake explicit on both sides: what they gain
+    from the current definition, what they would lose if it were
+    audited and replaced. Per docs/PREEMPTING_ATTACKS.md preempt #5,
+    this makes incentive defenses visible — when a defender of the
+    current system speaks, their incentive is already documented.
+    """
     name: str                           # entity name
     authority_basis: str                # statute, convention, market power, etc.
-    incentive_structure: str            # what they gain/lose by the definition
+    incentive_structure: str            # what they gain by the definition
     independence_from_measured: float   # 0.0 = fully captured by measured
                                         # 1.0 = fully independent
+    loss_if_audited: str = ""           # what they lose if the standard is
+                                        # replaced by a clean signal. Empty
+                                        # is allowed for backward compat but
+                                        # signals an incomplete audit.
+
+    def is_loss_documented(self) -> bool:
+        """True iff loss_if_audited has been filled in. The framework's
+        own audit-of-itself surfaces these gaps."""
+        return bool(self.loss_if_audited.strip())
 
 
 @dataclass
@@ -97,6 +114,10 @@ class TermAudit:
     correlation_to_real_signal: float   # 0.0 = uncorrelated, 1.0 = perfect
     correlation_justification: str
     notes: str = ""
+    # Preempt extensions (backward-compatible, default empty).
+    # See docs/PREEMPTING_ATTACKS.md.
+    boundary_conditions: List = field(default_factory=list)   # BoundaryCondition
+    predictions: List = field(default_factory=list)           # FalsifiablePrediction
 
     def is_signal(self, threshold: int = 5) -> bool:
         """Term qualifies as a signal only if it passes >= threshold criteria
@@ -107,6 +128,38 @@ class TermAudit:
     def failure_modes(self) -> List[str]:
         """Return criteria where score < 0.5."""
         return [s.criterion for s in self.signal_scores if s.score < 0.5]
+
+    def measurement_layer(self) -> Dict:
+        """The math half of the audit, isolated from the incentive half.
+        Per docs/PREEMPTING_ATTACKS.md preempt #2: a critic must declare
+        which layer they are attacking."""
+        return {
+            "claimed_signal": self.claimed_signal,
+            "signal_scores": self.signal_scores,
+            "is_signal": self.is_signal(),
+            "failure_modes": self.failure_modes(),
+            "correlation_to_real_signal": self.correlation_to_real_signal,
+            "boundary_conditions": self.boundary_conditions,
+            "predictions": self.predictions,
+        }
+
+    def incentive_layer(self) -> Dict:
+        """The incentive half of the audit, isolated from the math half.
+        An attack on this layer is a defense of an incentive structure,
+        not a defense of the measurement's validity."""
+        return {
+            "term": self.term,
+            "standard_setters": self.standard_setters,
+            "first_principles": self.first_principles,
+        }
+
+    def incomplete_loss_documentation(self) -> List[str]:
+        """Standard-setter names whose loss_if_audited field is empty.
+        The framework auditing itself."""
+        return [
+            s.name for s in self.standard_setters
+            if not getattr(s, "is_loss_documented", lambda: True)()
+        ]
 
     def summary(self) -> Dict:
         return {
