@@ -74,8 +74,41 @@ Without `site`/`step_result`, `compute_flow` still works (backward-compatible pa
 - `README.md` — thesis and layer diagram (public-facing).
 - `STATUS.md` — current session state: tests passing, bugs fixed, hidden variables still open, what the framework does NOT do. **Update this** when you change verified behavior.
 - `docs/EQUATIONS.md` — every equation in the scaffold, tagged `[CORE] / [PLACEHOLDER] / [HEURISTIC] / [FRAGILE]`. Read before changing any formula; `[PLACEHOLDER]` and `[FRAGILE]` are explicitly waiting to be replaced.
-- `docs/AUDIT_01..03.md` — prior audit reports. `STATUS.md` references a future `docs/AUDIT_04.md` for open Bugs 2 and 3 (regulatory crosswalk has no social/labor frameworks; mitigation has no community-specific leverage patterns).
+- `docs/AUDIT_01..04.md` — audit reports. `AUDIT_04.md` covers the tier-vector Bug 1/4 fixes and scopes the still-open Bugs 2 (regulatory crosswalk has no social/labor frameworks) and 3 (mitigation has no community-specific leverage patterns). New audits append (`AUDIT_05.md`, etc.); do not overwrite prior ones.
 - `docs/LITERATURE.md` — citations backing the thermodynamic framing.
+
+## Navigation — where to start by intent
+
+Land on the right file without grepping blind. Each row lists the primary file and the first place to look next.
+
+| If you want to... | Start here | Then |
+| --- | --- | --- |
+| See the pipeline end-to-end | `tests/test_integration.py` | `tests/test_scaffold.py` |
+| Change regeneration cost math | `accounting/regeneration.py` | `tests/test_regeneration.py`, `tests/test_registry_safety.py` |
+| Add a new basin type | `basin_states/base.py` + one of the type files | `reserves/defaults.py` (`SECONDARY_SPECS`) + register regen fn in `accounting/regeneration.py` |
+| Change cascade / failure-rate math | `cascade/detector.py`, `cascade/aggregation.py` | `docs/EQUATIONS.md` §4, `cascade/ramp.py` |
+| Understand the glucose / PnL lines | `accounting/glucose.py` | `verdict/assess.py` |
+| Change what BLACK / RED / AMBER mean | `verdict/assess.py::yield_signal` | `distributional/tiers.py::determine_tier_for_basin` |
+| Add a regulatory framework (Bug 2) | `regulatory/frameworks.py` | `regulatory/crosswalk.py`, `docs/AUDIT_04.md` Part B |
+| Add a mitigation action (Bug 3) | `mitigation/actions.py` | `tests/test_mitigation.py`, `docs/AUDIT_04.md` Part C |
+| Work with cohorts / distributional load | `distributional/access.py` | `distributional/institutional.py`, `tests/test_distributional.py`, `tests/test_tier_vector.py` |
+| Understand reserves + first-law closure | `reserves/site.py` (`step()`) | `reserves/pools.py`, `thermodynamics/exergy.py` |
+| Check literature anchors for a metric | `docs/LITERATURE.md` | the relevant basin file in `basin_states/` |
+
+## Do not silently rewrite these
+
+These files either encode a historical record, a literature anchor, or a safety invariant. Edits are fine *with a reason*; silent rewrites have caused real drift in this repo before (see the STATUS.md / code mismatch that `docs/AUDIT_04.md` had to unwind).
+
+- `STATUS.md` — append-or-explicit-edit only. Every numerical claim here should be reproducible by running a test right now. If you change verified behavior, re-run the suite before updating the PASS list.
+- `docs/AUDIT_0*.md` — historical audit trail. Never overwrite a past audit; start a new one (`AUDIT_05.md`, etc.) and link back.
+- `docs/EQUATIONS.md` — equation tags (`[CORE] / [PLACEHOLDER] / [HEURISTIC] / [FRAGILE]`) are load-bearing. Changing a formula without updating the tag hides the scaffold→production transition.
+- `docs/LITERATURE.md` — citation anchors (Case & Deaton, Kim 2024, Sciubba, etc.). Don't drop a citation without replacing it with an equally specific source.
+- `tests/*` — never weaken an assertion to make a failing test pass. Either fix the code or write a *new* test that expresses the new intended behavior, and leave the old test's falsification signal intact.
+- `accounting/regeneration.py::KNOWN_METRICS` and `DEFAULT_REGISTRY` — removing an entry silently under-reports cost. The `strict=True` refusal path depends on `KNOWN_METRICS`; see `tests/test_registry_safety.py`.
+- `reserves/defaults.py` (`SECONDARY_SPECS`, tertiary pool capacities/cliffs) — numbers here are literature-anchored, not tunable knobs. Don't adjust without citing the new anchor in `docs/LITERATURE.md`.
+- `thermodynamics/exergy.py` — the Gouy-Stodola invariant (`Exd ≥ 0`) is enforced here. Don't relax `check_nonnegative_destruction` or `check_closure` to make a test pass; if closure fails, the physics is wrong upstream.
+
+When in doubt, read the module docstring first — every module in this repo leads with a docstring that states its invariants. If your change violates one, either update the docstring with a stated reason or stop and ask.
 
 ## Things the framework intentionally does NOT do
 
