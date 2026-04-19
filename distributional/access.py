@@ -205,6 +205,10 @@ class AccessReport:
 
     newly_collapsed_this_period: Dict[str, int] = field(default_factory=dict)
     newly_recovered_this_period: Dict[str, int] = field(default_factory=dict)
+    # per-cohort realized structural load (populated when
+    # cohort_basin_sensitivities is used; otherwise equals
+    # structural_load * cohort_load_multiplier per cohort)
+    per_cohort_structural_load: Dict[str, float] = field(default_factory=dict)
 
     def total_functional_capacity(self) -> float:
         return sum(c.total_output_capacity() for c in self.cohorts.values())
@@ -253,15 +257,27 @@ def apply_tier_to_cohorts(
     load_table: Optional[Dict[Tier, float]] = None,
     cohort_load_multipliers: Optional[Dict[str, float]] = None,
     recovery_fractions: Optional[Dict[str, float]] = None,
+    cohort_basin_sensitivities: Optional[Dict[str, Dict[str, float]]] = None,
 ) -> AccessReport:
     """Apply the firm's tier to a population of cohorts.
 
-    cohort_load_multipliers: cohort_name -> multiplier. Multipliers
-        above 1.0 mean the cohort bears more of the structural load
-        (less exit mobility, closer to the basin damage, more
-        dependent on local conditions). Community members typically
-        1.5x; capital market participants typically 0.2-0.4x
-        because they can diversify.
+    cohort_load_multipliers: cohort_name -> scalar multiplier on the
+        worst-basin load. Legacy scalar path — used only when
+        cohort_basin_sensitivities is not supplied for that cohort.
+
+    cohort_basin_sensitivities: cohort_name -> {basin_type: weight}.
+        Vector path — preserves TierAssignment.by_basin_type so a firm
+        GREEN on soil and BLACK on community does not impose the same
+        load on every cohort. Load for a cohort is the weighted sum of
+        per-basin-type tier loads (sensitivity weights are absolute, not
+        normalized), clipped to [0, 1]. Cohorts absent from this dict
+        fall back to the scalar path.
+
+        Example:
+            sensitivities = {
+                "community_members": {"community": 1.5, "soil": 0.4},
+                "capital_market":    {"community": 0.1, "soil": 0.1},
+            }
 
     recovery_fractions: cohort_name -> recovery fraction per period
         for collapsed members whose buffer has risen above current
@@ -272,13 +288,34 @@ def apply_tier_to_cohorts(
 
     multipliers = cohort_load_multipliers or {}
     recoveries = recovery_fractions or {}
+    sensitivities = cohort_basin_sensitivities or {}
+
+    # precompute per-basin-type loads for the vector path
+    per_basin_type_load: Dict[str, float] = {}
+    if sensitivities:
+        for btype, tier in tier_assignment.by_basin_type.items():
+            per_basin_type_load[btype] = structural_load_from_tier(
+                tier, table=load_table,
+            )
 
     newly_collapsed: Dict[str, int] = {}
     newly_recovered: Dict[str, int] = {}
+    per_cohort_load: Dict[str, float] = {}
 
     for name, cohort in cohorts.items():
-        mult = multipliers.get(name, 1.0)
-        load = min(1.0, base_load * mult)
+        sens = sensitivities.get(name)
+        if sens:
+            # vector path: weighted sum across basin types
+            load = 0.0
+            for btype, weight in sens.items():
+                load += weight * per_basin_type_load.get(btype, 0.0)
+            load = max(0.0, min(1.0, load))
+        else:
+            # scalar path (legacy): worst-basin load * optional multiplier
+            mult = multipliers.get(name, 1.0)
+            load = min(1.0, base_load * mult)
+
+        per_cohort_load[name] = load
 
         cohort, crossed = apply_structural_load(cohort, load)
         newly_collapsed[name] = len(crossed)
@@ -293,6 +330,7 @@ def apply_tier_to_cohorts(
         cohorts=cohorts,
         newly_collapsed_this_period=newly_collapsed,
         newly_recovered_this_period=newly_recovered,
+        per_cohort_structural_load=per_cohort_load,
     )
 
 

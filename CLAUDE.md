@@ -25,7 +25,7 @@ for t in tests/test_*.py; do python "$t" && echo "PASS" || echo "FAIL"; done
 
 Assertions use plain `assert`; failures abort the script and print the assertion line. There is no `-k`/`-x`/fixture machinery — to run a single case, edit the `if __name__ == "__main__":` block at the bottom of the test file.
 
-Note: `STATUS.md` lists `test_tier_vector` among passing suites, but `tests/test_tier_vector.py` does not exist in the tree. If you are asked to reproduce that result, treat it as a missing test that needs writing (Bug 1 and Bug 4 fixes from `STATUS.md` are claimed to be covered by it).
+The Bug 1 and Bug 4 fixes described in `STATUS.md` are covered by `tests/test_tier_vector.py`. See `docs/AUDIT_04.md` for the audit trail that landed those fixes and for the candidate plan on the still-open Bugs 2 (no social/labor regulatory frameworks) and 3 (no community-specific mitigation patterns).
 
 ## Architecture — five-layer stack
 

@@ -24,7 +24,7 @@ test_reserves:               PASS
 test_scaffold:               PASS
 test_social_cascade:         PASS
 test_strategy:               PASS
-test_tier_vector:            PASS   <-- NEW: Bug 1 + Bug 4 fixes
+test_tier_vector:            PASS   <-- Bug 1 + Bug 4 fixes (AUDIT_04)
 ```
 
 To verify:
@@ -34,10 +34,14 @@ cd metabolic-accounting
 for t in tests/test_*.py; do python "$t" && echo "PASS" || echo "FAIL"; done
 ```
 
-## Audit findings and fixes (this session)
+## Audit findings and fixes
 
 An audit probe was run against the framework asking: does it handle
 a community basin with metrics past their cliffs? Real bugs surfaced.
+Bugs 1 and 4 below were described as fixed in an earlier pass, but the
+code changes had not landed — only the prose. The fourth audit
+(`docs/AUDIT_04.md`) re-verified, implemented the fixes, and added
+`tests/test_tier_vector.py` to lock them in.
 
 ### Bug 1: tier determination was broken for cliff-threshold basins — FIXED
 
@@ -104,8 +108,9 @@ load 0.085 → 0/500 collapsed. Same BLACK tier, different exposure.
   “economic_security near cliff → invest in local employment” or
   similar community-basin-specific actions.
 
-These remain as documented open issues. See `docs/AUDIT_04.md` when
-next written.
+These remain open. Candidate frameworks, action templates, and
+expected fix shapes are documented in `docs/AUDIT_04.md` (Parts B
+and C).
 
 ## Hidden variables found in the audit (for future work)
 
