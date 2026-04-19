@@ -97,6 +97,7 @@ Land on the right file without grepping blind. Each row lists the primary file a
 | Understand reserves + first-law closure | `reserves/site.py` (`step()`) | `reserves/pools.py`, `thermodynamics/exergy.py` |
 | Check literature anchors for a metric | `docs/LITERATURE.md` | the relevant basin file in `basin_states/` |
 | Audit whether an economic term is a signal | `term_audit/schema.py` | `tests/test_term_audit.py` |
+| **Reason about money / capital / investment / any economic term** | `docs/SCOPING_ECONOMIC_TERMS.md` (**read first**) | `term_audit/scoping.py`, `term_audit/audits/money.py` |
 | Understand how this repo relates to TAF / PhysicsGuard / Logic-Ferret | `docs/RELATED.md` | `docs/SCHEMAS.md` for the cross-framework data contract |
 
 ## Do not silently rewrite these
@@ -111,6 +112,7 @@ These files either encode a historical record, a literature anchor, or a safety 
 - `accounting/regeneration.py::KNOWN_METRICS` and `DEFAULT_REGISTRY` — removing an entry silently under-reports cost. The `strict=True` refusal path depends on `KNOWN_METRICS`; see `tests/test_registry_safety.py`.
 - `reserves/defaults.py` (`SECONDARY_SPECS`, tertiary pool capacities/cliffs) — numbers here are literature-anchored, not tunable knobs. Don't adjust without citing the new anchor in `docs/LITERATURE.md`.
 - `thermodynamics/exergy.py` — the Gouy-Stodola invariant (`Exd ≥ 0`) is enforced here. Don't relax `check_nonnegative_destruction` or `check_closure` to make a test pass; if closure fails, the physics is wrong upstream.
+- `docs/SCOPING_ECONOMIC_TERMS.md` and `term_audit/scoping.py::SCOPING_DIMENSIONS` — the scoping discipline that prevents training-bias re-anchoring to currency. Don't quietly drop dimensions or loosen `DeclaredScope` validators. Removing a dimension silently weakens the framework's resistance to narrative strip. Add new dimensions at the end; mark obsolete ones deprecated rather than deleting.
 
 When in doubt, read the module docstring first — every module in this repo leads with a docstring that states its invariants. If your change violates one, either update the docstring with a stated reason or stop and ask.
 

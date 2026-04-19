@@ -4,6 +4,11 @@ term_audit/audits/money.py
 Audit of the term 'money' against signal-definition criteria and
 first-principles purpose.
 
+Companion reading: docs/SCOPING_ECONOMIC_TERMS.md lists the twelve+
+distinct referents 'money' collapses, which is why each signal
+criterion below scores at or below 0.2. The audit states the failure;
+the scoping doc shows the dimensional explosion that causes it.
+
 CC0.
 """
 

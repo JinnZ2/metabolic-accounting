@@ -11,6 +11,14 @@ pipeline computes verdicts for firms; term_audit computes verdicts for the
 terms firms (and economists, regulators, analysts) use to describe
 themselves. Aligned with the narrative-stripper concept in the parent
 thermodynamic-accountability-framework (see docs/RELATED.md).
+
+Two modules:
+  - schema.py:   score an economic term against the seven signal criteria
+                 after the fact.
+  - scoping.py:  codify the dimensions that WOULD need to be declared in
+                 advance for the term to function as a measurement in a
+                 given use. See docs/SCOPING_ECONOMIC_TERMS.md for the
+                 full argument and worked expansions.
 """
 
 from .schema import (
@@ -20,6 +28,11 @@ from .schema import (
     FirstPrinciplesPurpose,
     TermAudit,
 )
+from .scoping import (
+    SCOPING_DIMENSIONS,
+    SCOPING_DIMENSION_NAMES,
+    DeclaredScope,
+)
 
 __all__ = [
     "SIGNAL_CRITERIA",
@@ -27,4 +40,8 @@ __all__ = [
     "StandardSetter",
     "FirstPrinciplesPurpose",
     "TermAudit",
+    "SCOPING_DIMENSIONS",
+    "SCOPING_DIMENSION_NAMES",
+    "DeclaredScope",
 ]
+
