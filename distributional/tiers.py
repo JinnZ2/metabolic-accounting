@@ -67,6 +67,49 @@ def _basin_type_from_name(basin_name: str) -> str:
     return basin_name
 
 
+def _metric_past_cliff(basin, key: str) -> bool:
+    """True when the metric has crossed its cliff threshold.
+
+    Honors `basin.high_is_bad` semantics: contamination-style metrics
+    (high_is_bad) are past-cliff when state >= cliff; capacity-style
+    metrics (the default) are past-cliff when state <= cliff.
+
+    Replaces the broken `fraction_remaining < 0` check, which never
+    fired for reasonable states since state/capacity is non-negative."""
+    state = basin.state.get(key)
+    cliff = basin.cliff_thresholds.get(key)
+    if state is None or cliff is None:
+        return False
+    high_is_bad = getattr(basin, "high_is_bad", None) or set()
+    if key in high_is_bad:
+        return state >= cliff
+    return state <= cliff
+
+
+def _metric_near_cliff(basin, key: str, band: float = 0.25) -> bool:
+    """True when the metric is within `band` fraction of the
+    cliff-to-healthy range from its cliff threshold.
+
+    For capacity-style metrics: danger zone = [cliff, cliff + band*(cap-cliff)].
+    For high-is-bad metrics:    danger zone = [cliff - band*cliff, cliff].
+
+    Catches metrics trending into failure without false-flagging
+    healthy baselines. Returns True for past-cliff metrics too."""
+    if _metric_past_cliff(basin, key):
+        return True
+    state = basin.state.get(key)
+    cliff = basin.cliff_thresholds.get(key)
+    cap = basin.capacity.get(key)
+    if state is None or cliff is None or cap is None:
+        return False
+    high_is_bad = getattr(basin, "high_is_bad", None) or set()
+    if key in high_is_bad:
+        danger_start = cliff - band * cliff
+        return state >= danger_start
+    danger_start = cliff + band * (cap - cliff)
+    return state <= danger_start
+
+
 def determine_tier_for_basin(
     basin_name: str,
     basin,
@@ -93,11 +136,10 @@ def determine_tier_for_basin(
     """
     basin_type = _basin_type_from_name(basin_name)
 
-    # check primary irreversibility
+    # check primary irreversibility — state past cliff threshold,
+    # honoring high_is_bad semantics per metric
     for key in basin.state:
-        frac = basin.fraction_remaining(key)
-        # frac < 0 means past cliff
-        if frac < 0:
+        if _metric_past_cliff(basin, key):
             return Tier.BLACK
 
     # check corresponding tertiary pools
@@ -126,6 +168,12 @@ def determine_tier_for_basin(
             if reserve.fraction_remaining() < 0.5:
                 return Tier.AMBER
 
+    # check metrics within the near-cliff band (AMBER trigger for
+    # metrics that are stable in trajectory but already close to failure)
+    for key in basin.state:
+        if _metric_near_cliff(basin, key):
+            return Tier.AMBER
+
     # check metric trajectories
     for key in basin.state:
         ttc = basin.time_to_cliff(key)
@@ -142,6 +190,15 @@ DEFAULT_TERTIARY_MAPPING: Dict[str, List[str]] = {
     "water": ["watershed_reserve"],
     "air": ["airshed_reserve"],
     "biology": ["landscape_reserve"],   # biodiversity tied to landscape
+    # community basin is driven by the four social tertiary pools;
+    # any of these past cliff is a landscape-scale social signature
+    # that triggers BLACK for the community basin type
+    "community": [
+        "social_fabric_reserve",
+        "generational_transmission",
+        "institutional_stock",
+        "civic_trust_reserve",
+    ],
 }
 
 

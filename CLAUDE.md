@@ -25,7 +25,7 @@ for t in tests/test_*.py; do python "$t" && echo "PASS" || echo "FAIL"; done
 
 Assertions use plain `assert`; failures abort the script and print the assertion line. There is no `-k`/`-x`/fixture machinery — to run a single case, edit the `if __name__ == "__main__":` block at the bottom of the test file.
 
-Note: `STATUS.md` lists `test_tier_vector` among passing suites, but `tests/test_tier_vector.py` does not exist in the tree. If you are asked to reproduce that result, treat it as a missing test that needs writing (Bug 1 and Bug 4 fixes from `STATUS.md` are claimed to be covered by it).
+The Bug 1 and Bug 4 fixes described in `STATUS.md` are covered by `tests/test_tier_vector.py`. See `docs/AUDIT_04.md` for the audit trail that landed those fixes and for the candidate plan on the still-open Bugs 2 (no social/labor regulatory frameworks) and 3 (no community-specific mitigation patterns).
 
 ## Architecture — five-layer stack
 
@@ -74,8 +74,110 @@ Without `site`/`step_result`, `compute_flow` still works (backward-compatible pa
 - `README.md` — thesis and layer diagram (public-facing).
 - `STATUS.md` — current session state: tests passing, bugs fixed, hidden variables still open, what the framework does NOT do. **Update this** when you change verified behavior.
 - `docs/EQUATIONS.md` — every equation in the scaffold, tagged `[CORE] / [PLACEHOLDER] / [HEURISTIC] / [FRAGILE]`. Read before changing any formula; `[PLACEHOLDER]` and `[FRAGILE]` are explicitly waiting to be replaced.
-- `docs/AUDIT_01..03.md` — prior audit reports. `STATUS.md` references a future `docs/AUDIT_04.md` for open Bugs 2 and 3 (regulatory crosswalk has no social/labor frameworks; mitigation has no community-specific leverage patterns).
+- `docs/AUDIT_01..04.md` — audit reports. `AUDIT_04.md` covers the tier-vector Bug 1/4 fixes and scopes the still-open Bugs 2 (regulatory crosswalk has no social/labor frameworks) and 3 (mitigation has no community-specific leverage patterns). New audits append (`AUDIT_05.md`, etc.); do not overwrite prior ones.
+- `docs/RELATED.md` — relationship to the three companion repos (TAF as organism-agnostic parent, PhysicsGuard as claim verifier, Logic-Ferret as narrative auditor). No runtime dependencies between repos; links are structural (shared invariants) not code-level.
+- `docs/SCHEMAS.md` — data types this repo exposes for cross-framework consumption (`ExergyFlow`, `GlucoseFlow`, `BasinState`, `Tier`/`TierAssignment`, `Verdict`) with units and invariants. Companion tools read this to construct matching local types without importing from this repo.
 - `docs/LITERATURE.md` — citations backing the thermodynamic framing.
+
+## Navigation — where to start by intent
+
+Land on the right file without grepping blind. Each row lists the primary file and the first place to look next.
+
+| If you want to... | Start here | Then |
+| --- | --- | --- |
+| See the pipeline end-to-end | `tests/test_integration.py` | `tests/test_scaffold.py` |
+| Change regeneration cost math | `accounting/regeneration.py` | `tests/test_regeneration.py`, `tests/test_registry_safety.py` |
+| Add a new basin type | `basin_states/base.py` + one of the type files | `reserves/defaults.py` (`SECONDARY_SPECS`) + register regen fn in `accounting/regeneration.py` |
+| Change cascade / failure-rate math | `cascade/detector.py`, `cascade/aggregation.py` | `docs/EQUATIONS.md` §4, `cascade/ramp.py` |
+| Understand the glucose / PnL lines | `accounting/glucose.py` | `verdict/assess.py` |
+| Change what BLACK / RED / AMBER mean | `verdict/assess.py::yield_signal` | `distributional/tiers.py::determine_tier_for_basin` |
+| Add a regulatory framework (Bug 2) | `regulatory/frameworks.py` | `regulatory/crosswalk.py`, `docs/AUDIT_04.md` Part B |
+| Add a mitigation action (Bug 3) | `mitigation/actions.py` | `tests/test_mitigation.py`, `docs/AUDIT_04.md` Part C |
+| Work with cohorts / distributional load | `distributional/access.py` | `distributional/institutional.py`, `tests/test_distributional.py`, `tests/test_tier_vector.py` |
+| Understand reserves + first-law closure | `reserves/site.py` (`step()`) | `reserves/pools.py`, `thermodynamics/exergy.py` |
+| Check literature anchors for a metric | `docs/LITERATURE.md` | the relevant basin file in `basin_states/` |
+| Audit whether an economic term is a signal | `term_audit/schema.py` | `tests/test_term_audit.py` |
+| **Reason about money / capital / investment / any economic term** | `docs/SCOPING_ECONOMIC_TERMS.md` (**read first**) | `term_audit/scoping.py`, `term_audit/audits/money.py` |
+| **See the tiered list of terms we are auditing** | `docs/TERMS_TO_AUDIT.md` | `term_audit/tiers.py::find_tier(term)` |
+| Understand the dynamics that capture measurement systems | `term_audit/status_extraction.py` | `tests/test_status_extraction.py`, `term_audit/audits/disability.py` |
+| **Defend the framework against attacks** | `docs/PREEMPTING_ATTACKS.md` | `term_audit/falsification.py`, `term_audit/contradictions.py`, `term_audit/counter_hypotheses.py` |
+| Understand how this repo relates to TAF / PhysicsGuard / Logic-Ferret | `docs/RELATED.md` | `docs/SCHEMAS.md` for the cross-framework data contract |
+
+## Do not silently rewrite these
+
+These files either encode a historical record, a literature anchor, or a safety invariant. Edits are fine *with a reason*; silent rewrites have caused real drift in this repo before (see the STATUS.md / code mismatch that `docs/AUDIT_04.md` had to unwind).
+
+- `STATUS.md` — append-or-explicit-edit only. Every numerical claim here should be reproducible by running a test right now. If you change verified behavior, re-run the suite before updating the PASS list.
+- `docs/AUDIT_0*.md` — historical audit trail. Never overwrite a past audit; start a new one (`AUDIT_05.md`, etc.) and link back.
+- `docs/EQUATIONS.md` — equation tags (`[CORE] / [PLACEHOLDER] / [HEURISTIC] / [FRAGILE]`) are load-bearing. Changing a formula without updating the tag hides the scaffold→production transition.
+- `docs/LITERATURE.md` — citation anchors (Case & Deaton, Kim 2024, Sciubba, etc.). Don't drop a citation without replacing it with an equally specific source.
+- `tests/*` — never weaken an assertion to make a failing test pass. Either fix the code or write a *new* test that expresses the new intended behavior, and leave the old test's falsification signal intact.
+- `accounting/regeneration.py::KNOWN_METRICS` and `DEFAULT_REGISTRY` — removing an entry silently under-reports cost. The `strict=True` refusal path depends on `KNOWN_METRICS`; see `tests/test_registry_safety.py`.
+- `reserves/defaults.py` (`SECONDARY_SPECS`, tertiary pool capacities/cliffs) — numbers here are literature-anchored, not tunable knobs. Don't adjust without citing the new anchor in `docs/LITERATURE.md`.
+- `thermodynamics/exergy.py` — the Gouy-Stodola invariant (`Exd ≥ 0`) is enforced here. Don't relax `check_nonnegative_destruction` or `check_closure` to make a test pass; if closure fails, the physics is wrong upstream.
+- `docs/SCOPING_ECONOMIC_TERMS.md` and `term_audit/scoping.py::SCOPING_DIMENSIONS` — the scoping discipline that prevents training-bias re-anchoring to currency. Don't quietly drop dimensions or loosen `DeclaredScope` validators. Removing a dimension silently weakens the framework's resistance to narrative strip. Add new dimensions at the end; mark obsolete ones deprecated rather than deleting.
+- `docs/TERMS_TO_AUDIT.md` and `term_audit/tiers.py` — the seven-tier list of terms the framework rubs against. The Tier 4 environment-vs-person framing and the Tier 6 AI-drift note are load-bearing handoffs for future sessions; `tests/test_tiers.py` tripwires against silent removal. Add terms to tiers as coverage grows; do not reorganize tiers without a commit message explaining why.
+- `docs/PREEMPTING_ATTACKS.md` and the modules it points at (`term_audit/falsification.py`, `term_audit/contradictions.py`, `term_audit/counter_hypotheses.py`, plus the `measurement_layer()` / `incentive_layer()` methods on `TermAudit`) — the framework's defensive posture. Test 10 of `tests/test_preemption.py` asserts the `distinction_as_coordination` counter-hypothesis stays falsified; if you intend to support it, update the model AND the audit notes — that is not a soft change.
+
+When in doubt, read the module docstring first — every module in this repo leads with a docstring that states its invariants. If your change violates one, either update the docstring with a stated reason or stop and ask.
+
+## Known terms we rub against
+
+The framework identifies a tiered list of terms as tokens occupying
+signal-shaped positions in discourse without meeting
+signal-definition criteria. Codified in `term_audit/tiers.py`; full
+list with framing observations in `docs/TERMS_TO_AUDIT.md`.
+
+- **Tier 1 — foundational fictions** (maximum resistance):
+  `money`, `currency`, `capital`, `investment`, `value`, `wealth`,
+  `economic_growth`, `gross_domestic_product`.
+- **Tier 2 — labor and human-worth measurements**: `productivity`,
+  `efficiency`, `performance`, `skill`, `qualification`,
+  `credential`, `merit`, `unemployment`, `labor_market`,
+  `human_capital`.
+- **Tier 3 — organizational and institutional legitimacy**:
+  `accountability`, `authority`, `leadership`, `expertise`,
+  `governance`, `compliance`, `professionalism`, `best_practices`,
+  `stakeholder`.
+- **Tier 4 — mental and physical capacity measurements**:
+  `disability`, `mental_illness`, `intelligence`, `iq`,
+  `learning_disorder`, `adhd`, `autism_spectrum`, `normal` /
+  `normative`, `functional`, `high_functioning` / `low_functioning`,
+  `competence`, `rationality`.
+- **Tier 5 — social and behavioral measurements**: `crime`,
+  `deviance`, `addiction`, `risk`, `reliability`, `trust` (as
+  institutionally measured), `radicalization`, `extremism`,
+  `misinformation`.
+- **Tier 6 — knowledge and truth measurements**: `evidence_based`,
+  `peer_reviewed`, `consensus`, `credible_source`, `expert_opinion`,
+  `data_driven`, `scientific`, `objective`.
+- **Tier 7 — environmental and resource terms**: `natural_resource`,
+  `ecosystem_services`, `carbon_credit`, `offset`, `sustainable`,
+  `renewable`, `externality`.
+
+**Three observations shape how to work the list.** They are
+operational, not optional.
+
+1. **The tiers are not independent.** Tier 1 is structurally
+   load-bearing for Tiers 2–5. Productivity-in-dollars is not a
+   signal if money is not a signal, and so on up the stack. Audit
+   Tier 1 first and cite those audits rather than re-doing the
+   foundational work each time.
+2. **Tier 4 will hurt people, including allies.** The audit is NOT
+   that the phenomena don't exist; it is that the measurement
+   relocates failure from environment to person. Every Tier 4
+   audit must make that distinction explicit and link to
+   `distributional/institutional.py` (which already tracks the
+   environment-fit categories: `fit_multiplier`, `trauma_tax`,
+   `available_capacity`).
+3. **Tier 6 is where AI drifts hardest.** "Peer-reviewed" and
+   "evidence-based" are near-sacred in training corpora. An AI
+   working Tier 6 will feel strong pull toward softening — hedges
+   like "but peer review does serve an important function"
+   appearing before the audit is complete. The hedge itself is
+   the signal that the critique is landing. Complete the audit
+   first; add contextualizing language only where the scoring
+   specifically warrants it, not as a preemptive cushion.
 
 ## Things the framework intentionally does NOT do
 
