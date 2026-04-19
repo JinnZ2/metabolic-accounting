@@ -98,6 +98,7 @@ Land on the right file without grepping blind. Each row lists the primary file a
 | Check literature anchors for a metric | `docs/LITERATURE.md` | the relevant basin file in `basin_states/` |
 | Audit whether an economic term is a signal | `term_audit/schema.py` | `tests/test_term_audit.py` |
 | **Reason about money / capital / investment / any economic term** | `docs/SCOPING_ECONOMIC_TERMS.md` (**read first**) | `term_audit/scoping.py`, `term_audit/audits/money.py` |
+| **See the tiered list of terms we are auditing** | `docs/TERMS_TO_AUDIT.md` | `term_audit/tiers.py::find_tier(term)` |
 | Understand how this repo relates to TAF / PhysicsGuard / Logic-Ferret | `docs/RELATED.md` | `docs/SCHEMAS.md` for the cross-framework data contract |
 
 ## Do not silently rewrite these
@@ -113,8 +114,67 @@ These files either encode a historical record, a literature anchor, or a safety 
 - `reserves/defaults.py` (`SECONDARY_SPECS`, tertiary pool capacities/cliffs) — numbers here are literature-anchored, not tunable knobs. Don't adjust without citing the new anchor in `docs/LITERATURE.md`.
 - `thermodynamics/exergy.py` — the Gouy-Stodola invariant (`Exd ≥ 0`) is enforced here. Don't relax `check_nonnegative_destruction` or `check_closure` to make a test pass; if closure fails, the physics is wrong upstream.
 - `docs/SCOPING_ECONOMIC_TERMS.md` and `term_audit/scoping.py::SCOPING_DIMENSIONS` — the scoping discipline that prevents training-bias re-anchoring to currency. Don't quietly drop dimensions or loosen `DeclaredScope` validators. Removing a dimension silently weakens the framework's resistance to narrative strip. Add new dimensions at the end; mark obsolete ones deprecated rather than deleting.
+- `docs/TERMS_TO_AUDIT.md` and `term_audit/tiers.py` — the seven-tier list of terms the framework rubs against. The Tier 4 environment-vs-person framing and the Tier 6 AI-drift note are load-bearing handoffs for future sessions; `tests/test_tiers.py` tripwires against silent removal. Add terms to tiers as coverage grows; do not reorganize tiers without a commit message explaining why.
 
 When in doubt, read the module docstring first — every module in this repo leads with a docstring that states its invariants. If your change violates one, either update the docstring with a stated reason or stop and ask.
+
+## Known terms we rub against
+
+The framework identifies a tiered list of terms as tokens occupying
+signal-shaped positions in discourse without meeting
+signal-definition criteria. Codified in `term_audit/tiers.py`; full
+list with framing observations in `docs/TERMS_TO_AUDIT.md`.
+
+- **Tier 1 — foundational fictions** (maximum resistance):
+  `money`, `currency`, `capital`, `investment`, `value`, `wealth`,
+  `economic_growth`, `gross_domestic_product`.
+- **Tier 2 — labor and human-worth measurements**: `productivity`,
+  `efficiency`, `performance`, `skill`, `qualification`,
+  `credential`, `merit`, `unemployment`, `labor_market`,
+  `human_capital`.
+- **Tier 3 — organizational and institutional legitimacy**:
+  `accountability`, `authority`, `leadership`, `expertise`,
+  `governance`, `compliance`, `professionalism`, `best_practices`,
+  `stakeholder`.
+- **Tier 4 — mental and physical capacity measurements**:
+  `disability`, `mental_illness`, `intelligence`, `iq`,
+  `learning_disorder`, `adhd`, `autism_spectrum`, `normal` /
+  `normative`, `functional`, `high_functioning` / `low_functioning`,
+  `competence`, `rationality`.
+- **Tier 5 — social and behavioral measurements**: `crime`,
+  `deviance`, `addiction`, `risk`, `reliability`, `trust` (as
+  institutionally measured), `radicalization`, `extremism`,
+  `misinformation`.
+- **Tier 6 — knowledge and truth measurements**: `evidence_based`,
+  `peer_reviewed`, `consensus`, `credible_source`, `expert_opinion`,
+  `data_driven`, `scientific`, `objective`.
+- **Tier 7 — environmental and resource terms**: `natural_resource`,
+  `ecosystem_services`, `carbon_credit`, `offset`, `sustainable`,
+  `renewable`, `externality`.
+
+**Three observations shape how to work the list.** They are
+operational, not optional.
+
+1. **The tiers are not independent.** Tier 1 is structurally
+   load-bearing for Tiers 2–5. Productivity-in-dollars is not a
+   signal if money is not a signal, and so on up the stack. Audit
+   Tier 1 first and cite those audits rather than re-doing the
+   foundational work each time.
+2. **Tier 4 will hurt people, including allies.** The audit is NOT
+   that the phenomena don't exist; it is that the measurement
+   relocates failure from environment to person. Every Tier 4
+   audit must make that distinction explicit and link to
+   `distributional/institutional.py` (which already tracks the
+   environment-fit categories: `fit_multiplier`, `trauma_tax`,
+   `available_capacity`).
+3. **Tier 6 is where AI drifts hardest.** "Peer-reviewed" and
+   "evidence-based" are near-sacred in training corpora. An AI
+   working Tier 6 will feel strong pull toward softening — hedges
+   like "but peer review does serve an important function"
+   appearing before the audit is complete. The hedge itself is
+   the signal that the critique is landing. Complete the audit
+   first; add contextualizing language only where the scoring
+   specifically warrants it, not as a preemptive cushion.
 
 ## Things the framework intentionally does NOT do
 

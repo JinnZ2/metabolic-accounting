@@ -33,6 +33,20 @@ from .scoping import (
     SCOPING_DIMENSION_NAMES,
     DeclaredScope,
 )
+from .tiers import (
+    TermTier,
+    ALL_TIERS,
+    TIER_1_FOUNDATIONAL,
+    TIER_2_LABOR_AND_HUMAN_WORTH,
+    TIER_3_ORGANIZATIONAL_LEGITIMACY,
+    TIER_4_CAPACITY_MEASUREMENTS,
+    TIER_5_SOCIAL_AND_BEHAVIORAL,
+    TIER_6_KNOWLEDGE_AND_TRUTH,
+    TIER_7_ENVIRONMENTAL_AND_RESOURCE,
+    find_tier,
+    all_terms,
+    duplicate_terms,
+)
 
 __all__ = [
     "SIGNAL_CRITERIA",
@@ -43,5 +57,17 @@ __all__ = [
     "SCOPING_DIMENSIONS",
     "SCOPING_DIMENSION_NAMES",
     "DeclaredScope",
+    "TermTier",
+    "ALL_TIERS",
+    "TIER_1_FOUNDATIONAL",
+    "TIER_2_LABOR_AND_HUMAN_WORTH",
+    "TIER_3_ORGANIZATIONAL_LEGITIMACY",
+    "TIER_4_CAPACITY_MEASUREMENTS",
+    "TIER_5_SOCIAL_AND_BEHAVIORAL",
+    "TIER_6_KNOWLEDGE_AND_TRUTH",
+    "TIER_7_ENVIRONMENTAL_AND_RESOURCE",
+    "find_tier",
+    "all_terms",
+    "duplicate_terms",
 ]
 
