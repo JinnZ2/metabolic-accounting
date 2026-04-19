@@ -19,6 +19,11 @@ individuals — the same pattern distributional/institutional.py
 already tracks via fit_multiplier, trauma_tax, and
 available_capacity.
 
+Companion model: term_audit/status_extraction.py models the dynamics
+by which measurement systems get captured by distinction-seeking
+flow, which is the upstream mechanism producing the collapsed
+'disability' token this audit catches downstream.
+
 CC0. Stdlib only.
 """
 
