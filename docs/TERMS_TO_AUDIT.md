@@ -39,6 +39,28 @@ signal criteria at threshold 0.7).
 - `labor_market`
 - `human_capital`
 
+First audits committed:
+
+- `term_audit/audits/productivity.py` — conventional productivity
+  fails 7 of 7 signal criteria. Module also provides a constructive
+  redefinition (`JobDependencyProfile`) where real productivity is
+  output divided by the full dependency chain (caloric, sleep,
+  shelter, transport, equipment, medical, social, knowledge,
+  recovery, replacement). A job is productive iff pay >= true_input;
+  otherwise the gap is substrate conversion routed to organism,
+  family, commons, or deferred maintenance. Worked long-haul driver
+  example: pay $1600/week against $2070 true input, $470 extracted
+  per week.
+- `term_audit/audits/efficiency.py` — conventional linear efficiency
+  fails 6 of 7 signal criteria. Module provides a vector-space
+  redefinition (`EfficiencyVector` on EROI, coupling coefficient,
+  carrying-capacity trajectory, knowledge density). Natural-system
+  calibration (mature forest, coupled human operation) and corporate
+  counter-references (industrial agriculture, financial services
+  extraction) included. `CoupledOperation` +
+  `system_coupling_coefficient()` let a caller compute system-level
+  coupling from a list of operations.
+
 ## Tier 3 — organizational and institutional legitimacy
 
 - `accountability`
