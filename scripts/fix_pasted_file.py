@@ -121,6 +121,17 @@ def _reindent_one_pass(lines: List[str]) -> Tuple[List[str], int]:
                         fixes += 1
                         j += 1
                         continue
+                    # EXCEPTION: when inside a class, CONST = ... patterns
+                    # are usually Enum members or class-level constants,
+                    # NOT end-of-class. Only break on `class `, `@`,
+                    # `# ====`, or `if __name__`.
+                    if in_class and re.match(
+                        r"^[A-Z_][A-Z_0-9]*\s*=", nxt,
+                    ):
+                        out.append("    " + nxt)
+                        fixes += 1
+                        j += 1
+                        continue
                     break
                 # only re-indent lines that are already at indent 0
                 # (paste damage). Lines that are already indented stay.
@@ -143,6 +154,28 @@ def _leading_spaces(line: str) -> int:
     return i
 
 
+def _strip_inline_comment(line: str) -> str:
+    """Return `line` with any trailing `# ...` comment removed.
+    Respects `#` inside simple single/double quoted strings. Not a
+    full Python tokenizer — handles the common cases."""
+    in_single = False
+    in_double = False
+    i = 0
+    while i < len(line):
+        c = line[i]
+        if c == "\\" and i + 1 < len(line):
+            i += 2
+            continue
+        if not in_single and c == '"':
+            in_double = not in_double
+        elif not in_double and c == "'":
+            in_single = not in_single
+        elif c == "#" and not in_single and not in_double:
+            return line[:i]
+        i += 1
+    return line
+
+
 def _reindent_control_flow_one_pass(lines: List[str]) -> Tuple[List[str], int]:
     """Fix control-flow bodies that were flattened to the same indent
     as their opening `:` line.
@@ -162,10 +195,22 @@ def _reindent_control_flow_one_pass(lines: List[str]) -> Tuple[List[str], int]:
     while i < n:
         L = lines[i]
         out.append(L)
+        # Does this line open a block (ends with `:` after stripping
+        # inline comments, starts with a real block-opening keyword,
+        # and is not itself a comment)?
         stripped = L.rstrip()
-        # Does this line open a block (ends with `:` and is not a slice
-        # or dict literal line)?
-        if stripped.endswith(":") and not stripped.lstrip().startswith("#"):
+        # strip an inline comment (but not if `#` is inside a string)
+        code_part = _strip_inline_comment(stripped).rstrip()
+        is_block_opener = (
+            code_part.endswith(":")
+            and not stripped.lstrip().startswith("#")
+            and bool(re.match(
+                r"^\s*(if|elif|else|for|while|try|except|finally|"
+                r"with|def|class|match|case)\b",
+                stripped,
+            ))
+        )
+        if is_block_opener:
             opener_indent = _leading_spaces(L)
             # Restrict to openers INSIDE a function/class (indent >= 4).
             # At indent 0, a `:` line is either a class/def/if-main
