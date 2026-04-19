@@ -96,6 +96,7 @@ Land on the right file without grepping blind. Each row lists the primary file a
 | Work with cohorts / distributional load | `distributional/access.py` | `distributional/institutional.py`, `tests/test_distributional.py`, `tests/test_tier_vector.py` |
 | Understand reserves + first-law closure | `reserves/site.py` (`step()`) | `reserves/pools.py`, `thermodynamics/exergy.py` |
 | Check literature anchors for a metric | `docs/LITERATURE.md` | the relevant basin file in `basin_states/` |
+| Audit whether an economic term is a signal | `term_audit/schema.py` | `tests/test_term_audit.py` |
 | Understand how this repo relates to TAF / PhysicsGuard / Logic-Ferret | `docs/RELATED.md` | `docs/SCHEMAS.md` for the cross-framework data contract |
 
 ## Do not silently rewrite these
