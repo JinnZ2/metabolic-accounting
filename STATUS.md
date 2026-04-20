@@ -4,7 +4,7 @@ Status of the metabolic-accounting framework at end of session.
 
 ## Verified (all tests run, all passing)
 
-Thirty-one test suites, every one runs and passes:
+Thirty-four test suites, every one runs and passes:
 
 ```
 # main accounting stack (18, pre-term_audit)
@@ -27,7 +27,7 @@ test_social_cascade:         PASS
 test_strategy:               PASS
 test_tier_vector:            PASS   <-- Bug 1 + Bug 4 fixes (AUDIT_04)
 
-# term_audit layer and its adapter (13, added this session)
+# term_audit layer and its adapter (16)
 test_term_audit:             PASS   <-- schema: SignalScore, TermAudit
 test_scoping:                PASS   <-- 15 scoping dimensions
 test_tiers:                  PASS   <-- seven-tier registry
@@ -41,7 +41,12 @@ test_efficiency_audit:       PASS   <-- Tier 2: vector-space redefinition
 test_disability_audit:       PASS   <-- Tier 4: A / B / C decomposition
 test_incentive_analysis:     PASS   <-- cross-term archetype capture risk
 test_metabolic_accounting_adapter: PASS   <-- term_audit -> accounting bridge
+test_temporal_adapter:       PASS   <-- AUDIT_06: tripwire for time-series wrapper
+test_governance_design_principles: PASS   <-- AUDIT_06: 14 principles, 6 categories
+test_recovery_pathways:      PASS   <-- AUDIT_06: stage-ordering invariant restored
 ```
+
+See `docs/AUDIT_06.md` for the cross-check that landed the last three.
 
 To verify:
 
@@ -244,6 +249,25 @@ verdict: sustainable_yield 0.056, trajectory -0.0017, ttr 21.67,
    unreachable inside the `if strength >= 0` branch.
    `test_metabolic_accounting_adapter.py::test_7` surfaced it.
    Fixed in commit `8145548`.
+
+## Bugs caught by AUDIT_06
+
+4. `test_governance_design_principles.py` imported
+   `term_audit.governance_design_principles` but the module was on
+   disk as `governance_design_systems.py` (despite its own docstring
+   naming it `_principles`). File renamed to match the intended name;
+   principle count tripwire corrected from 13 → 14 to reflect what
+   actually landed.
+5. `term_audit/recovery_pathways.py` violated its own stage-ordering
+   invariant: `shelter_and_thermal_regulation` (IMMEDIATE_SURVIVAL)
+   listed `ecological_and_seasonal_observation` (SUBSISTENCE) as a
+   prerequisite. Edge removed with an inline rationale citing the
+   audit — immediate shelter is pre-seasonal. Also added the missing
+   `shelter_and_thermal_regulation` preservation strategy.
+6. `term_audit/integration/temporal_adapter.py` raised `NameError`
+   at import time (`TermAudit` annotated without import). Fixed;
+   `tests/test_temporal_adapter.py` added as the first tripwire for
+   the module.
 
 ## What the framework does end-to-end
 

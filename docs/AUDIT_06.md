@@ -282,3 +282,24 @@ None of these are architectural. All are drift-repair.
   #10 all verified healthy against STATUS.md numerics.
 - No changes to AUDIT_04 bugs 2/3 or the AUDIT_05 hidden-variable
   list; no new architectural observations.
+
+
+## Part H — Fix landing (same commit as this audit's resolution)
+
+All six § G recommended actions executed after this audit was filed.
+State at close:
+
+| § | Item | Resolution |
+| --- | --- | --- |
+| A.1 | `test_governance_design_principles.py` import failure | File renamed `governance_design_systems.py` → `governance_design_principles.py`; test-1 principle-count tripwire corrected 13 → 14 to match the 14 principles actually committed (drift between plan and landing). `[CLOSED]` |
+| A.2 | `recovery_pathways` stage-ordering contradiction | Removed the `shelter_and_thermal_regulation → ecological_and_seasonal_observation` edge with an inline rationale. `[CLOSED]` |
+| A.2' | `recovery_pathways` — test 6 newly surfaced once test 4 stopped aborting the run: `shelter_and_thermal_regulation` in `MINIMUM_VIABLE_CIVILIZATION_FUNCTIONS` but missing from `PRESERVATION_STRATEGIES` | Added a preservation strategy covering vernacular shelter / passive thermal regulation traditions and the vulnerability introduced by grid-dependent mass housing. `[CLOSED]` |
+| A.3 | `temporal_adapter.py` — `NameError` on `TermAudit` | Added `from term_audit.schema import TermAudit`. Wrote `tests/test_temporal_adapter.py` (4 cases: import smoke, falsifiable-predictions registry, end-to-end example shape, trend slope captures degradation). `[CLOSED]` |
+| B.1 | STATUS.md test roster stale | Updated to 34 suites, named the three tests added this audit, linked back here. `[CLOSED]` |
+| B.2 | CLAUDE.md nav table omits ~9 modules | Added 7 rows: temporal_adapter, expertise (as Tier-3 template), alternative_viability, civilization_substrate_scaling, recovery_pathways, governance_design_principles, and related Tier-3 machinery. `[CLOSED]` |
+| C.1 | "Hello/Goodbye" commit messages on 1400+-line module adds | Documented, no action (rewriting branch history risks breaking others' pulls). `[NAMED]` |
+
+Final regression run: 34/34 PASS. First-law closure still at
+1.42e-14; preempt #10 still falsified at 22.863/100; all Tier 1/2/4
+audit numerics unchanged. No change to AUDIT_04 bugs 2/3 or the
+AUDIT_05 hidden-variable list.
