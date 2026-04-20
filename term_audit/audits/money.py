@@ -22,6 +22,9 @@ sys.path.insert(
 from term_audit.schema import (
     TermAudit, SignalScore, StandardSetter, FirstPrinciplesPurpose,
 )
+from term_audit.provenance import (
+    empirical, theoretical, design_choice, placeholder, stipulative,
+)
 
 
 MONEY_AUDIT = TermAudit(
@@ -87,6 +90,24 @@ MONEY_AUDIT = TermAudit(
                 "Mitchell-Innes 1914, 'The Credit Theory of Money'",
                 "Ingham 2004, 'The Nature of Money'",
             ],
+            provenance=theoretical(
+                rationale=(
+                    "money's multi-referent structure is established in "
+                    "classical monetary theory (Mitchell-Innes, Ingham); "
+                    "the specific 0.1 value is a design choice reflecting "
+                    "'some token-level commonality via legal tender status' "
+                    "rather than zero, not a measured quantity"
+                ),
+                source_refs=[
+                    "Mitchell-Innes 1914, 'The Credit Theory of Money'",
+                    "Ingham 2004, 'The Nature of Money'",
+                ],
+                falsification_test=(
+                    "produce a formal definition of money that asserts a "
+                    "single bounded domain and show it accounts for all "
+                    "current usage without regime-specific carve-outs"
+                ),
+            ),
         ),
         SignalScore(
             criterion="unit_invariant",
@@ -103,6 +124,31 @@ MONEY_AUDIT = TermAudit(
                 "BLS regional CPI differentials",
                 "purchasing power parity literature (Balassa-Samuelson)",
             ],
+            provenance=empirical(
+                source_refs=[
+                    "US BLS regional CPI differentials (published series)",
+                    "Balassa 1964, 'The Purchasing Power Parity Doctrine: "
+                    "A Reappraisal', Journal of Political Economy 72(6)",
+                    "Samuelson 1964, 'Theoretical Notes on Trade "
+                    "Problems', Review of Economics and Statistics 46(2)",
+                ],
+                rationale=(
+                    "regional CPI and PPP literature directly measures "
+                    "non-invariance of the nominal unit across spatial "
+                    "and temporal contexts"
+                ),
+                scope_caveat=(
+                    "BLS/Balassa-Samuelson measure PPP deviations; the "
+                    "broader claim here (non-invariance across contract "
+                    "form, counterparty, coercion level) extends beyond "
+                    "the cited measurements"
+                ),
+                falsification_test=(
+                    "demonstrate a domain in which $1 labor, $1 derivative, "
+                    "$1 tax, and $1 consumer purchase are exchangeable at "
+                    "parity with bounded tolerance"
+                ),
+            ),
         ),
         SignalScore(
             criterion="referent_stable",
@@ -117,6 +163,26 @@ MONEY_AUDIT = TermAudit(
             source_refs=[
                 "Soros 1987, 'The Alchemy of Finance'",
             ],
+            provenance=theoretical(
+                rationale=(
+                    "reflexivity argument (measurement interacts with "
+                    "the measured) is a theoretical claim about market "
+                    "systems, established by Soros and formalized in "
+                    "later econophysics literature; the regime-shift "
+                    "point is historical-empirical (1971 severance of "
+                    "USD from gold, various currency reforms)"
+                ),
+                source_refs=[
+                    "Soros 1987, 'The Alchemy of Finance'",
+                    "Bordo & Eichengreen 1993, 'A Retrospective on the "
+                    "Bretton Woods System', NBER monograph",
+                ],
+                falsification_test=(
+                    "demonstrate a monetary regime with a stable referent "
+                    "across at least one legal regime change and one "
+                    "commodity-base change without redefinition"
+                ),
+            ),
         ),
         SignalScore(
             criterion="calibration_exists",
@@ -131,6 +197,31 @@ MONEY_AUDIT = TermAudit(
             source_refs=[
                 "Boskin Commission 1996 report on CPI methodology",
             ],
+            provenance=empirical(
+                source_refs=[
+                    "Boskin et al. 1996, 'Toward a More Accurate Measure "
+                    "of the Cost of Living', Final Report to the Senate "
+                    "Finance Committee",
+                    "BLS CPI Handbook of Methods (ongoing updates)",
+                ],
+                rationale=(
+                    "Boskin Commission directly documented discretionary "
+                    "basket weights and substitution rules in CPI; BLS "
+                    "methods handbook makes those choices publicly "
+                    "inspectable"
+                ),
+                scope_caveat=(
+                    "0.15 (not 0.0) acknowledges that CPI-style indices "
+                    "are internally reproducible calibrations to themselves; "
+                    "they do not calibrate the dollar to a fixed external "
+                    "physical referent, which is the stricter claim"
+                ),
+                falsification_test=(
+                    "produce a calibration mapping a dollar amount to a "
+                    "fixed physical or informational referent that is "
+                    "stable across regime changes"
+                ),
+            ),
         ),
         SignalScore(
             criterion="observer_invariant",
@@ -146,6 +237,30 @@ MONEY_AUDIT = TermAudit(
             source_refs=[
                 "FASB ASC 820 fair value hierarchy; level 3 inputs",
             ],
+            provenance=empirical(
+                source_refs=[
+                    "FASB ASC 820, 'Fair Value Measurement' (Level 1/2/3 "
+                    "hierarchy; Level 3 = unobservable inputs)",
+                    "AICPA appraisal audit literature on inter-appraiser "
+                    "variance for illiquid assets",
+                ],
+                rationale=(
+                    "FASB's own hierarchy is evidence: Level 3 exists "
+                    "because observer invariance fails for illiquid "
+                    "assets. The standard codifies the failure mode."
+                ),
+                scope_caveat=(
+                    "FASB hierarchy is about accounting measurement; the "
+                    "buyer/seller disagreement point is bilateral, not "
+                    "accounting-specific. Both point to the same failure "
+                    "but through different mechanisms."
+                ),
+                falsification_test=(
+                    "show that two independent appraisers applying GAAP "
+                    "to the same Level-3 asset agree within 5% on >80% "
+                    "of cases"
+                ),
+            ),
         ),
         SignalScore(
             criterion="conservation_or_law",
@@ -162,6 +277,31 @@ MONEY_AUDIT = TermAudit(
                 "McLeay, Radia, Thomas 2014, 'Money Creation in the "
                 "Modern Economy', Bank of England Quarterly Bulletin",
             ],
+            provenance=empirical(
+                source_refs=[
+                    "McLeay, Radia & Thomas 2014, 'Money Creation in the "
+                    "Modern Economy', Bank of England Quarterly Bulletin "
+                    "2014 Q1",
+                    "Werner 2014, 'Can banks individually create money "
+                    "out of nothing?', International Review of Financial "
+                    "Analysis 36",
+                ],
+                rationale=(
+                    "central-bank-authored and peer-reviewed evidence that "
+                    "commercial credit creation adds money units; no "
+                    "conservation law governs aggregate supply"
+                ),
+                scope_caveat=(
+                    "0.2 (not 0.0) acknowledges local per-ledger "
+                    "double-entry conservation, which is a weaker "
+                    "property than system-level conservation"
+                ),
+                falsification_test=(
+                    "derive aggregate monetary conservation from a "
+                    "property of the institutional arrangements that is "
+                    "not itself set by those institutions"
+                ),
+            ),
         ),
         SignalScore(
             criterion="falsifiability",
@@ -174,6 +314,21 @@ MONEY_AUDIT = TermAudit(
                 "independent physical or informational definition."
             ),
             source_refs=[],
+            provenance=theoretical(
+                rationale=(
+                    "the circularity is structural: 'value' as conven- "
+                    "tionally used is defined by market-clearing prices, "
+                    "which are denominated in money. No independent "
+                    "physical or informational definition is supplied. "
+                    "0.2 (not 0.0) allows that narrow market-clearance "
+                    "predictions within a specific market are falsifiable."
+                ),
+                falsification_test=(
+                    "produce a definition of 'value' that money measures, "
+                    "stated in units other than money, that is both "
+                    "operationally usable and survives regime changes"
+                ),
+            ),
         ),
     ],
     first_principles=FirstPrinciplesPurpose(

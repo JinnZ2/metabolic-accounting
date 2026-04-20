@@ -97,6 +97,7 @@ Land on the right file without grepping blind. Each row lists the primary file a
 | Understand reserves + first-law closure | `reserves/site.py` (`step()`) | `reserves/pools.py`, `thermodynamics/exergy.py` |
 | Check literature anchors for a metric | `docs/LITERATURE.md` | the relevant basin file in `basin_states/` |
 | Audit whether an economic term is a signal | `term_audit/schema.py` | `tests/test_term_audit.py` |
+| Attach provenance (empirical / theoretical / design_choice / placeholder / stipulative) to any numeric or structural choice | `term_audit/provenance.py` | `tests/test_provenance.py`, `tests/test_tier1_coverage.py`, `docs/AUDIT_07.md` |
 | Write a new concrete term audit | `term_audit/audits/money.py` as template | `term_audit/audits/` (capital, value, productivity, efficiency, disability) |
 | Analyze capture risk across every committed audit | `term_audit/incentive_analysis.py` | `tests/test_incentive_analysis.py` |
 | Feed term_audit output into the accounting pipeline | `term_audit/integration/metabolic_accounting_adapter.py` | `tests/test_metabolic_accounting_adapter.py` |

@@ -14,6 +14,8 @@ CC0. Stdlib only.
 from dataclasses import dataclass, field
 from typing import Any, List, Dict, Optional
 
+from term_audit.provenance import Provenance, coverage_report
+
 
 # ---------------------------------------------------------------------------
 # Signal-definition criteria (from information theory / measurement science)
@@ -52,11 +54,20 @@ SIGNAL_CRITERIA = [
 
 @dataclass
 class SignalScore:
-    """Score for one signal-definition criterion."""
+    """Score for one signal-definition criterion.
+
+    `source_refs` is retained for backward compatibility with audits
+    that predate the Provenance taxonomy. New audits should use
+    `provenance` (see term_audit/provenance.py) which distinguishes
+    EMPIRICAL / THEORETICAL / DESIGN_CHOICE / PLACEHOLDER /
+    STIPULATIVE — forcing a citation on a design choice produces
+    performative references that do not actually support the claim.
+    """
     criterion: str                      # one of SIGNAL_CRITERIA
     score: float                        # 0.0 = fails, 1.0 = fully satisfies
     justification: str                  # why this score
     source_refs: List[str] = field(default_factory=list)
+    provenance: Optional[Provenance] = None
 
     def __post_init__(self):
         if self.criterion not in SIGNAL_CRITERIA:
@@ -119,15 +130,69 @@ class TermAudit:
     boundary_conditions: List = field(default_factory=list)   # BoundaryCondition
     predictions: List = field(default_factory=list)           # FalsifiablePrediction
 
-    def is_signal(self, threshold: int = 5) -> bool:
+    # Scoring thresholds, exposed as class-level constants so the rule
+    # is inspectable and tests can pin it. Changing these is a
+    # load-bearing edit — see docs/AUDIT_07.md for the rationale on
+    # the pass threshold (5/7 = "fails ≤ 2"), which matches the module
+    # docstring's "fails three or more → not a signal" rule.
+    PASS_SCORE: float = 0.7
+    PASS_CRITERIA_REQUIRED: int = 5
+    FAILURE_SCORE: float = 0.5
+
+    def is_signal(self, threshold: Optional[int] = None) -> bool:
         """Term qualifies as a signal only if it passes >= threshold criteria
-        at score >= 0.7."""
-        passing = sum(1 for s in self.signal_scores if s.score >= 0.7)
+        at score >= PASS_SCORE.
+
+        Default threshold is PASS_CRITERIA_REQUIRED (5 of 7), matching
+        the module docstring: a term that fails three or more of seven
+        criteria is not a signal. 5 passing = 2 failing at most.
+        """
+        if threshold is None:
+            threshold = self.PASS_CRITERIA_REQUIRED
+        passing = sum(1 for s in self.signal_scores if s.score >= self.PASS_SCORE)
         return passing >= threshold
 
+    def pass_count(self) -> int:
+        """Number of criteria passing at score >= PASS_SCORE."""
+        return sum(1 for s in self.signal_scores if s.score >= self.PASS_SCORE)
+
+    def score_vector(self) -> Dict[str, float]:
+        """Return the full score vector, preserving information that
+        is_signal()'s bool return necessarily loses. The collapsed-vs-
+        decomposed argument's punchline is the gap between vectors; a
+        bool cannot express it."""
+        return {s.criterion: s.score for s in self.signal_scores}
+
+    def mean_score(self) -> float:
+        """Arithmetic mean of signal scores; lossy but monotonic in
+        pass count."""
+        if not self.signal_scores:
+            return 0.0
+        return sum(s.score for s in self.signal_scores) / len(self.signal_scores)
+
+    def min_score(self) -> float:
+        """Weakest criterion. A single 0 drags the audit; surfacing min
+        separately is how we keep that visible."""
+        if not self.signal_scores:
+            return 0.0
+        return min(s.score for s in self.signal_scores)
+
     def failure_modes(self) -> List[str]:
-        """Return criteria where score < 0.5."""
-        return [s.criterion for s in self.signal_scores if s.score < 0.5]
+        """Return criteria where score < FAILURE_SCORE."""
+        return [s.criterion for s in self.signal_scores
+                if s.score < self.FAILURE_SCORE]
+
+    def provenance_coverage(self) -> Dict:
+        """Aggregate provenance coverage across signal_scores.
+
+        Returns the same shape as provenance.coverage_report, computed
+        over the provenance attached to each signal_score. Entries
+        without a provenance field count as `none`.
+
+        This is the framework auditing itself for where numeric claims
+        are backed vs unbacked.
+        """
+        return coverage_report([s.provenance for s in self.signal_scores])
 
     def measurement_layer(self) -> Dict:
         """The math half of the audit, isolated from the incentive half.

@@ -35,6 +35,9 @@ from typing import List, Dict, Optional
 from term_audit.schema import (
 TermAudit, SignalScore, StandardSetter, FirstPrinciplesPurpose,
 )
+from term_audit.provenance import (
+Provenance, empirical, theoretical, design_choice, placeholder, stipulative,
+)
 
 # ===========================================================================
 
@@ -103,6 +106,23 @@ justification=(
 "child's education, a patent, and a friendship without "
 "scope separation. These do not share a referent."
 ),
+provenance=theoretical(
+rationale=(
+"structural claim: the term is applied across categorically "
+"distinct referents without scope separation. Falsification "
+"would be exhibiting a bounded domain the collapsed term "
+"actually respects."
+),
+source_refs=[
+"Ingham 2004, 'The Nature of Money'",
+"Graeber 2011, 'Debt: The First 5,000 Years' (ch. 3)",
+],
+falsification_test=(
+"produce a definition of 'value' with a declared bounded "
+"domain that covers all current usage without cross-category "
+"collapse"
+),
+),
 ),
 SignalScore(
 criterion="unit_invariant",
@@ -113,6 +133,19 @@ justification=(
 "and substrate-value (carrying-capacity units). The "
 "invariance is an artifact of the unit, not the "
 "quantity."
+),
+provenance=theoretical(
+rationale=(
+"non-commensurability is a structural-algebraic property: "
+"need-meeting (context-indexed), market-ratio (jurisdiction-"
+"indexed) and carrying-capacity (physical-unit) live in "
+"different metric spaces. Collapsing them under 'dollar' "
+"is a unit relabel, not a unit invariance."
+),
+falsification_test=(
+"exhibit a transformation that maps between the three "
+"measurement spaces preserving the claimed invariant"
+),
 ),
 ),
 SignalScore(
@@ -125,6 +158,19 @@ justification=(
 "timber revenue to another, and carrying capacity to "
 "a third. Same token, different referents."
 ),
+provenance=theoretical(
+rationale=(
+"referent-shift is an instance of the scope-defined failure; "
+"once scope is not declared, referent selection is a "
+"free parameter of the speaker. 0.1 (not 0.0) allows for "
+"contexts where speaker conventions stabilize the referent."
+),
+falsification_test=(
+"audit 100 uses of 'value' across sources; show >=80% "
+"select the same referent among {V_A, V_B, V_C} without "
+"explicit scope declaration"
+),
+),
 ),
 SignalScore(
 criterion="calibration_exists",
@@ -135,6 +181,19 @@ justification=(
 "has market-clearing procedures, but those procedures "
 "do not calibrate to the other two."
 ),
+provenance=theoretical(
+rationale=(
+"calibration requires a reproducible procedure mapping the "
+"measurement to the referent. Market-clearing procedures "
+"calibrate V_B to itself (a tautology at the system level); "
+"no analogous procedure exists for the collapsed term "
+"because its referent is not singular."
+),
+falsification_test=(
+"exhibit a calibration procedure from dollar amounts to a "
+"non-money referent that is stable across regime changes"
+),
+),
 ),
 SignalScore(
 criterion="observer_invariant",
@@ -143,6 +202,28 @@ justification=(
 "two observers measuring the 'value' of the same thing "
 "routinely disagree by orders of magnitude depending "
 "on which referent they are silently invoking"
+),
+provenance=empirical(
+source_refs=[
+"FASB ASC 820 fair-value hierarchy; Level-3 unobservable "
+"inputs literature",
+"AICPA inter-appraiser variance studies for illiquid assets",
+],
+rationale=(
+"FASB's own Level-3 category empirically codifies observer "
+"variance for illiquid assets; appraisal studies measure "
+"variance directly"
+),
+scope_caveat=(
+"FASB/AICPA studies measure accounting observer variance; "
+"the broader orders-of-magnitude claim across V_A/V_B/V_C "
+"extends beyond the cited measurement domain"
+),
+falsification_test=(
+"assemble matched pairs of independent appraisers applying "
+"the collapsed 'value' to the same asset and show agreement "
+"within 10% on >80% of cases"
+),
 ),
 ),
 SignalScore(
@@ -154,6 +235,21 @@ justification=(
 "physical flow. Substrate-value does obey conservation, "
 "but the collapsed measurement does not expose that."
 ),
+provenance=theoretical(
+rationale=(
+"collapsed term inherits money's non-conservation (see "
+"money audit, conservation_or_law provenance). V_C obeys "
+"thermodynamic conservation but is masked by the collapse."
+),
+source_refs=[
+"McLeay, Radia & Thomas 2014, Bank of England Q1 Bulletin "
+"(money-creation evidence)",
+],
+falsification_test=(
+"derive a conservation law for the collapsed term that is "
+"not already satisfied by the V_C component alone"
+),
+),
 ),
 SignalScore(
 criterion="falsifiability",
@@ -164,6 +260,19 @@ justification=(
 "is deflected to use-value; a challenge to use-value "
 "is deflected to exchange-value; substrate-value is "
 "rarely acknowledged."
+),
+provenance=theoretical(
+rationale=(
+"deflection structure is a consequence of the scope failure. "
+"0.15 (not 0.0) allows that narrow claims (V_B market-"
+"clearing) remain falsifiable within their scope; what fails "
+"is falsifiability of the collapsed token."
+),
+falsification_test=(
+"pre-register a prediction phrased in 'value' and a "
+"disconfirming observation schedule; run three audit "
+"attempts and show no post-hoc scope redrawing occurs"
+),
 ),
 ),
 ],
@@ -245,6 +354,19 @@ justification=(
 "scope is bounded once the thing, the need, and the "
 "context are specified"
 ),
+provenance=stipulative(
+rationale=(
+"V_A is defined by construction as need-fit in context; "
+"scope-definedness is built into the definition via the "
+"(thing, need, context) triple. 0.8 rather than 1.0 "
+"reflects that in practice, 'the need' often needs further "
+"disambiguation (survival vs status-display)."
+),
+definition_ref=(
+"module docstring: V_A = functional capacity to meet a "
+"specified need in context"
+),
+),
 ),
 SignalScore(
 criterion="unit_invariant",
@@ -254,6 +376,27 @@ justification=(
 "(liters of water during drought, calories during "
 "famine, hours of shelter). Cross-need comparison "
 "requires separate accounting."
+),
+provenance=empirical(
+source_refs=[
+"Institute of Medicine DRI reports (water, calorie, "
+"protein requirements by demographic)",
+"ASHRAE thermal-comfort standards (shelter-hours equivalents)",
+],
+rationale=(
+"within a specific need, physiology and physics provide "
+"unit invariants (liters, calories, kWh). Across-need "
+"aggregation lacks a common unit — correctly scored 0.5"
+),
+scope_caveat=(
+"DRI and ASHRAE standards cover a subset of human needs "
+"(nutrition, thermal); extension to other need-domains "
+"requires their own calibrated units"
+),
+falsification_test=(
+"find a need-context pair where the physiological or "
+"engineering unit is ill-defined or observer-dependent"
+),
 ),
 ),
 SignalScore(
@@ -265,6 +408,18 @@ justification=(
 "a coat in winter and a coat in summer have "
 "different use-values, which is correct."
 ),
+provenance=stipulative(
+rationale=(
+"referent stability within (need, context) is part of the "
+"V_A definition. Across-need variation is a feature, not "
+"a failure: different (need, context) = different V_A by "
+"construction."
+),
+definition_ref=(
+"the (thing, need, context) triple fixes the referent; "
+"see module docstring"
+),
+),
 ),
 SignalScore(
 criterion="calibration_exists",
@@ -274,6 +429,27 @@ justification=(
 "(pharmacology, nutrition, engineering performance). "
 "Across domains, calibration is qualitative."
 ),
+provenance=empirical(
+source_refs=[
+"FDA/EMA pharmacokinetic calibration protocols",
+"AOAC International analytical methods (nutrition)",
+"ISO engineering performance standards",
+],
+rationale=(
+"credentialed technical domains maintain reproducible "
+"calibration procedures directly testable against need-"
+"meeting outcomes"
+),
+scope_caveat=(
+"calibration coverage is domain-dependent; V_A for "
+"informational or relational needs is weaker than for "
+"material needs"
+),
+falsification_test=(
+"identify a domain with routine V_A claims and no "
+"reproducible calibration procedure"
+),
+),
 ),
 SignalScore(
 criterion="observer_invariant",
@@ -282,6 +458,24 @@ justification=(
 "two observers assessing need-meeting for the same "
 "person in the same context will largely agree on "
 "whether the thing met the need"
+),
+provenance=design_choice(
+rationale=(
+"0.6 reflects that observer agreement is high for "
+"material-need cases (food, medication, shelter) but "
+"declines for contested-need cases (status, meaning, "
+"appropriate-care decisions)"
+),
+alternatives_considered=[
+"0.8 (favoring technical-domain cases)",
+"0.4 (favoring contested-need cases)",
+"a vector of subscores by need-type",
+],
+falsification_test=(
+"assemble matched observer pairs across a representative "
+"need-type spectrum; show inter-rater agreement outside "
+"the 0.5-0.7 band"
+),
 ),
 ),
 SignalScore(
@@ -293,6 +487,18 @@ justification=(
 "and the physiological or contextual requirements of "
 "the need"
 ),
+provenance=theoretical(
+rationale=(
+"use-value is bounded above by physical properties of the "
+"thing (a 500kcal food can meet at most a 500kcal need) "
+"and bounded below by zero. These are constraints, not "
+"a conservation law, hence the intermediate score."
+),
+falsification_test=(
+"exhibit a V_A measurement that exceeds the physical "
+"upper bound derived from the thing's properties"
+),
+),
 ),
 SignalScore(
 criterion="falsifiability",
@@ -300,6 +506,17 @@ score=0.85,
 justification=(
 "strongly falsifiable: apply the thing to the need in "
 "the context and observe whether the need is met"
+),
+provenance=stipulative(
+rationale=(
+"V_A is defined operationally as need-meeting outcome in "
+"context; applying the thing and observing is the "
+"definition, not a separate empirical study"
+),
+definition_ref=(
+"V_A operational definition: outcome of (thing applied "
+"to need in context)"
+),
 ),
 ),
 ],
@@ -391,6 +608,18 @@ justification=(
 "time with specific liquidity and legal conditions. "
 "Generalized across markets or times, scope breaks."
 ),
+provenance=stipulative(
+rationale=(
+"V_B is defined as an equilibrium ratio in a specific "
+"market; the scope is the market itself. Within-market "
+"scope is stipulative; across-market scope is where the "
+"failure lives."
+),
+definition_ref=(
+"V_B = ratio at which a thing trades in a specified "
+"market under specified legal and liquidity conditions"
+),
+),
 ),
 SignalScore(
 criterion="unit_invariant",
@@ -401,6 +630,24 @@ justification=(
 "thing trades at different exchange-values in "
 "different jurisdictions and at different times."
 ),
+provenance=theoretical(
+rationale=(
+"V_B's denomination inherits money's unit_invariant score "
+"(0.05) by the inheritance argument — see money audit. "
+"0.3 is higher than money's 0.05 because V_B also admits "
+"ratio-forms (commodity-to-commodity) that do not inherit "
+"the money failure."
+),
+source_refs=[
+"money audit, unit_invariant criterion",
+"Balassa 1964; Samuelson 1964 (PPP non-invariance)",
+],
+falsification_test=(
+"demonstrate a cross-jurisdiction V_B measurement whose "
+"invariance exceeds the invariance of its denominator "
+"(money)"
+),
+),
 ),
 SignalScore(
 criterion="referent_stable",
@@ -409,6 +656,23 @@ justification=(
 "referent shifts with reflexivity: the act of pricing "
 "can move the price. Markets are measurement systems "
 "that interact with the measured quantity."
+),
+provenance=theoretical(
+rationale=(
+"reflexivity is a structural property of markets as "
+"measurement systems that participate in what they measure "
+"(Soros, later formalized in econophysics). The referent "
+"is not stable because the act of measurement perturbs it."
+),
+source_refs=[
+"Soros 1987, 'The Alchemy of Finance'",
+"Bouchaud & Potters 2003, 'Theory of Financial Risks and "
+"Derivative Pricing'",
+],
+falsification_test=(
+"identify a market whose prices are measurably independent "
+"of the pricing process itself"
+),
 ),
 ),
 SignalScore(
@@ -419,6 +683,24 @@ justification=(
 "to itself; they do not calibrate it to use-value or "
 "substrate-value"
 ),
+provenance=design_choice(
+rationale=(
+"0.6 scores 'tautological self-calibration' as a partial "
+"signal: within-V_B calibration is real, but calibration "
+"to a non-V_B referent is absent. Splitting the concept "
+"(self-calibration vs cross-calibration) would change the "
+"score."
+),
+alternatives_considered=[
+"0.9 counting market-clearing as full calibration",
+"0.2 counting only cross-referent calibration",
+"a two-vector split: within/cross",
+],
+falsification_test=(
+"exhibit a market-clearing procedure that calibrates V_B "
+"to V_A or V_C without passing through monetary units"
+),
+),
 ),
 SignalScore(
 criterion="observer_invariant",
@@ -426,6 +708,28 @@ score=0.6,
 justification=(
 "two observers looking at the same liquid market at "
 "the same time will agree on the exchange-value"
+),
+provenance=empirical(
+source_refs=[
+"SEC Rule 605 order-execution disclosure data",
+"FINRA TRACE corporate bond pricing inter-dealer quote "
+"variance studies",
+],
+rationale=(
+"exchange-pricing data directly shows inter-observer "
+"agreement in liquid markets (Rule 605); agreement "
+"collapses for illiquid instruments (TRACE variance)"
+),
+scope_caveat=(
+"0.6 reflects only liquid-market cases; observer agreement "
+"for Level-3 instruments under FASB ASC 820 is much weaker. "
+"A subscore by liquidity tier would be more honest."
+),
+falsification_test=(
+"measure inter-dealer quote variance for matched instruments "
+"across liquidity strata; show >10% variance for liquid "
+"instruments in functioning markets"
+),
 ),
 ),
 SignalScore(
@@ -436,6 +740,21 @@ justification=(
 "by credit expansion, destroyed by default, and "
 "reflected into and out of existence by speculation"
 ),
+provenance=theoretical(
+rationale=(
+"V_B inherits money's non-conservation (see money audit, "
+"conservation_or_law). Score of 0.2 matches money's own "
+"score on this criterion."
+),
+source_refs=[
+"money audit, conservation_or_law criterion",
+"McLeay, Radia & Thomas 2014, BoE Q1 Bulletin",
+],
+falsification_test=(
+"derive a conservation law for aggregate V_B that holds "
+"across credit cycles"
+),
+),
 ),
 SignalScore(
 criterion="falsifiability",
@@ -444,6 +763,18 @@ justification=(
 "falsifiable within a specific market: attempt the "
 "trade at the stated ratio and observe whether it "
 "clears"
+),
+provenance=stipulative(
+rationale=(
+"V_B falsifiability is operationally bound to the market-"
+"clearance test, which is part of the V_B definition. "
+"0.7 acknowledges the test is clean within-market but "
+"silent about cross-market claims."
+),
+definition_ref=(
+"V_B operational definition: equilibrium-ratio test via "
+"market clearing"
+),
 ),
 ),
 ],
@@ -533,6 +864,19 @@ justification=(
 "scope defined once the system boundary is declared "
 "and the carrying-capacity metric is specified"
 ),
+provenance=stipulative(
+rationale=(
+"V_C is defined as a carrying-capacity contribution over "
+"a declared system boundary; scope-definedness is part of "
+"the definition. 0.75 rather than 1.0 reflects that "
+"boundary selection has real effects (watershed vs basin) "
+"that the score should acknowledge."
+),
+definition_ref=(
+"V_C = thermodynamic contribution to carrying capacity "
+"of the system the thing participates in"
+),
+),
 ),
 SignalScore(
 criterion="unit_invariant",
@@ -541,6 +885,24 @@ justification=(
 "units are physical (energy, mass, information, "
 "biological capacity) and invariant across contexts "
 "when the same system and metric are used"
+),
+provenance=theoretical(
+rationale=(
+"physical units are invariant by their metrological "
+"definition. 0.7 (not 1.0) because cross-substrate "
+"aggregation requires a superordinate unit (exergy is "
+"one candidate per thermodynamics/exergy.py) and that "
+"aggregation introduces its own invariance gaps."
+),
+source_refs=[
+"BIPM SI unit definitions",
+"Szargut 2005, 'Exergy Method: Technical and Ecological "
+"Applications'",
+],
+falsification_test=(
+"show that the physical unit system's invariance fails "
+"within the same declared system boundary"
+),
 ),
 ),
 SignalScore(
@@ -551,6 +913,23 @@ justification=(
 "of the system that exists independent of the "
 "measurement"
 ),
+provenance=theoretical(
+rationale=(
+"carrying capacity is a property of the physical system "
+"independent of observation — measurement does not "
+"perturb it in the way market pricing perturbs V_B. "
+"Referent stability follows from physical realism."
+),
+source_refs=[
+"Odum 1971, 'Fundamentals of Ecology'",
+"Daly 1977, 'Steady-State Economics'",
+],
+falsification_test=(
+"exhibit a carrying-capacity measurement procedure that "
+"measurably alters the capacity of the system being "
+"measured"
+),
+),
 ),
 SignalScore(
 criterion="calibration_exists",
@@ -559,6 +938,28 @@ justification=(
 "calibration exists in ecology (net primary productivity, "
 "soil carbon, species richness), thermodynamics "
 "(exergy), and biogeochemistry (nutrient cycling rates)"
+),
+provenance=empirical(
+source_refs=[
+"FAO Global Soil Organic Carbon Map methodology",
+"ISO 14040 LCA standard; IPCC AR6 methodology chapters",
+"Odum 1996, 'Environmental Accounting: Emergy and "
+"Environmental Decision Making'",
+],
+rationale=(
+"calibration procedures are published in peer-reviewed "
+"ecology, thermodynamics, and biogeochemistry literature "
+"with documented uncertainty bounds"
+),
+scope_caveat=(
+"calibration quality varies across substrate types; soil "
+"carbon measurement is mature, while coupling-strength "
+"measurement in community basins is less developed"
+),
+falsification_test=(
+"identify a substrate type where V_C is routinely claimed "
+"and no reproducible measurement protocol exists"
+),
 ),
 ),
 SignalScore(
@@ -569,6 +970,27 @@ justification=(
 "with the same protocol will agree within documented "
 "tolerance"
 ),
+provenance=empirical(
+source_refs=[
+"ISO/IEC 17025 (inter-laboratory calibration protocols)",
+"IPCC uncertainty reporting guidelines",
+],
+rationale=(
+"physical measurements conducted under standardized "
+"protocols have documented inter-laboratory variance; "
+"V_C inherits this when protocols are followed"
+),
+scope_caveat=(
+"applies when protocols are followed; observer variance "
+"rises sharply in field conditions, indigenous-knowledge "
+"calibrations, and cross-method comparisons"
+),
+falsification_test=(
+"assemble inter-laboratory round-robin samples on a V_C "
+"quantity and show >50% inter-lab variance under "
+"standardized protocol"
+),
+),
 ),
 SignalScore(
 criterion="conservation_or_law",
@@ -578,6 +1000,25 @@ justification=(
 "conservation laws and biogeochemical cycles; the "
 "quantity obeys physical laws that markets do not"
 ),
+provenance=theoretical(
+rationale=(
+"V_C is directly anchored in thermodynamic first and "
+"second laws (energy conservation, entropy non-decrease) "
+"and biogeochemical cycle conservation. The framework's "
+"own thermodynamics/exergy.py enforces this."
+),
+source_refs=[
+"First and second laws of thermodynamics",
+"Gouy-Stodola theorem (exergy destruction ≥ 0)",
+"Sciubba 2011, 'What did Lotka really say?'",
+"thermodynamics/exergy.py (framework enforcement)",
+],
+falsification_test=(
+"identify a V_C measurement that systematically violates "
+"first-law or second-law bounds under the framework's "
+"closure checks"
+),
+),
 ),
 SignalScore(
 criterion="falsifiability",
@@ -586,6 +1027,17 @@ justification=(
 "strongly falsifiable: measure the system's carrying "
 "capacity before and after the thing is added or "
 "removed"
+),
+provenance=stipulative(
+rationale=(
+"V_C is defined operationally as the before/after "
+"difference in system carrying capacity; the falsification "
+"test is built into the definition"
+),
+definition_ref=(
+"V_C operational definition: delta-carrying-capacity under "
+"addition/removal of the thing"
+),
 ),
 ),
 ],
@@ -634,7 +1086,12 @@ notes=(
 
 @dataclass
 class ValueLinkage:
-    """A documented relationship between two value measurements."""
+    """A documented relationship between two value measurements.
+
+    `strength_estimate` is a numeric claim and carries a Provenance.
+    Per AUDIT_07, linkage strengths without a Provenance are treated
+    as incomplete by the framework's own coverage surface.
+    """
     source: str                         # 'V_A', 'V_B', 'V_C'
     target: str                         # 'V_A', 'V_B', 'V_C'
     relation: str                       # 'positive', 'negative',
@@ -645,6 +1102,7 @@ class ValueLinkage:
     strength_estimate: float            # -1.0 fully anti, 0 none,
     # +1.0 fully positive
     strength_justification: str
+    provenance: Optional["Provenance"] = None
 
 VALUE_LINKAGES = [
 ValueLinkage(
@@ -670,6 +1128,18 @@ strength_justification=(
 "has enormous use-value to a person without purchasing "
 "power; its exchange-value to them is inaccessible."
 ),
+provenance=placeholder(
+rationale=(
+"0.4 is the auditor's best guess at the average linkage "
+"strength absent a meta-analysis. Sign is confident; "
+"magnitude is not."
+),
+retirement_path=(
+"meta-analysis of purchasing-power-stratified studies on "
+"need-meeting goods (Case & Deaton 'Deaths of Despair' "
+"dataset is one candidate starting point)"
+),
+),
 ),
 ValueLinkage(
 source="V_C", target="V_B",
@@ -693,6 +1163,19 @@ strength_estimate=0.2,
 strength_justification=(
 "usually near zero; rises only when scarcity forces "
 "market recognition"
+),
+provenance=placeholder(
+rationale=(
+"0.2 is the auditor's estimate based on the qualitative "
+"pattern that substrate-value externalities are rarely "
+"priced until scarcity forces recognition. No meta-"
+"analysis of substrate price elasticity is cited."
+),
+retirement_path=(
+"systematic review of ecosystem-services pricing studies "
+"across substrate-scarcity gradients; MA/IPBES assessments "
+"are candidate anchors"
+),
 ),
 ),
 ValueLinkage(
@@ -719,6 +1202,26 @@ strength_justification=(
 "service or information sectors; occasionally positive "
 "in explicitly regenerative sectors"
 ),
+provenance=design_choice(
+rationale=(
+"LOAD-BEARING negative linkage: the sign (not the "
+"magnitude) is the argument's punchline — exchange-value "
+"growth draws down substrate. Changing sign to positive "
+"would break the Tier-1-inheritance argument. -0.5 is a "
+"design choice reflecting sectoral averaging."
+),
+alternatives_considered=[
+"-0.8 (treating extractive sectors as the default)",
+"-0.2 (treating information-sector prevalence as the "
+"default)",
+"a sector-indexed vector instead of a scalar",
+],
+falsification_test=(
+"sample high-V_B activities across sectors; measure V_C "
+"trajectory over 30 years; show positive trajectory in "
+">50% of cases"
+),
+),
 ),
 ValueLinkage(
 source="V_A", target="V_C",
@@ -744,6 +1247,18 @@ strength_justification=(
 "for luxury or status goods where use-value is defined "
 "against distinction rather than need"
 ),
+provenance=placeholder(
+rationale=(
+"0.5 is the auditor's estimate for a fundamental-needs "
+"basket; strength varies sharply by need-type and the "
+"fundamental-vs-status distinction is itself contested"
+),
+retirement_path=(
+"domain-specific studies correlating fundamental-need "
+"satisfaction with substrate flows (IPCC AR6 Impacts; "
+"FAO nutrition/soil linkages)"
+),
+),
 ),
 ValueLinkage(
 source="V_C", target="V_A",
@@ -763,6 +1278,26 @@ strength_justification=(
 "strong positive over long timescales; weaker in the "
 "short term because substrate drawdown can be invisible "
 "until a threshold is crossed"
+),
+provenance=theoretical(
+rationale=(
+"V_A ⊂ what V_C makes possible: the set of needs that "
+"can be met is bounded by the substrate's carrying "
+"capacity. This is a set-theoretic constraint, not a "
+"measurement; 0.7 rather than 1.0 reflects lag and "
+"threshold nonlinearity in the coupling."
+),
+source_refs=[
+"Rockström et al. 2009, 'A safe operating space for "
+"humanity', Nature 461",
+"Steffen et al. 2015, 'Planetary boundaries: Guiding "
+"human development on a changing planet', Science 347",
+],
+falsification_test=(
+"exhibit a case of documented substrate collapse with no "
+"subsequent reduction in the need-meeting set over any "
+"timescale"
+),
 ),
 ),
 ]

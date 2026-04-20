@@ -4,7 +4,7 @@ Status of the metabolic-accounting framework at end of session.
 
 ## Verified (all tests run, all passing)
 
-Thirty-four test suites, every one runs and passes:
+Thirty-six test suites, every one runs and passes:
 
 ```
 # main accounting stack (18, pre-term_audit)
@@ -44,9 +44,12 @@ test_metabolic_accounting_adapter: PASS   <-- term_audit -> accounting bridge
 test_temporal_adapter:       PASS   <-- AUDIT_06: tripwire for time-series wrapper
 test_governance_design_principles: PASS   <-- AUDIT_06: 14 principles, 6 categories
 test_recovery_pathways:      PASS   <-- AUDIT_06: stage-ordering invariant restored
+test_provenance:             PASS   <-- AUDIT_07: 5-kind provenance taxonomy
+test_tier1_coverage:         PASS   <-- AUDIT_07: Tier 1 fully provenanced + neg-linkage tripwires
 ```
 
-See `docs/AUDIT_06.md` for the cross-check that landed the last three.
+See `docs/AUDIT_06.md` and `docs/AUDIT_07.md` for the cross-checks
+that landed the most recent tests.
 
 To verify:
 
@@ -268,6 +271,24 @@ verdict: sustainable_yield 0.056, trajectory -0.0017, ttr 21.67,
    at import time (`TermAudit` annotated without import). Fixed;
    `tests/test_temporal_adapter.py` added as the first tripwire for
    the module.
+
+## AUDIT_07 — argument-structure and provenance
+
+7. `SignalScore` had only a loose `source_refs: List[str]` — no way
+   to distinguish an empirical citation from a design choice from a
+   placeholder. `term_audit/provenance.py` adds a 5-kind taxonomy
+   (EMPIRICAL / THEORETICAL / DESIGN_CHOICE / PLACEHOLDER /
+   STIPULATIVE) with a `knowledge_dna` pass-through. 74/74 Tier 1
+   records now fully provenanced. See `docs/AUDIT_07.md` Parts A and D.
+8. `is_signal` threshold and the schema.py docstring were
+   contradictory (docstring said "fails ≥ 3"; code counted passes
+   ≥ 5). Thresholds exposed as class constants, rule reconciled.
+9. Vector aggregates added: `pass_count`, `mean_score`, `min_score`,
+   `score_vector` — `is_signal`'s bool return lost the collapsed-vs-
+   decomposed gap that is the argument's punchline. Vector preserves it.
+10. Load-bearing negative-linkage signs (V_B→V_C, K_B→K_A, K_B→K_C)
+    now tripwired in `tests/test_tier1_coverage.py::test_6`. AUDIT_05
+    named them as load-bearing but did not encode the assertion.
 
 ## What the framework does end-to-end
 
