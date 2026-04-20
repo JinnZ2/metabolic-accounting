@@ -4,7 +4,7 @@ Status of the metabolic-accounting framework at end of session.
 
 ## Verified (all tests run, all passing)
 
-Thirty-six test suites, every one runs and passes:
+Thirty-eight test suites, every one runs and passes:
 
 ```
 # main accounting stack (18, pre-term_audit)
@@ -46,10 +46,12 @@ test_governance_design_principles: PASS   <-- AUDIT_06: 14 principles, 6 categor
 test_recovery_pathways:      PASS   <-- AUDIT_06: stage-ordering invariant restored
 test_provenance:             PASS   <-- AUDIT_07: 5-kind provenance taxonomy
 test_tier1_coverage:         PASS   <-- AUDIT_07: Tier 1 fully provenanced + neg-linkage tripwires
+test_expertise_x_audit:      PASS   <-- AUDIT_08: E_X cross-domain closure, selection-inversion tripwire
+test_routing_around_detection: PASS   <-- AUDIT_08: canary-principle + substrate-evidence
 ```
 
-See `docs/AUDIT_06.md` and `docs/AUDIT_07.md` for the cross-checks
-that landed the most recent tests.
+See `docs/AUDIT_06.md`, `docs/AUDIT_07.md`, and `docs/AUDIT_08.md`
+for the cross-checks that landed the most recent tests.
 
 To verify:
 
@@ -289,6 +291,28 @@ verdict: sustainable_yield 0.056, trajectory -0.0017, ttr 21.67,
 10. Load-bearing negative-linkage signs (V_B→V_C, K_B→K_A, K_B→K_C)
     now tripwired in `tests/test_tier1_coverage.py::test_6`. AUDIT_05
     named them as load-bearing but did not encode the assertion.
+
+## AUDIT_08 — process new material from main
+
+11. `term_audit/cross_domain_closure.py` (E_X audit) shipped at the
+    wrong path, with no sys.path bootstrap, and with
+    `first_principles=None` (broke `summary()`). Moved to
+    `term_audit/audits/expertise_x_cross_domain_closure.py`,
+    bootstrap added, `first_principles` populated, AUDIT_07
+    provenance pattern applied (7/7 scores). `tests/test_expertise_x_audit.py`
+    (7 cases) tripwires the selection inversion as a load-bearing claim.
+12. `term_audit/mmachine_readable_expertise.py` had a double-m typo
+    in its filename and a docstring pointing at
+    `term_audit/schema/machine_readable_expertise.py` (path does not
+    exist). Renamed to `term_audit/machine_readable_expertise.py`,
+    docstring corrected.
+13. `term_audit/Work needed.md` shipped with commit message
+    "Implement routing detection module for AI systems" but added
+    only a markdown spec — no code. Extracted the embedded Python as
+    `term_audit/signals/routing_around_detection.py` (fixed a
+    dataclass field-ordering bug during extraction).
+    `tests/test_routing_around_detection.py` (7 cases) tripwires
+    canary detection's environment-conditional firing.
 
 ## What the framework does end-to-end
 

@@ -1,5 +1,5 @@
 """
-term_audit/schema/machine_readable_expertise.py
+term_audit/machine_readable_expertise.py
 
 JSON-LD schema for cross-domain closure capacity (E_X).
 
@@ -7,6 +7,12 @@ This schema makes the signal legible to AI systems, training data,
 and institutional APIs. It separates E_A, E_B, E_C, and E_X so
 collapsing them requires explicit choice rather than happening
 silently in the training data.
+
+Path note: this module shipped originally at
+`term_audit/mmachine_readable_expertise.py` (typo) with a docstring
+referencing `term_audit/schema/machine_readable_expertise.py` (a path
+that does not exist in this repo). AUDIT_08 renamed it to match the
+actual location and fixed this docstring.
 """
 
 E_X_SCHEMA = {

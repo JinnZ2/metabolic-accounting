@@ -16,14 +16,33 @@ E_X is orthogonal to E_A, E_B, and E_C. High E_A in multiple domains
 does not imply high E_X. E_X is the capacity to close the dependency
 graph when domains couple and handoff is unavailable.
 
+Path note: this module originally shipped at
+`term_audit/cross_domain_closure.py` (outside the audits/ subdir).
+AUDIT_08 moved it to match its own docstring and the `audits/`
+convention shared with money/value/capital/productivity/efficiency/
+disability, and added the sys.path bootstrap that the other audit
+modules use so direct invocation works.
+
 CC0. Stdlib only.
 """
+
+import sys
+import os
+sys.path.insert(
+    0,
+    os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))),
+)
 
 from dataclasses import dataclass, field
 from typing import List, Dict, Optional, Set
 from enum import Enum
 
-from term_audit.schema import TermAudit, SignalScore, StandardSetter
+from term_audit.schema import (
+    TermAudit, SignalScore, StandardSetter, FirstPrinciplesPurpose,
+)
+from term_audit.provenance import (
+    empirical, theoretical, design_choice, placeholder, stipulative,
+)
 
 
 # ===========================================================================
@@ -148,6 +167,19 @@ E_X_AUDIT = TermAudit(
                 "handoff'. Scope shifts as practitioner demonstrates "
                 "closure across new domains."
             ),
+            provenance=stipulative(
+                rationale=(
+                    "E_X is defined by the closure-without-handoff test; "
+                    "scope-definedness is built into the definition via the "
+                    "(practitioner, problem-set, handoff-unavailable context) "
+                    "triple. 0.80 rather than 1.0 allows for contested cases "
+                    "where 'without handoff' is ambiguous at the margin."
+                ),
+                definition_ref=(
+                    "module docstring: E_X = probability of closure without "
+                    "failure or external handoff across multi-domain problems"
+                ),
+            ),
         ),
         SignalScore(
             criterion="unit_invariant",
@@ -156,6 +188,19 @@ E_X_AUDIT = TermAudit(
                 "unit is closure probability estimated from observed "
                 "events; comparable across practitioners with similar "
                 "observation density"
+            ),
+            provenance=theoretical(
+                rationale=(
+                    "probability as unit is invariant by construction. "
+                    "0.70 rather than 1.0 reflects that observation density "
+                    "varies across practitioners and naive ratio estimation "
+                    "loses invariance at low event counts."
+                ),
+                falsification_test=(
+                    "compute closure probabilities for practitioners at "
+                    "matched observation densities and show >20% invariance "
+                    "failure under the same protocol"
+                ),
             ),
         ),
         SignalScore(
@@ -166,6 +211,18 @@ E_X_AUDIT = TermAudit(
                 "stable and observable. A problem either was resolved "
                 "without handoff or it wasn't."
             ),
+            provenance=stipulative(
+                rationale=(
+                    "the closure-vs-handoff distinction is binary by "
+                    "definition; 0.75 rather than 1.0 reflects that "
+                    "partial-handoff edge cases (consultation, informal "
+                    "support) are contested in practice"
+                ),
+                definition_ref=(
+                    "E_X referent: outcome of (problem resolved | no external "
+                    "handoff) over repeated presentations"
+                ),
+            ),
         ),
         SignalScore(
             criterion="calibration_exists",
@@ -174,6 +231,33 @@ E_X_AUDIT = TermAudit(
                 "calibration occurs naturally in constrained environments: "
                 "practitioners are tested on real closures and selection "
                 "priority updates based on outcomes"
+            ),
+            provenance=empirical(
+                source_refs=[
+                    "Weick & Sutcliffe 2007, 'Managing the Unexpected: "
+                    "Resilient Performance in an Age of Uncertainty' "
+                    "(high-reliability organizations, HROs)",
+                    "Ostrom 1990, 'Governing the Commons' (communities "
+                    "selecting practitioners under constraint)",
+                    "Perrow 1984, 'Normal Accidents' (coupled-system "
+                    "failure under credential-based selection)",
+                ],
+                rationale=(
+                    "literature on HROs and common-pool resource governance "
+                    "documents outcome-based practitioner selection in "
+                    "constrained environments; that selection process is "
+                    "the natural calibration"
+                ),
+                scope_caveat=(
+                    "cited literature is qualitative/case-study; a formal "
+                    "calibration protocol (pre-registered closure events, "
+                    "standardized difficulty) has not been built"
+                ),
+                falsification_test=(
+                    "pre-register closure-event difficulty across matched "
+                    "environments; show practitioner selection does not "
+                    "track closure success"
+                ),
             ),
         ),
         SignalScore(
@@ -184,6 +268,26 @@ E_X_AUDIT = TermAudit(
                 "who can close; agreement strongest in high-stakes "
                 "contexts where selection errors are visible"
             ),
+            provenance=design_choice(
+                rationale=(
+                    "0.70 reflects that inter-observer agreement is high "
+                    "in constrained/high-stakes environments (HRO selection "
+                    "literature) but lower in settings where selection "
+                    "errors are masked by buffer; the score averages across "
+                    "contexts"
+                ),
+                alternatives_considered=[
+                    "0.85 (weighting constrained-environment cases)",
+                    "0.50 (weighting buffered-environment cases where "
+                    "credentials substitute for observation)",
+                    "a vector indexed by environment-type",
+                ],
+                falsification_test=(
+                    "assemble matched observer pairs in constrained "
+                    "environments; measure inter-rater agreement on E_X "
+                    "rankings and show agreement below 0.6"
+                ),
+            ),
         ),
         SignalScore(
             criterion="conservation_or_law",
@@ -192,6 +296,25 @@ E_X_AUDIT = TermAudit(
                 "closure capacity is not conserved; it can be acquired "
                 "through cross-domain experience and atrophies without "
                 "practice. Substrate dynamic rather than conservation law."
+            ),
+            provenance=theoretical(
+                rationale=(
+                    "E_X follows a maintenance-and-accumulation dynamic "
+                    "parallel to K_C (institutional capital): grows through "
+                    "iterated cross-domain closure, decays without practice. "
+                    "This is a dynamic constraint, not a conservation law; "
+                    "0.40 reflects the intermediate status."
+                ),
+                source_refs=[
+                    "Anders Ericsson 1993, 'The Role of Deliberate Practice "
+                    "in the Acquisition of Expert Performance'",
+                    "capital audit, K_C conservation_or_law provenance "
+                    "(parallel dynamic structure)",
+                ],
+                falsification_test=(
+                    "find a population where E_X persists across extended "
+                    "(>5 year) practice absence without refresher cycles"
+                ),
             ),
         ),
         SignalScore(
@@ -202,9 +325,45 @@ E_X_AUDIT = TermAudit(
                 "under constraint, observe whether closure occurs "
                 "without handoff"
             ),
+            provenance=stipulative(
+                rationale=(
+                    "E_X falsifiability is built into the operational "
+                    "definition: the closure test is both the measurement "
+                    "and the falsification procedure. 0.90 allows for the "
+                    "observational overhead of running the test under "
+                    "genuinely constrained conditions."
+                ),
+                definition_ref=(
+                    "E_X operational definition: closure-without-handoff "
+                    "test on a multi-domain problem under constraint"
+                ),
+            ),
         ),
     ],
-    first_principles=None,  # would mirror E_A structure
+    first_principles=FirstPrinciplesPurpose(
+        stated_purpose=(
+            "identify practitioners who can take multi-domain, partially "
+            "undefined problems to completed state in environments where "
+            "specialists and handoff infrastructure are unavailable"
+        ),
+        physical_referent=(
+            "observed closure events: problems presented, resolved "
+            "without external handoff, outcome observable"
+        ),
+        informational_referent=(
+            "conditional probability of closure given (practitioner, "
+            "problem-class, environmental constraint level)"
+        ),
+        drift_score=0.15,
+        drift_justification=(
+            "minimal drift: E_X is a proposed measurement, not yet "
+            "widely adopted, so it has not accumulated the collapse-"
+            "into-credentials pattern that E_A and E_B have. The "
+            "drift risk is future, not historical — if E_X becomes "
+            "institutionally recognized, it will be subject to the "
+            "same capture pressures that corrupted E_B."
+        ),
+    ),
     correlation_to_real_signal=0.85,
     correlation_justification=(
         "E_X correlates strongly with operational outcomes in constrained "
