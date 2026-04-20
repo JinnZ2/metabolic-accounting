@@ -97,6 +97,10 @@ Land on the right file without grepping blind. Each row lists the primary file a
 | Understand reserves + first-law closure | `reserves/site.py` (`step()`) | `reserves/pools.py`, `thermodynamics/exergy.py` |
 | Check literature anchors for a metric | `docs/LITERATURE.md` | the relevant basin file in `basin_states/` |
 | Audit whether an economic term is a signal | `term_audit/schema.py` | `tests/test_term_audit.py` |
+| Write a new concrete term audit | `term_audit/audits/money.py` as template | `term_audit/audits/` (capital, value, productivity, efficiency, disability) |
+| Analyze capture risk across every committed audit | `term_audit/incentive_analysis.py` | `tests/test_incentive_analysis.py` |
+| Feed term_audit output into the accounting pipeline | `term_audit/integration/metabolic_accounting_adapter.py` | `tests/test_metabolic_accounting_adapter.py` |
+| Repair a chat-paste of code (smart quotes, flat bodies) | `scripts/fix_pasted_file.py` | run `python scripts/fix_pasted_file.py IN OUT`, review the diff, `ast.parse` result |
 | **Reason about money / capital / investment / any economic term** | `docs/SCOPING_ECONOMIC_TERMS.md` (**read first**) | `term_audit/scoping.py`, `term_audit/audits/money.py` |
 | **See the tiered list of terms we are auditing** | `docs/TERMS_TO_AUDIT.md` | `term_audit/tiers.py::find_tier(term)` |
 | Understand the dynamics that capture measurement systems | `term_audit/status_extraction.py` | `tests/test_status_extraction.py`, `term_audit/audits/disability.py` |
