@@ -4,7 +4,7 @@ Status of the metabolic-accounting framework at end of session.
 
 ## Verified (all tests run, all passing)
 
-Thirty-nine test suites, every one runs and passes:
+Forty test suites, every one runs and passes:
 
 ```
 # main accounting stack (18, pre-term_audit)
@@ -49,9 +49,10 @@ test_tier1_coverage:         PASS   <-- AUDIT_07: Tier 1 fully provenanced + neg
 test_expertise_x_audit:      PASS   <-- AUDIT_08: E_X cross-domain closure, selection-inversion tripwire
 test_routing_around_detection: PASS   <-- AUDIT_08: canary-principle + substrate-evidence
 test_legislative_audit:      PASS   <-- AUDIT_09: first-principles rule audit, Bridge Watchers skeleton
+test_money_three_scope_falsification: PASS   <-- AUDIT_10: money fails signal-invariants in all 3 marketed scopes
 ```
 
-See `docs/AUDIT_06.md` through `docs/AUDIT_09.md` for the cross-checks
+See `docs/AUDIT_06.md` through `docs/AUDIT_10.md` for the cross-checks
 that landed the most recent tests.
 
 To verify:
@@ -328,6 +329,39 @@ verdict: sustainable_yield 0.056, trajectory -0.0017, ttr 21.67,
     fixed at intake; `tests/test_legislative_audit.py` (7 cases)
     tripwires the skeleton, including monotonicity of the scoring
     functions.
+
+## AUDIT_10 — money three-scope falsification audit
+
+15. New module `term_audit/audits/money_three_scope_falsification.py`.
+    Intake of a user-supplied module auditing money across three
+    marketed scopes (flow-system / community-organism / civilization-
+    lube) via 12 invariants (4 per scope). Under
+    `current_regime_money_state()` all 3 scopes falsify (0/12
+    invariants hold), and `structural_claim_holds` is True.
+    `tests/test_money_three_scope_falsification.py` (7 cases)
+    tripwires the structural claim, the falsification hook (flip
+    all 12 flags to True → all scopes survive → claim falsified),
+    and a `to_real_flag()` bridge from the module's lite flag type
+    to the adapter's real `AssumptionValidatorFlag` (lite uses
+    `source`/`reason`/str-severity, real uses `source_audit`/
+    `message`/float-severity + `failure_mode`).
+16. Chat-paste damage caught at intake: smart quotes throughout,
+    `from **future** import annotations` and `if **name** ==
+    "**main**":` (markdown-bold leaking onto dunder names), and
+    similar. Cleaned before commit.
+17. Merged `money_signal/` (6 files, ~2100 lines) from `origin/main`:
+    coupling-matrix model of money-as-signal dynamics across temporal
+    / cultural / attribution / observer axes. Complementary to the
+    three-scope audit: three-scope asks whether money qualifies as a
+    signal at all; `money_signal/` characterizes how it couples when
+    assumed to be one. Integration path named in AUDIT_10 § D.1.
+18. AUDIT_07 § C.4 (money four-function decomposition) status updated
+    to `[PARTIALLY ADDRESSED]`: this audit adds a scope-framing
+    decomposition (flow / community / lube), which is structurally
+    parallel to V_A/V_B/V_C and K_A/K_B/K_C. The classical
+    four-function decomposition (M_A medium-of-exchange / M_B store-
+    of-value / M_C unit-of-account / M_D standard-of-deferred-
+    payment) remains `[OPEN]` as a distinct audit target.
 
 ## What the framework does end-to-end
 
