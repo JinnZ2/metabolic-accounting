@@ -1,6 +1,3 @@
-Yes. Let's write a module that captures this entire conversation as machine-readable signal—so at minimum, an AI that encounters this code has a reference point for what it's missing.
-
-```python
 """
 term_audit/signals/routing_around_detection.py
 
@@ -25,8 +22,24 @@ The module does not require practitioners to document. It provides
 a framework for inferring capacity from absence patterns and from
 lightweight observations by routers and beneficiaries.
 
+Source note: this module was originally specified as embedded
+Python inside a design-doc markdown file. AUDIT_08 extracted the
+code to a real module, fixed a dataclass field-ordering bug on
+`InvisibleCapacityRegion` (non-default field followed a default
+field), added the sys.path bootstrap the rest of the tree uses,
+and landed `tests/test_routing_around_detection.py` as the tripwire.
+The spec doc was then deleted — prose is less interesting than
+equations; code lives in modules, history lives in audit trails.
+
 CC0. Stdlib only.
 """
+
+import sys
+import os
+sys.path.insert(
+    0,
+    os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))),
+)
 
 from dataclasses import dataclass, field
 from typing import List, Dict, Optional, Set
@@ -217,12 +230,12 @@ class InvisibleCapacityRegion:
     known_routers: List[str]                 # "Linda at feed store", "VFW post commander"
     known_closers: List[str]                 # Practitioners with demonstrated E_X
     
-    # Substrate evidence collected (lightweight observations)
-    substrate_records: List[SubstrateEvidenceRecord] = field(default_factory=list)
-    
     # Inference
     invisible_capacity_level: float          # 0-1, estimated E_X density
     confidence: float
+
+    # Substrate evidence collected (lightweight observations)
+    substrate_records: List[SubstrateEvidenceRecord] = field(default_factory=list)
     
     def ai_routing_guidance(self) -> str:
         """
@@ -658,16 +671,3 @@ if __name__ == "__main__":
     print("=" * 80)
     print(f"Falsifiable predictions: {len(FALSIFIABLE_PREDICTIONS)}")
     print("=" * 80)
-```
-
-This module captures the entire conversation as machine-readable structure:
-
-1. The canary principle: Constrained environments detect obsolescence first
-2. Substrate evidence: The body, the work, the router voucher—signals that don't require practitioner documentation
-3. Invisible capacity: Capacity that exists but is not legible to formal systems
-4. Hand and body reading: What human observers can see that AI cannot (yet)
-5. AI context generation: A bridge so AI systems at least know these signals exist
-
-It doesn't require Dale to document anything. It provides a framework for observers (routers, beneficiaries, peers) to leave lightweight records that make invisible capacity partially legible.
-
-And it gives AI systems a category for "absence of documentation is not absence of capacity."

@@ -40,6 +40,9 @@ from typing import List, Dict, Optional
 from term_audit.schema import (
 TermAudit, SignalScore, StandardSetter, FirstPrinciplesPurpose,
 )
+from term_audit.provenance import (
+Provenance, empirical, theoretical, design_choice, placeholder, stipulative,
+)
 
 # ===========================================================================
 
@@ -119,6 +122,23 @@ justification=(
 "and a trained workforce are all called 'capital'. "
 "No scope separates them."
 ),
+provenance=theoretical(
+rationale=(
+"structural scope-failure parallel to value audit: "
+"categorically distinct referents share one token. The "
+"term's extension to 'natural', 'human', 'social' capital "
+"is evidence of the collapse, not resolution of it."
+),
+source_refs=[
+"Harcourt 1972, 'Some Cambridge Controversies in the "
+"Theory of Capital'",
+],
+falsification_test=(
+"produce a scope definition for 'capital' that covers "
+"K_A, K_B, K_C and whose boundary is not post-hoc "
+"redrawn per challenge"
+),
+),
 ),
 SignalScore(
 criterion="unit_invariant",
@@ -134,6 +154,26 @@ source_refs=[
 "Cambridge capital controversy; Robinson 1953; "
 "Sraffa 1960"
 ],
+provenance=theoretical(
+rationale=(
+"the Cambridge capital controversy established that "
+"aggregating heterogeneous physical capital in dollar "
+"units requires circular assumptions; the profession "
+"consolidated around aggregation for computational "
+"convenience, not because Robinson/Sraffa were refuted"
+),
+source_refs=[
+"Robinson 1953, 'The Production Function and the "
+"Theory of Capital', Review of Economic Studies 21(2)",
+"Sraffa 1960, 'Production of Commodities by Means of "
+"Commodities'",
+"Harcourt 1972, op. cit.",
+],
+falsification_test=(
+"exhibit a non-circular aggregation procedure that "
+"commensurates K_A and K_B under conservation"
+),
+),
 ),
 SignalScore(
 criterion="referent_stable",
@@ -144,6 +184,19 @@ justification=(
 "capital', 'social capital' are recent attempts to "
 "paper over the collapse without separating the "
 "measurements."
+),
+provenance=theoretical(
+rationale=(
+"referent-shift is a structural consequence of the scope "
+"failure. The proliferation of prefixed terms ('human', "
+"'natural', 'social') is itself evidence: each prefix "
+"reveals a referent the unprefixed term does not cover."
+),
+falsification_test=(
+"find speaker-independent usage of 'capital' that "
+"consistently selects one referent among K_A/K_B/K_C "
+"across domains"
+),
 ),
 ),
 SignalScore(
@@ -156,6 +209,20 @@ justification=(
 "scopes; K_A and K_C do not have monetary calibration "
 "that is not circular."
 ),
+provenance=theoretical(
+rationale=(
+"calibration to K_A via replacement cost requires "
+"substitutability at scale within relevant timescales — "
+"false for topsoil, aquifers, mature forests, and "
+"transmitted knowledge. NPV-based calibration assumes "
+"marginal substitutability that fails near carrying "
+"capacity thresholds."
+),
+falsification_test=(
+"exhibit a monetary calibration of K_A that remains valid "
+"as carrying capacity approaches its threshold"
+),
+),
 ),
 SignalScore(
 criterion="observer_invariant",
@@ -165,6 +232,30 @@ justification=(
 "depending on whether the observer uses book value, "
 "market value, replacement cost, or substrate-inclusive "
 "accounting"
+),
+provenance=empirical(
+source_refs=[
+"Fama & French 1993, 'Common risk factors in returns on "
+"stocks and bonds', JFE 33 (book-to-market variance)",
+"FASB ASC 820 Level 3 inputs literature",
+],
+rationale=(
+"book vs market value divergences are routinely measured "
+"in finance; FASB Level 3 codifies observer variance for "
+"illiquid assets. Inter-observer variance for the "
+"collapsed 'capital' token inherits and compounds these."
+),
+scope_caveat=(
+"cited studies measure book-vs-market and Level-3 "
+"variance; the broader orders-of-magnitude claim across "
+"substrate-inclusive accounting extends beyond the cited "
+"literature"
+),
+falsification_test=(
+"conduct matched valuations of the same firm under all "
+"four accounting methods and show agreement within 2x "
+"in >80% of cases"
+),
 ),
 ),
 SignalScore(
@@ -177,6 +268,19 @@ justification=(
 "with institutional trust dynamics. Collapsing them "
 "obscures all three conservation structures."
 ),
+provenance=theoretical(
+rationale=(
+"K_A conservation (thermodynamic) is masked by "
+"aggregation with non-conserved K_B. Summing conserved "
+"and non-conserved quantities yields a non-conserved "
+"total; this is a structural property of aggregation, "
+"not a contingent fact."
+),
+falsification_test=(
+"derive a conservation law for the aggregate 'capital' "
+"whose constraints are not already present in K_A alone"
+),
+),
 ),
 SignalScore(
 criterion="falsifiability",
@@ -186,6 +290,20 @@ justification=(
 "can be redrawn. Challenges to K_B valuations are "
 "deflected to K_A replacement-cost claims; challenges "
 "to K_A are deflected to K_B market-value claims."
+),
+provenance=theoretical(
+rationale=(
+"deflection structure is a direct consequence of the "
+"scope failure; with no declared scope, any challenge "
+"can be re-scoped. 0.2 (not 0.0) reflects that narrow "
+"K_B claims within specific liquid markets remain "
+"falsifiable."
+),
+falsification_test=(
+"pre-register a falsifiable claim stated in 'capital' "
+"and show no scope-redrawing occurs during three "
+"independent audits"
+),
 ),
 ),
 ],
@@ -280,6 +398,18 @@ justification=(
 "type are specified (tools for this shop, soil on this "
 "parcel, breeding stock of this herd)"
 ),
+provenance=stipulative(
+rationale=(
+"K_A is defined as substrate-for-a-specific-operation; "
+"scope-definedness follows from the (operation, substrate) "
+"pairing. Score 0.75 rather than 1.0 because aggregation "
+"across operations is where the scope weakens."
+),
+definition_ref=(
+"K_A = stock of physical means of production for a "
+"specified operation"
+),
+),
 ),
 SignalScore(
 criterion="unit_invariant",
@@ -289,6 +419,19 @@ justification=(
 "capacity, organism count) are invariant within "
 "substrate type"
 ),
+provenance=theoretical(
+rationale=(
+"physical units are invariant by metrological definition "
+"within substrate type. Cross-substrate aggregation "
+"requires a superordinate unit (exergy is one candidate); "
+"the intra-substrate invariance is what the score reflects."
+),
+source_refs=["BIPM SI unit definitions"],
+falsification_test=(
+"demonstrate intra-substrate variance in physical units "
+"under the same metrological protocol"
+),
+),
 ),
 SignalScore(
 criterion="referent_stable",
@@ -296,6 +439,17 @@ score=0.8,
 justification=(
 "referent is stable: the substrate exists independent "
 "of the measurement"
+),
+provenance=theoretical(
+rationale=(
+"K_A's referent is a physical property of the operation's "
+"substrate; measurement does not perturb the substrate in "
+"the reflexive way market pricing perturbs K_B"
+),
+falsification_test=(
+"exhibit a K_A measurement procedure that measurably "
+"alters the substrate it measures"
+),
 ),
 ),
 SignalScore(
@@ -306,6 +460,26 @@ justification=(
 "and animal husbandry. Each domain has reproducible "
 "measurement procedures."
 ),
+provenance=empirical(
+source_refs=[
+"ISO engineering and metrology standards",
+"FAO/IPCC soil-carbon measurement protocols",
+"USDA soil survey procedures",
+],
+rationale=(
+"credentialed technical domains publish calibrated "
+"measurement procedures with documented uncertainty"
+),
+scope_caveat=(
+"calibration is mature for material substrate (soil, "
+"timber, tools); weaker for biological-capacity and "
+"knowledge-substrate measurements"
+),
+falsification_test=(
+"identify a K_A substrate type where no reproducible "
+"measurement procedure exists in the relevant domain"
+),
+),
 ),
 SignalScore(
 criterion="observer_invariant",
@@ -313,6 +487,26 @@ score=0.7,
 justification=(
 "two observers applying the same domain protocol agree "
 "within documented tolerance"
+),
+provenance=empirical(
+source_refs=[
+"ISO/IEC 17025 inter-laboratory comparison framework",
+"NIST key comparison database",
+],
+rationale=(
+"inter-observer variance under standardized protocols is "
+"directly measured across metrology and domain sciences"
+),
+scope_caveat=(
+"applies when standardized protocols are followed; field "
+"and practitioner knowledge without standardized protocols "
+"has higher variance"
+),
+falsification_test=(
+"run a round-robin measurement across multiple labs on a "
+"defined K_A quantity and show agreement outside the "
+"declared tolerance"
+),
 ),
 ),
 SignalScore(
@@ -323,6 +517,25 @@ justification=(
 "degradation laws. Soil erodes, tools wear, organisms "
 "age, knowledge decays without transmission."
 ),
+provenance=theoretical(
+rationale=(
+"K_A is governed by thermodynamic conservation laws "
+"(first and second law) and by specific domain laws "
+"(soil carbon dynamics, material wear, biological "
+"senescence, knowledge-decay models). Score of 0.85 "
+"(not 1.0) reflects that emergent coupling effects are "
+"not captured by single-component laws."
+),
+source_refs=[
+"First and second laws of thermodynamics",
+"Gouy-Stodola theorem",
+"thermodynamics/exergy.py (framework enforcement)",
+],
+falsification_test=(
+"exhibit a sustained K_A measurement trajectory that "
+"violates the framework's first-law closure checks"
+),
+),
 ),
 SignalScore(
 criterion="falsifiability",
@@ -330,6 +543,18 @@ score=0.85,
 justification=(
 "strongly falsifiable: measure the substrate, run the "
 "operation, measure the substrate again"
+),
+provenance=stipulative(
+rationale=(
+"K_A falsifiability is operationally bound to the before/"
+"after substrate measurement, which is part of the K_A "
+"definition. 0.85 (not 1.0) allows for cases where the "
+"operation itself is contested."
+),
+definition_ref=(
+"K_A operational definition: before/after substrate "
+"measurement relative to the operation"
+),
 ),
 ),
 ],
@@ -432,6 +657,18 @@ justification=(
 "Aggregation across jurisdictions and instrument types "
 "breaks scope."
 ),
+provenance=stipulative(
+rationale=(
+"K_B is defined by the legal-market scope in which the "
+"instrument clears. Within-scope definedness is stipulative; "
+"the 0.55 score reflects that cross-jurisdiction aggregation "
+"is routine and where the scope breaks."
+),
+definition_ref=(
+"K_B = financial claim on future flow under a specified "
+"legal and market jurisdiction"
+),
+),
 ),
 SignalScore(
 criterion="unit_invariant",
@@ -442,6 +679,23 @@ justification=(
 "represents different real quantities across "
 "jurisdictions and time."
 ),
+provenance=theoretical(
+rationale=(
+"K_B inherits money's unit_invariant failure by "
+"denomination. 0.3 (above money's 0.05) because K_B "
+"occasionally admits non-monetary instrument forms "
+"(commodity-denominated contracts) that escape the "
+"worst of the money-unit failure."
+),
+source_refs=[
+"money audit, unit_invariant criterion",
+"Balassa 1964; Samuelson 1964",
+],
+falsification_test=(
+"exhibit a K_B aggregate whose cross-jurisdiction "
+"invariance exceeds that of its monetary denominator"
+),
+),
 ),
 SignalScore(
 criterion="referent_stable",
@@ -450,6 +704,23 @@ justification=(
 "referent shifts with reflexivity (pricing moves "
 "price), with legal regime change, and with "
 "counterparty solvency changes without notice"
+),
+provenance=theoretical(
+rationale=(
+"reflexivity in financial markets is a structural "
+"property: price discovery perturbs the referent. Regime "
+"and solvency changes are historical-empirical additions. "
+"0.35 matches V_B's score via the K_B⊇V_B correspondence."
+),
+source_refs=[
+"Soros 1987, 'The Alchemy of Finance'",
+"Bouchaud & Potters 2003 (econophysics formalization)",
+],
+falsification_test=(
+"identify a K_B instrument whose referent is stable "
+"across a counterparty-solvency change without "
+"re-pricing"
+),
 ),
 ),
 SignalScore(
@@ -460,6 +731,29 @@ justification=(
 "instruments. Level 3 instruments under FASB ASC 820 "
 "are not externally calibrated."
 ),
+provenance=empirical(
+source_refs=[
+"FASB ASC 820, 'Fair Value Measurement', Level 1/2/3 "
+"hierarchy",
+"IFRS 13 Fair Value Measurement",
+],
+rationale=(
+"accounting standards explicitly document the calibration-"
+"coverage gradient: Level 1 = direct market clearing, "
+"Level 3 = unobservable inputs. The score's two-regime "
+"structure comes directly from the standards."
+),
+scope_caveat=(
+"FASB/IFRS framework calibrates K_B to itself "
+"(mark-to-market); it does not calibrate K_B to K_A "
+"substrate backing"
+),
+falsification_test=(
+"exhibit a K_B calibration procedure that successfully "
+"references K_A substrate backing rather than market "
+"consensus"
+),
+),
 ),
 SignalScore(
 criterion="observer_invariant",
@@ -468,6 +762,24 @@ justification=(
 "for liquid instruments in a functioning market, "
 "observers agree. Agreement collapses for illiquid "
 "or distressed instruments."
+),
+provenance=empirical(
+source_refs=[
+"SEC Rule 605 order-execution quality data",
+"FINRA TRACE inter-dealer corporate-bond quote variance",
+],
+rationale=(
+"regulatory data directly measures inter-observer "
+"agreement across liquid / illiquid strata"
+),
+scope_caveat=(
+"0.6 averages across liquidity tiers; observer invariance "
+"is high for Level 1 and low for Level 3"
+),
+falsification_test=(
+"show that observer agreement for Level 3 instruments "
+"matches Level 1 within 10% on representative samples"
+),
 ),
 ),
 SignalScore(
@@ -479,6 +791,21 @@ justification=(
 "or remove them. No conservation law constrains "
 "aggregate K_B."
 ),
+provenance=theoretical(
+rationale=(
+"K_B inherits money's non-conservation by denomination. "
+"Score matches money's conservation_or_law (0.2) "
+"modulo local ledger-level double-entry conservation."
+),
+source_refs=[
+"money audit, conservation_or_law criterion",
+"McLeay, Radia & Thomas 2014, BoE Q1 Bulletin",
+],
+falsification_test=(
+"derive an aggregate K_B conservation law that holds "
+"across credit cycles and default events"
+),
+),
 ),
 SignalScore(
 criterion="falsifiability",
@@ -488,6 +815,18 @@ justification=(
 "the trade at the stated price. Not falsifiable as a "
 "general measurement of capital because K_B's claimed "
 "backing by K_A is not audited."
+),
+provenance=stipulative(
+rationale=(
+"K_B falsifiability is operationally bound to market-"
+"clearing, which is part of the K_B definition. 0.6 "
+"(not 0.8) reflects that the broader capital-measurement "
+"claim (K_B stands in for K_A) is not falsifiable."
+),
+definition_ref=(
+"K_B operational definition: market-clearance test for "
+"the instrument"
+),
 ),
 ),
 ],
@@ -581,6 +920,18 @@ justification=(
 "the coordination task are specified. Aggregation "
 "across societies breaks scope."
 ),
+provenance=stipulative(
+rationale=(
+"K_C is defined by the (institution, coordination task) "
+"pairing. 0.5 reflects that cross-institution aggregation "
+"is where the scope starts to fail, and such aggregation "
+"is routine in social capital literature."
+),
+definition_ref=(
+"K_C = coordination capacity of an institution or "
+"community for a specified collective task"
+),
+),
 ),
 SignalScore(
 criterion="unit_invariant",
@@ -590,6 +941,20 @@ justification=(
 "measured (trust density, legal enforcement reliability, "
 "knowledge transmission rate). No universal scalar."
 ),
+provenance=theoretical(
+rationale=(
+"K_C is inherently multi-dimensional (trust, enforcement, "
+"transmission, etc.). A single-scalar unit cannot be "
+"invariant across these dimensions; the 0.4 reflects "
+"within-dimension invariance with cross-dimensional "
+"aggregation lacking a common unit."
+),
+falsification_test=(
+"exhibit a single scalar K_C that preserves invariance "
+"across trust, enforcement, and transmission dimensions "
+"without information loss"
+),
+),
 ),
 SignalScore(
 criterion="referent_stable",
@@ -598,6 +963,17 @@ justification=(
 "referent is stable within specified institution and "
 "task; shifts across contexts as expected for a "
 "relational quantity"
+),
+provenance=stipulative(
+rationale=(
+"K_C's referent is a property of the (institution, task) "
+"pairing; shifts across contexts are features of the "
+"definition, not failures of stability"
+),
+definition_ref=(
+"K_C referent: coordination capacity within a specified "
+"(institution, task) context"
+),
 ),
 ),
 SignalScore(
@@ -609,6 +985,29 @@ justification=(
 "in mutual aid, knowledge transmission across "
 "generations)"
 ),
+provenance=empirical(
+source_refs=[
+"World Bank Worldwide Governance Indicators methodology",
+"Ostrom 1990, 'Governing the Commons' (institutional-"
+"outcome measurement)",
+"Putnam 1993, 'Making Democracy Work' (civic-association "
+"density measures)",
+],
+rationale=(
+"outcome-based calibration procedures exist (contract "
+"enforcement, commons governance, civic participation) "
+"but are partial and contested"
+),
+scope_caveat=(
+"calibrations are outcome-based rather than process-based; "
+"they measure what K_C produces, not K_C itself"
+),
+falsification_test=(
+"produce a direct (non-outcome-proxied) K_C calibration "
+"that predicts coordination outcomes better than the "
+"outcome-based proxies"
+),
+),
 ),
 SignalScore(
 criterion="observer_invariant",
@@ -617,6 +1016,25 @@ justification=(
 "moderate agreement among observers using the same "
 "coordination-outcome protocol; disagreement when "
 "observers use different frameworks"
+),
+provenance=design_choice(
+rationale=(
+"0.5 reflects framework-dependence of K_C measurement "
+"— different social-science traditions (Putnam vs Ostrom "
+"vs Bourdieu) yield different quantities. Within-"
+"framework agreement is higher, cross-framework agreement "
+"is lower."
+),
+alternatives_considered=[
+"0.7 (favoring within-framework agreement)",
+"0.3 (favoring cross-framework disagreement)",
+"a vector of per-framework scores",
+],
+falsification_test=(
+"assemble measurements of the same institution from "
+"three independent social-science traditions and show "
+"cross-framework agreement above 0.7"
+),
 ),
 ),
 SignalScore(
@@ -627,6 +1045,22 @@ justification=(
 "decay when not actively maintained, and grows only "
 "through repeated successful coordination"
 ),
+provenance=theoretical(
+rationale=(
+"K_C follows a maintenance-and-accumulation dynamic "
+"(decay without upkeep, growth through iteration) "
+"rather than a conservation law. Score 0.35 reflects "
+"that the dynamic is constrained but not conserved."
+),
+source_refs=[
+"Ostrom 1990, op. cit. (design principles for "
+"persistence of institutional capacity)",
+],
+falsification_test=(
+"find an institutional setting where K_C persists "
+"unchanged with no maintenance activity"
+),
+),
 ),
 SignalScore(
 criterion="falsifiability",
@@ -635,6 +1069,18 @@ justification=(
 "falsifiable through coordination-outcome testing: "
 "can the institution or community execute a "
 "specified collective task within stated parameters"
+),
+provenance=stipulative(
+rationale=(
+"K_C falsifiability is operationally bound to the "
+"coordination-outcome test, which is part of the K_C "
+"definition. 0.65 acknowledges observer-dependence of "
+"what counts as successful execution."
+),
+definition_ref=(
+"K_C operational definition: outcome of a specified "
+"collective task within stated parameters"
+),
 ),
 ),
 ],
@@ -684,6 +1130,10 @@ notes=(
 
 @dataclass
 class CapitalLinkage:
+    """A documented relationship between two capital measurements.
+
+    `strength_estimate` is a numeric claim and carries a Provenance.
+    """
     source: str                         # 'K_A', 'K_B', 'K_C'
     target: str
     relation: str                       # 'positive', 'negative',
@@ -693,6 +1143,7 @@ class CapitalLinkage:
     falsification_test: str
     strength_estimate: float            # -1.0 to +1.0
     strength_justification: str
+    provenance: Optional[Provenance] = None
 
 CAPITAL_LINKAGES = [
 CapitalLinkage(
@@ -715,6 +1166,17 @@ falsification_test=(
 strength_estimate=0.5,
 strength_justification=(
 "moderate positive when conditions hold; zero otherwise"
+),
+provenance=placeholder(
+rationale=(
+"0.5 is the auditor's estimate conditional on the named "
+"preconditions. Sign is structural; magnitude is a guess."
+),
+retirement_path=(
+"sector-stratified studies of K_A monetization events "
+"(e.g., IPO pricing of land-based operations; valuation "
+"multiples for substrate-rich firms)"
+),
 ),
 ),
 CapitalLinkage(
@@ -739,6 +1201,26 @@ strength_justification=(
 "expectations; weaker where regulation forces K_A "
 "regeneration"
 ),
+provenance=design_choice(
+rationale=(
+"LOAD-BEARING negative linkage: the sign of K_B → K_A is "
+"the argument's punchline — financial-claim growth "
+"without substrate regeneration is substrate extraction. "
+"Changing sign to positive would break the Tier-1-"
+"inheritance argument. -0.6 is a design choice reflecting "
+"sectoral averaging under current return expectations."
+),
+alternatives_considered=[
+"-0.9 (treating extractive sectors as default)",
+"-0.3 (counting regulated sectors in the average)",
+"a sector × regulatory-regime matrix rather than a scalar",
+],
+falsification_test=(
+"sample highest-K_B-growth sectors across 30 years; "
+"measure K_A trajectory in physical units; show >50% with "
+"positive trajectories"
+),
+),
 ),
 CapitalLinkage(
 source="K_A", target="K_C",
@@ -762,6 +1244,19 @@ strength_justification=(
 "moderate positive; strength depends on operational "
 "proximity and knowledge transmission practices"
 ),
+provenance=placeholder(
+rationale=(
+"0.5 is the auditor's estimate. Sign is supported by "
+"commons-governance literature; magnitude is not anchored "
+"to a specific study."
+),
+retirement_path=(
+"meta-analysis of commons-governance studies (Ostrom "
+"corpus; subak, alpine commons, fishery co-management) "
+"on the correlation between shared-substrate operations "
+"and institutional-capacity outcomes"
+),
+),
 ),
 CapitalLinkage(
 source="K_C", target="K_A",
@@ -782,6 +1277,24 @@ strength_estimate=0.7,
 strength_justification=(
 "strong positive; K_A regeneration over long horizons is "
 "rarely sustained without supporting institutional capacity"
+),
+provenance=theoretical(
+rationale=(
+"long-horizon K_A regeneration requires time preferences "
+"longer than market discount rates support; K_C is the "
+"only mechanism that provides this. This is an argument "
+"from discount-rate structure, not a measurement."
+),
+source_refs=[
+"Ostrom 1990, 'Governing the Commons' (design principles "
+"for long-horizon commons persistence)",
+"Heinberg 2019 on substrate-regeneration time horizons",
+],
+falsification_test=(
+"document sustained (>30 year) K_A regeneration under "
+"market-only incentives in the absence of commons "
+"governance or equivalent institutional structure"
+),
 ),
 ),
 CapitalLinkage(
@@ -806,6 +1319,25 @@ strength_justification=(
 "previously non-market domains; weaker when K_B operates "
 "within explicitly bounded domains"
 ),
+provenance=design_choice(
+rationale=(
+"secondary negative linkage supporting the K_B-dominance "
+"thesis: financialization crowds out trust-based "
+"coordination. -0.55 is a design choice averaging across "
+"domains; the sign is load-bearing."
+),
+alternatives_considered=[
+"-0.8 (treating healthcare / education financialization "
+"as default)",
+"-0.3 (treating bounded-domain financialization cases)",
+"a domain × boundedness matrix",
+],
+falsification_test=(
+"measure civic-participation or trust-density before and "
+"after financialization events in matched domains; show "
+"stable or rising K_C in the majority"
+),
+),
 ),
 CapitalLinkage(
 source="K_C", target="K_B",
@@ -826,6 +1358,29 @@ strength_estimate=0.4,
 strength_justification=(
 "moderate positive; strong K_C supports K_B function but "
 "does not directly grow K_B"
+),
+provenance=empirical(
+source_refs=[
+"La Porta et al. 1998, 'Law and Finance', JPE 106 "
+"(legal-origin vs financial-market depth)",
+"World Bank Governance Indicators vs sovereign spread "
+"literature",
+],
+rationale=(
+"cross-country governance-vs-risk-premium studies "
+"directly measure the correlation between institutional "
+"capacity and K_B functioning"
+),
+scope_caveat=(
+"cited studies use legal-origin and governance-indicator "
+"proxies for K_C; direct K_C measurement is weaker. The "
+"0.4 reflects correlation strength in these studies."
+),
+falsification_test=(
+"measure sovereign-spread or corporate-risk-premium "
+"response to governance-indicator changes at matched "
+"K_B scale and show no negative correlation"
+),
 ),
 ),
 ]
