@@ -254,13 +254,13 @@ def cascade_from_negative_linkage(
     """
     if linkage.strength_estimate >= 0:
         return None
-        return CascadeCouplingInput(
+    return CascadeCouplingInput(
         source=source_entity,
         target=target_entity,
         coupling_strength=abs(linkage.strength_estimate),
         time_lag=time_lag,
         mechanism=linkage.mechanism,
-        )
+    )
 
 # ===========================================================================
 
