@@ -4,7 +4,7 @@ Status of the metabolic-accounting framework at end of session.
 
 ## Verified (all tests run, all passing)
 
-Thirty-eight test suites, every one runs and passes:
+Thirty-nine test suites, every one runs and passes:
 
 ```
 # main accounting stack (18, pre-term_audit)
@@ -48,10 +48,11 @@ test_provenance:             PASS   <-- AUDIT_07: 5-kind provenance taxonomy
 test_tier1_coverage:         PASS   <-- AUDIT_07: Tier 1 fully provenanced + neg-linkage tripwires
 test_expertise_x_audit:      PASS   <-- AUDIT_08: E_X cross-domain closure, selection-inversion tripwire
 test_routing_around_detection: PASS   <-- AUDIT_08: canary-principle + substrate-evidence
+test_legislative_audit:      PASS   <-- AUDIT_09: first-principles rule audit, Bridge Watchers skeleton
 ```
 
-See `docs/AUDIT_06.md`, `docs/AUDIT_07.md`, and `docs/AUDIT_08.md`
-for the cross-checks that landed the most recent tests.
+See `docs/AUDIT_06.md` through `docs/AUDIT_09.md` for the cross-checks
+that landed the most recent tests.
 
 To verify:
 
@@ -313,6 +314,20 @@ verdict: sustainable_yield 0.056, trajectory -0.0017, ttr 21.67,
     dataclass field-ordering bug during extraction).
     `tests/test_routing_around_detection.py` (7 cases) tripwires
     canary detection's environment-conditional firing.
+
+## AUDIT_09 — first-principles legislative audit skeleton
+
+14. New package `term_audit/legislative_audit/`. Intake of a user-
+    supplied skeleton (Bridge Watchers): `LegislativeAudit` composite
+    over `FirstPrinciplesPurpose`, `ContextAssumption`, `ScopeBoundary`,
+    `ConsequenceAnalysis`, `CounterfactualAnalysis`, `TransmissionEffect`,
+    `ContradictionAnalysis`, `ExceptionPathway`, `SubstrateEvidence`.
+    Two worked examples (bridge-permit-in-constrained-context, Good
+    Samaritan chilling effect) both saturate at alignment 0.00 / harm
+    1.00. Typo in the supplied spec (`alternative_mechanchanisms`)
+    fixed at intake; `tests/test_legislative_audit.py` (7 cases)
+    tripwires the skeleton, including monotonicity of the scoring
+    functions.
 
 ## What the framework does end-to-end
 

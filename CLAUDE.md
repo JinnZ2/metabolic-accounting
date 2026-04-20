@@ -106,6 +106,7 @@ Land on the right file without grepping blind. Each row lists the primary file a
 | Work with E_X (cross-domain closure) — the fourth expertise dimension | `term_audit/audits/expertise_x_cross_domain_closure.py` | `tests/test_expertise_x_audit.py`, `docs/AUDIT_08.md` |
 | Detect populations that routed around formal systems (canary principle + substrate evidence) | `term_audit/signals/routing_around_detection.py` | `tests/test_routing_around_detection.py`, `docs/AUDIT_08.md` |
 | Emit AI-readable expertise profiles (JSON-LD) | `term_audit/machine_readable_expertise.py` | `term_audit/audits/expertise_x_cross_domain_closure.py` |
+| Audit a law, regulation, or ordinance against its own first-principles purpose | `term_audit/legislative_audit/first_principles_legislative_audit.py` | `tests/test_legislative_audit.py`, `docs/AUDIT_09.md` |
 | Score a proposed alternative to a captured measurement | `term_audit/alternative_viability.py` | CAPTURE / RELOCATION / IMPLEMENTATION / STRUCTURAL classifications |
 | Reason about measurement appropriateness by civilization scale | `term_audit/civilization_substrate_scaling.py` | `term_audit/collapse_propensity.py` |
 | Think about what must be preserved through collapse / how recovery proceeds | `term_audit/recovery_pathways.py` | `tests/test_recovery_pathways.py` |
