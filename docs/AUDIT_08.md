@@ -138,12 +138,15 @@ Full regression: **38/38 PASS** (pre-AUDIT_08: 36/36).
   diagnostic_depth, etc.) are intended as operationally measured
   quantities but ship without per-field provenance. Same gap as the
   Tier 1 linkages before AUDIT_07. `[OPEN]`.
-- **`Work needed.md` still sits at `term_audit/Work needed.md`.** It
-  is now a design doc whose code was extracted, but the filename
-  has a space and the location (inside `term_audit/`) reads as if
-  it were a module. Better relocated to `docs/routing_around_detection_spec.md`
-  or similar, with a pointer from AUDIT_08. Not done this pass.
-  `[NAMED]`.
+- **`Work needed.md` deleted** (addendum to initial audit).   `[CLOSED]`
+  Once the module was extracted and tripwired, the spec doc had no
+  remaining function. Keeping it around would have created two
+  sources of truth — one of which nothing imports and nothing tests.
+  Guideline affirmed for future specs: prose is less interesting
+  than equations; code lives in modules, history lives in audit
+  trails. References in `CLAUDE.md` nav table, `signals/__init__.py`
+  docstring, and module source updated to point at `docs/AUDIT_08.md`
+  as the origin record.
 - **JSON-LD schema has no test.** `machine_readable_expertise.py`
   ships `E_X_SCHEMA` and `EXAMPLE_RURAL_PRACTITIONER` but no
   validator / round-trip test. The schema could drift silently from

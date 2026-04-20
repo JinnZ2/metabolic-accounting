@@ -8,5 +8,5 @@ Current members:
   - routing_around_detection: canary-principle + substrate-evidence
     detection of populations that have routed around formal systems
 
-Extracted from term_audit/Work needed.md in AUDIT_08.
+See docs/AUDIT_08.md for origin and history.
 """

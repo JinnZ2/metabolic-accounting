@@ -104,7 +104,7 @@ Land on the right file without grepping blind. Each row lists the primary file a
 | Run term_audit outputs over a time series | `term_audit/integration/temporal_adapter.py` | `tests/test_temporal_adapter.py` |
 | Audit a Tier 3 institutional-legitimacy term | `term_audit/expertise.py` (template + 4 axes) | `term_audit/systemic_necessity.py`, `term_audit/consequence_accounting.py` |
 | Work with E_X (cross-domain closure) — the fourth expertise dimension | `term_audit/audits/expertise_x_cross_domain_closure.py` | `tests/test_expertise_x_audit.py`, `docs/AUDIT_08.md` |
-| Detect populations that routed around formal systems (canary principle + substrate evidence) | `term_audit/signals/routing_around_detection.py` | `tests/test_routing_around_detection.py`, `term_audit/Work needed.md` (spec) |
+| Detect populations that routed around formal systems (canary principle + substrate evidence) | `term_audit/signals/routing_around_detection.py` | `tests/test_routing_around_detection.py`, `docs/AUDIT_08.md` |
 | Emit AI-readable expertise profiles (JSON-LD) | `term_audit/machine_readable_expertise.py` | `term_audit/audits/expertise_x_cross_domain_closure.py` |
 | Score a proposed alternative to a captured measurement | `term_audit/alternative_viability.py` | CAPTURE / RELOCATION / IMPLEMENTATION / STRUCTURAL classifications |
 | Reason about measurement appropriateness by civilization scale | `term_audit/civilization_substrate_scaling.py` | `term_audit/collapse_propensity.py` |

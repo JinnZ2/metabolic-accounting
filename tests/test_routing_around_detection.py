@@ -3,12 +3,12 @@ tests/test_routing_around_detection.py
 
 Tripwires for term_audit/signals/routing_around_detection.py.
 
-Module was originally shipped as embedded Python inside
-`term_audit/Work needed.md` (the commit message "Implement routing
-detection module for AI systems" on 7a64005 described the intent but
-added only the spec doc, not the module). AUDIT_08 extracted the
-code to a real module and fixed one dataclass field-ordering bug
-along the way.
+Module was originally shipped as embedded Python inside a design-
+doc markdown file (the commit message "Implement routing detection
+module for AI systems" on 7a64005 described the intent but added
+only the spec doc, not the module). AUDIT_08 extracted the code
+to a real module, fixed one dataclass field-ordering bug along
+the way, and deleted the spec doc once the code was in place.
 
 Tests lock in:
 

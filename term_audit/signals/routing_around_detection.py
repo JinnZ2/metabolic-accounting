@@ -22,12 +22,14 @@ The module does not require practitioners to document. It provides
 a framework for inferring capacity from absence patterns and from
 lightweight observations by routers and beneficiaries.
 
-Source note: this module was originally specified inside
-`term_audit/Work needed.md` as embedded Python. AUDIT_08 extracted
-it to a real module, fixed a dataclass field-ordering bug on
+Source note: this module was originally specified as embedded
+Python inside a design-doc markdown file. AUDIT_08 extracted the
+code to a real module, fixed a dataclass field-ordering bug on
 `InvisibleCapacityRegion` (non-default field followed a default
 field), added the sys.path bootstrap the rest of the tree uses,
 and landed `tests/test_routing_around_detection.py` as the tripwire.
+The spec doc was then deleted — prose is less interesting than
+equations; code lives in modules, history lives in audit trails.
 
 CC0. Stdlib only.
 """
