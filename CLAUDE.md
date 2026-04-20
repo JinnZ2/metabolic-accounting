@@ -39,9 +39,9 @@ INFRASTRUCTURE  infrastructure/     systems with basin dependencies + sensitivit
 BASIN STATE     basin_states/       soil, air, water, biology, community (primary metrics)
 ```
 
-Orthogonal to the main stack (read in parallel):
+Load-bearing in parallel with the main stack (read alongside, not after):
 
-- `reserves/` — `Site` binds basins to **secondary** (per-metric buffer) and **tertiary** (site-shared landscape) reserves. `Site.step(stress)` partitions stress through primary → secondary → tertiary → environment and enforces first-law closure via `thermodynamics/exergy.py`. Feeding the `Site` + `SiteStepResult` into `compute_flow(...)` is what surfaces `reserve_drawdown_cost` and `environment_loss` on the PnL.
+- `reserves/` — **where the forced drawdown actually executes.** `Site` binds basins to **secondary** (per-metric buffer) and **tertiary** (site-shared landscape) reserves. `Site.step(stress)` partitions stress through primary → secondary → tertiary → environment and enforces first-law closure via `thermodynamics/exergy.py`. The `reserve_drawdown_cost` and `environment_loss` that `compute_flow(...)` surfaces on the PnL are computed here, not in `accounting/`. The "invisible hidden cost" you see in `tests/test_integration.py` output (report $399.33, metabolic $370.73, $28.60 delta) is a reserves-layer quantity the accounting layer merely routes through.
 - `thermodynamics/exergy.py` — enforces Gouy-Stodola: exergy destruction ≥ 0. `check_closure` and `check_nonnegative_destruction` are called after every reserve partition.
 - `distributional/` — maps verdict tiers onto population cohorts with per-basin-type sensitivities. `apply_tier_to_cohorts` supports a vector path (`cohort_basin_sensitivities`) so a firm GREEN on soil and BLACK on community hits cohorts differently. Also houses institutional fit accounting (`available_capacity`, `fit_multiplier`, `trauma_tax`, `waste_ratio`) and civilization-scale comparisons.
 - `mitigation/`, `regulatory/`, `social_cascade/` — downstream reporting on top of the verdict.

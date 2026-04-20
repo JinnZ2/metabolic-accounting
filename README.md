@@ -36,10 +36,14 @@ against the profit signal itself.
     BASIN STATE LAYER     soil, air, water, biology, community
 ```
 
-Orthogonal to the stack: `reserves/` holds secondary (per-metric) and tertiary
-(site-shared) buffers; `thermodynamics/` enforces first-law closure on every
-reserve partition; `distributional/` maps verdicts onto population cohorts
-with per-basin-type sensitivities.
+`reserves/` is where the forced drawdown actually executes — it holds
+secondary (per-metric) and tertiary (site-shared) buffers, and
+`Site.step(stress)` partitions stress through primary → secondary →
+tertiary → environment. The "invisible hidden cost" the accounting
+layer surfaces (see the sample output below) is computed here, not in
+the accounting layer directly. `thermodynamics/` enforces first-law
+closure on every reserve partition; `distributional/` maps verdicts
+onto population cohorts with per-basin-type sensitivities.
 
 ## Run it in 60 seconds
 
