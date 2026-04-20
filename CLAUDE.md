@@ -100,6 +100,12 @@ Land on the right file without grepping blind. Each row lists the primary file a
 | Write a new concrete term audit | `term_audit/audits/money.py` as template | `term_audit/audits/` (capital, value, productivity, efficiency, disability) |
 | Analyze capture risk across every committed audit | `term_audit/incentive_analysis.py` | `tests/test_incentive_analysis.py` |
 | Feed term_audit output into the accounting pipeline | `term_audit/integration/metabolic_accounting_adapter.py` | `tests/test_metabolic_accounting_adapter.py` |
+| Run term_audit outputs over a time series | `term_audit/integration/temporal_adapter.py` | `tests/test_temporal_adapter.py` |
+| Audit a Tier 3 institutional-legitimacy term | `term_audit/expertise.py` (template + 4 axes) | `term_audit/systemic_necessity.py`, `term_audit/consequence_accounting.py` |
+| Score a proposed alternative to a captured measurement | `term_audit/alternative_viability.py` | CAPTURE / RELOCATION / IMPLEMENTATION / STRUCTURAL classifications |
+| Reason about measurement appropriateness by civilization scale | `term_audit/civilization_substrate_scaling.py` | `term_audit/collapse_propensity.py` |
+| Think about what must be preserved through collapse / how recovery proceeds | `term_audit/recovery_pathways.py` | `tests/test_recovery_pathways.py` |
+| Design measurement systems that resist capture | `term_audit/governance_design_principles.py` (14 principles, 6 categories) | `tests/test_governance_design_principles.py` |
 | Repair a chat-paste of code (smart quotes, flat bodies) | `scripts/fix_pasted_file.py` | run `python scripts/fix_pasted_file.py IN OUT`, review the diff, `ast.parse` result |
 | **Reason about money / capital / investment / any economic term** | `docs/SCOPING_ECONOMIC_TERMS.md` (**read first**) | `term_audit/scoping.py`, `term_audit/audits/money.py` |
 | **See the tiered list of terms we are auditing** | `docs/TERMS_TO_AUDIT.md` | `term_audit/tiers.py::find_tier(term)` |

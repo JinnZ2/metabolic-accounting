@@ -34,6 +34,7 @@ from dataclasses import dataclass, field
 from typing import List, Dict, Optional, Tuple, Callable
 from enum import Enum
 
+from term_audit.schema import TermAudit
 from term_audit.integration.metabolic_accounting_adapter import (
     BasinStateInput,
     InfrastructureInput,

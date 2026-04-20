@@ -23,11 +23,18 @@ from term_audit.governance_design_principles import (
 )
 
 
-def test_1_thirteen_principles_registered():
-    """Exactly 13 design principles across 6 categories."""
-    print("\n--- TEST 1: 13 principles registered ---")
-    assert len(DESIGN_PRINCIPLES) == 13, \
-        f"FAIL: expected 13 principles, got {len(DESIGN_PRINCIPLES)}"
+def test_1_fourteen_principles_registered():
+    """Exactly 14 design principles across 6 categories.
+
+    Count updated from 13 to 14 in AUDIT_06: the test and module landed
+    with drifted counts (REF/SET have 3 each; SCA/FEE/AUT/PRE have 2
+    each → 14 total). The tripwire intent (lock count to prevent silent
+    removal) is preserved; only the target is corrected to match the
+    code that was actually committed.
+    """
+    print("\n--- TEST 1: 14 principles registered ---")
+    assert len(DESIGN_PRINCIPLES) == 14, \
+        f"FAIL: expected 14 principles, got {len(DESIGN_PRINCIPLES)}"
 
     categories = set(p.category for p in DESIGN_PRINCIPLES)
     assert len(categories) == 6, \
@@ -180,7 +187,7 @@ def test_9_implementation_constraints_are_specific():
 
 
 if __name__ == "__main__":
-    test_1_thirteen_principles_registered()
+    test_1_fourteen_principles_registered()
     test_2_principle_ids_are_unique()
     test_3_all_principles_have_required_fields()
     test_4_derived_from_references_valid_audits()

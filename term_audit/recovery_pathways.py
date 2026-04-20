@@ -77,12 +77,18 @@ FUNCTION_DEPENDENCIES = [
     ),
     FunctionDependency(
         function="shelter_and_thermal_regulation",
-        depends_on=[
-            "ecological_and_seasonal_observation",  # materials, climate
-        ],
+        depends_on=[],
         rationale=(
-            "shelter construction requires knowledge of local materials "
-            "and climate patterns"
+            "immediate-survival shelter (windbreak, cave, improvised "
+            "cover) uses found materials and does not require "
+            "accumulated ecological or seasonal knowledge. "
+            "Climate-adapted permanent construction depends on "
+            "ecological_and_seasonal_observation, but that is a "
+            "SUBSISTENCE_STABILIZATION-stage activity and is captured "
+            "by the recovery stage assignment, not a prerequisite edge. "
+            "Edit per AUDIT_06: removing this edge resolves the "
+            "stage-ordering contradiction flagged by "
+            "tests/test_recovery_pathways.py::test_4."
         ),
     ),
     FunctionDependency(
@@ -527,6 +533,27 @@ PRESERVATION_STRATEGIES = [
             "institutional seed banks depend on continuous funding and "
             "infrastructure; distributed household seed saving is "
             "atrophied in industrial agriculture contexts"
+        ),
+    ),
+    PreservationStrategy(
+        function="shelter_and_thermal_regulation",
+        preservation_form=(
+            "vernacular building traditions adapted to local climate "
+            "and materials; hand-tool skills for improvised cover; "
+            "knowledge of passive thermal regulation (orientation, "
+            "mass, ventilation) that does not depend on mechanical "
+            "HVAC or grid power"
+        ),
+        examples=[
+            "Earth-and-thatch traditions surviving in rural regions",
+            "Nomadic tent and yurt construction lineages",
+            "Passive solar and earth-sheltered building knowledge",
+        ],
+        vulnerability=(
+            "mass housing built around mechanical climate control has "
+            "atrophied vernacular shelter knowledge; populations in "
+            "industrialized regions largely cannot construct adequate "
+            "shelter without a grid-dependent supply chain"
         ),
     ),
     PreservationStrategy(
