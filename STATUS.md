@@ -4,7 +4,7 @@ Status of the metabolic-accounting framework at end of session.
 
 ## Verified (all tests run, all passing)
 
-Forty-seven test suites, every one runs and passes:
+Forty-eight test suites, every one runs and passes:
 
 ```
 # main accounting stack (18, pre-term_audit)
@@ -57,6 +57,7 @@ test_investment_signal:      PASS   <-- AUDIT_13 + AUDIT_14 Part A: investment_s
 test_investment_historical_cases: PASS   <-- AUDIT_14 Part B: 5 anchor cases, CLT counter-example, 4/5 framework-covers-observed
 test_study_scope_audit:      PASS   <-- AUDIT_15: scope-bounded measurement audit framework
 test_signal_asymmetry:       PASS   <-- AUDIT_14 Part C: distributional stub + 4 literature anchors
+test_informational_cost_audit: PASS   <-- AUDIT_16: why false certainty costs exponentially
 ```
 
 See `docs/AUDIT_06.md` through `docs/AUDIT_15.md` for the cross-checks
@@ -506,6 +507,27 @@ verdict: sustainable_yield 0.056, trajectory -0.0017, ttr 21.67,
     subsequent commits on this branch, extending `docs/AUDIT_14.md`.
 
 ## AUDIT_14 — Part B (E.2): investment_signal/historical_cases.py
+
+## AUDIT_16 — INFORMATIONAL_COST_AUDIT (paired with study_scope_audit)
+
+37. **`term_audit/informational_cost_audit.py`** shipped as the
+    complement to AUDIT_15's study_scope_audit. study_scope_audit
+    answers "where does the claim hold?"; this module answers
+    "what's the cost of pretending it holds beyond that scope?"
+    Nine knowledge structures (geocentric comfort state, four
+    canonical anomalies, four-stage cost spiral, heliocentric
+    alternative, head-to-head comparison, Shannon-entropy insight,
+    AI implications, historical pattern, VERDICT) plus a small
+    `CostLedger` dataclass with `CostGrowth` symbolic tags
+    (FLAT / LINEAR / EXPONENTIAL / CATASTROPHIC_AT_REGIME_SHIFT).
+    `compare(ledger_a, ledger_b)` deliberately refuses to collapse
+    to a scalar verdict — the module is designed to warn against
+    exactly that false-certainty compression, and the tripwire test
+    catches any scalar key sneaking in. 7 tripwires including three
+    load-bearing invariants: narrative-order of the four-stage
+    spiral, the VERDICT booleans (comfort_is_expensive=True,
+    uncertainty_is_cheap=True), and the compare() scalar-collapse
+    refusal.
 
 ## AUDIT_15 — STUDY_SCOPE_AUDIT methodology module
 
