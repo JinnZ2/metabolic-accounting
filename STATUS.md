@@ -4,7 +4,7 @@ Status of the metabolic-accounting framework at end of session.
 
 ## Verified (all tests run, all passing)
 
-Forty-eight test suites, every one runs and passes:
+Forty-nine test suites, every one runs and passes:
 
 ```
 # main accounting stack (18, pre-term_audit)
@@ -58,6 +58,7 @@ test_investment_historical_cases: PASS   <-- AUDIT_14 Part B: 5 anchor cases, CL
 test_study_scope_audit:      PASS   <-- AUDIT_15: scope-bounded measurement audit framework
 test_signal_asymmetry:       PASS   <-- AUDIT_14 Part C: distributional stub + 4 literature anchors
 test_informational_cost_audit: PASS   <-- AUDIT_16: why false certainty costs exponentially
+test_provenance_study_scope_integration: PASS   <-- AUDIT_17: Provenance optionally carries a StudyScopeAudit
 ```
 
 See `docs/AUDIT_06.md` through `docs/AUDIT_15.md` for the cross-checks
@@ -507,6 +508,25 @@ verdict: sustainable_yield 0.056, trajectory -0.0017, ttr 21.67,
     subsequent commits on this branch, extending `docs/AUDIT_14.md`.
 
 ## AUDIT_14 — Part B (E.2): investment_signal/historical_cases.py
+
+## AUDIT_17 — Provenance + StudyScopeAudit integration
+
+38. `term_audit/provenance.py` extended: `Provenance.scope_audit:
+    Optional[Any]` (type `Any` to avoid circular import with
+    study_scope_audit) lets an EMPIRICAL record optionally carry a
+    machine-readable StudyScopeAudit alongside the existing prose
+    `scope_caveat`. New `has_scope_audit()` and `soft_gap()`
+    methods. `empirical()` constructor accepts `scope_audit=None`
+    kwarg. `coverage_report()` gains `scope_audit_count`,
+    `soft_gap_count`, `soft_gap_details` fields. Integration is
+    OPTIONAL — absence of `scope_audit` does NOT break
+    `is_complete()`, so AUDIT_07's 74/74 Tier 1 provenance
+    coverage is preserved (tripwired in test 7). Three
+    load-bearing invariants: soft-gap fires on caveat-without-audit
+    (the signal AUDIT_17 exists to produce), soft-gap clears when
+    scope_audit attached (the repair pathway), and Tier 1 74/74
+    no-regression. 7 tripwires. Closes the `[NAMED]` item from
+    AUDIT_15 § D.2.
 
 ## AUDIT_16 — INFORMATIONAL_COST_AUDIT (paired with study_scope_audit)
 

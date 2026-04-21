@@ -51,7 +51,7 @@ CC0. Stdlib only.
 
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import List, Optional
+from typing import Any, List, Optional
 
 
 class ProvenanceKind(Enum):
@@ -104,6 +104,15 @@ class Provenance:
     # (e.g., Knowledge DNA). Framework does not interpret; propagates.
     knowledge_dna: str = ""
 
+    # AUDIT_17 integration: optional attachment to a StudyScopeAudit
+    # from term_audit/study_scope_audit.py. The type is `Any` here
+    # to avoid the provenance <-> study_scope_audit circular import;
+    # callers typically attach a StudyScopeAudit instance. Absence
+    # is NOT a missing_fields() failure — attaching is a coverage
+    # improvement surfaced by soft_gap_report(), not a required
+    # field that would break the Tier 1 retrofit's 74/74 coverage.
+    scope_audit: Optional[Any] = None
+
     def missing_fields(self) -> List[str]:
         """Return names of fields required-but-missing for this kind.
 
@@ -135,6 +144,37 @@ class Provenance:
         """True iff every field required by this kind is filled in."""
         return not self.missing_fields()
 
+    def has_scope_audit(self) -> bool:
+        """True iff a StudyScopeAudit (or equivalent attachment) is
+        present on this Provenance record. Not required for
+        `is_complete()` — this is a soft coverage signal."""
+        return self.scope_audit is not None
+
+    def soft_gap(self) -> Optional[str]:
+        """Report a soft coverage gap that does NOT invalidate
+        completeness but flags a recommended attachment.
+
+        Current soft gap: an EMPIRICAL provenance that declares a
+        `scope_caveat` (i.e., the author has explicitly noted that
+        the study measured X but the framework is applying it to Y)
+        but has no `scope_audit` attached. The caveat says "we know
+        the scope is being stretched"; without a scope_audit, the
+        framework has no machine-readable record of WHERE it holds
+        vs where it fails.
+
+        Returns the soft-gap description string, or None.
+        """
+        if (self.kind == ProvenanceKind.EMPIRICAL
+                and self.scope_caveat.strip()
+                and not self.has_scope_audit()):
+            return (
+                "EMPIRICAL provenance declares a scope_caveat but has "
+                "no scope_audit attached — the author acknowledged the "
+                "scope stretch in prose but the framework has no "
+                "machine-readable scope-boundary record"
+            )
+        return None
+
 
 def empirical(
     source_refs: List[str],
@@ -142,8 +182,16 @@ def empirical(
     scope_caveat: str = "",
     falsification_test: str = "",
     knowledge_dna: str = "",
+    scope_audit: Optional[Any] = None,
 ) -> Provenance:
-    """Constructor for empirical provenance. Enforces source_refs at build."""
+    """Constructor for empirical provenance. Enforces source_refs at build.
+
+    AUDIT_17: optional `scope_audit` attachment (typically a
+    StudyScopeAudit from term_audit/study_scope_audit.py). When
+    present, it carries a machine-readable boundary record
+    complementing the prose `scope_caveat`. When absent AND a
+    scope_caveat is declared, `soft_gap()` surfaces the gap.
+    """
     if not source_refs:
         raise ValueError("empirical provenance requires source_refs")
     return Provenance(
@@ -153,6 +201,7 @@ def empirical(
         scope_caveat=scope_caveat,
         falsification_test=falsification_test,
         knowledge_dna=knowledge_dna,
+        scope_audit=scope_audit,
     )
 
 
@@ -257,6 +306,12 @@ def coverage_report(provenances: List[Optional[Provenance]]) -> dict:
                            each incomplete entry
       knowledge_dna_count  number of entries with a non-empty
                            knowledge_dna field
+      scope_audit_count    AUDIT_17: number of entries with a
+                           StudyScopeAudit attached
+      soft_gap_count       AUDIT_17: number of entries where
+                           soft_gap() returns non-None — coverage
+                           improvement signal, not a failure
+      soft_gap_details     list of (index, kind, gap_description)
 
     This is the surface used by TermAudit.provenance_coverage() and by
     tests that assert the framework has audited itself for gaps.
@@ -269,6 +324,9 @@ def coverage_report(provenances: List[Optional[Provenance]]) -> dict:
     by_kind = {k.value: 0 for k in ProvenanceKind}
     incomplete_details = []
     dna_count = 0
+    scope_audit_count = 0
+    soft_gap_count = 0
+    soft_gap_details: List = []
 
     for idx, p in enumerate(provenances):
         if p is None:
@@ -278,6 +336,12 @@ def coverage_report(provenances: List[Optional[Provenance]]) -> dict:
         by_kind[p.kind.value] += 1
         if p.knowledge_dna.strip():
             dna_count += 1
+        if p.has_scope_audit():
+            scope_audit_count += 1
+        gap = p.soft_gap()
+        if gap is not None:
+            soft_gap_count += 1
+            soft_gap_details.append((idx, p.kind.value, gap))
         missing = p.missing_fields()
         if missing:
             incomplete += 1
@@ -294,4 +358,7 @@ def coverage_report(provenances: List[Optional[Provenance]]) -> dict:
         "by_kind": by_kind,
         "incomplete_details": incomplete_details,
         "knowledge_dna_count": dna_count,
+        "scope_audit_count": scope_audit_count,
+        "soft_gap_count": soft_gap_count,
+        "soft_gap_details": soft_gap_details,
     }
