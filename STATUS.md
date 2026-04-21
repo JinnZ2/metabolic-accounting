@@ -4,7 +4,7 @@ Status of the metabolic-accounting framework at end of session.
 
 ## Verified (all tests run, all passing)
 
-Forty-four test suites, every one runs and passes:
+Forty-six test suites, every one runs and passes:
 
 ```
 # main accounting stack (18, pre-term_audit)
@@ -53,10 +53,12 @@ test_money_three_scope_falsification: PASS   <-- AUDIT_10: money fails signal-in
 test_money_signal:           PASS   <-- AUDIT_11: coupling framework smoke + all 9 README falsifiable claims
 test_historical_cases:       PASS   <-- AUDIT_12: 5 anchor cases with honest PLACEHOLDER provenance
 test_money_signal_accounting_bridge: PASS   <-- AUDIT_12: signal_quality + flag emitter + GlucoseFlow discount; AUDIT_13: weight Provenance + verdict inference
-test_investment_signal:      PASS   <-- AUDIT_13: investment_signal/ intake, 11/23 README claims tripwired
+test_investment_signal:      PASS   <-- AUDIT_13 + AUDIT_14 Part A: investment_signal/ intake, 23/23 README claims tripwired
+test_investment_historical_cases: PASS   <-- AUDIT_14 Part B: 5 anchor cases, CLT counter-example, 4/5 framework-covers-observed
+test_study_scope_audit:      PASS   <-- AUDIT_15: scope-bounded measurement audit framework
 ```
 
-See `docs/AUDIT_06.md` through `docs/AUDIT_13.md` for the cross-checks
+See `docs/AUDIT_06.md` through `docs/AUDIT_15.md` for the cross-checks
 that landed the most recent tests.
 
 To verify:
@@ -504,7 +506,29 @@ verdict: sustainable_yield 0.056, trajectory -0.0017, ttr 21.67,
 
 ## AUDIT_14 — Part B (E.2): investment_signal/historical_cases.py
 
-32. **`investment_signal/historical_cases.py`** shipped. Five anchor
+## AUDIT_15 — STUDY_SCOPE_AUDIT methodology module
+
+33. **`term_audit/study_scope_audit.py`** shipped (new material, not
+    part of AUDIT_14 plan). Six layered audit dataclasses — Instrument
+    (range/resolution/noise-floor/sampling), Protocol (prep/controls/
+    exclusions/replication), DomainCoupling (4 Coupling strengths:
+    instrument/protocol/substrate/regime), Regime (4 states:
+    STATIONARY/DRIFTING/NON_STATIONARY/UNKNOWN), CausalModel
+    (frame + confounders + unknown-unknowns flag), ScopeBoundary
+    (IN/EDGE/OUT/UNDECLARED). Composite `StudyScopeAudit.audit_report()`
+    returns a scope-bounded verdict rather than true/false. Five
+    HISTORICAL_CASES (geocentrism, miasma, caloric, steady-state
+    cosmology, low-fat diet) calibrate the methodology against
+    documented scope-boundary expansion events. Load-bearing
+    discipline: OUT_OF_SCOPE dominates IN_SCOPE and EDGE_OF_SCOPE
+    when deployment context matches both — tripwired in test_7.
+    9 tripwire tests. NOT applied as a gate anywhere in the framework;
+    integration with `term_audit/provenance.py` is named for a
+    future pass (docs/AUDIT_15.md § D.2).
+
+## AUDIT_14 — Part B (E.2): investment_signal/historical_cases.py
+
+34. **`investment_signal/historical_cases.py`** shipped. Five anchor
     cases parallel to money_signal/historical_cases.py: Enron 2001
     (SYNTHETIC reverse causation, conf 0.95), MBS 2004-2008 (multi-
     layer opacity + terminal money near-collapse, conf 0.95), ZIRP
