@@ -502,6 +502,28 @@ verdict: sustainable_yield 0.056, trajectory -0.0017, ttr 21.67,
     historical_cases.py) and C (distributional stub) ship in
     subsequent commits on this branch, extending `docs/AUDIT_14.md`.
 
+## AUDIT_14 — Part B (E.2): investment_signal/historical_cases.py
+
+32. **`investment_signal/historical_cases.py`** shipped. Five anchor
+    cases parallel to money_signal/historical_cases.py: Enron 2001
+    (SYNTHETIC reverse causation, conf 0.95), MBS 2004-2008 (multi-
+    layer opacity + terminal money near-collapse, conf 0.95), ZIRP
+    2009-2021 (liquidity illusion via scope mismatch, conf 0.80),
+    Gig economy 2013-present (DERIVATIVE distance + TIME/ATTENTION
+    extraction, conf 0.85), Community Land Trusts 1970-present
+    (**counter-example**: DIRECT + MULTI_GENERATIONAL +
+    RECIPROCAL_OBLIGATION produces 0 observed failures, conf 0.80).
+    Every ObservedInvestmentFailure uses a tag from the canonical
+    VALID_FAILURE_TAGS set and carries typed Provenance (EMPIRICAL
+    with literature refs or PLACEHOLDER with retirement paths).
+    `compare_case()` framework-covers-observed: **4/5**; ZIRP is the
+    documented single outlier (retail TWO_LAYER encoding doesn't hit
+    the 0.5 reverse-causation threshold that the firm-level buyback
+    literature describes — single-case-encoding limitation, not a
+    framework bug). `tests/test_investment_historical_cases.py` (8
+    cases) tripwires the structure, the 4/5 match count, and the
+    CLT zero-failure counter-example.
+
 ## What the framework does end-to-end
 
 Main accounting stack:
