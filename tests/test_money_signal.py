@@ -99,6 +99,61 @@ def test_3_cultural_validator_passes_at_composed_level():
     print("PASS")
 
 
+def test_3b_validate_composition_passes_on_readme_cases():
+    """README § Usage shows four example cases. validate_composition
+    must pass on all of them — case_c in particular stacks NEAR_COLLAPSE
+    × DIGITAL × THIN_HOLDER amplifiers in the same direction and
+    composes K[N][R] ≈ 3.66. The sanity bound must accommodate that
+    per README claim #8 (AUDIT_11 § B.5, bound widened from [-3, 3]
+    to [-5, 5])."""
+    print("\n--- TEST 3b: validate_composition on README example cases ---")
+    from money_signal.dimensions import (
+        DimensionalContext,
+        TemporalScope, CulturalScope, AttributedValue,
+        ObserverPosition, Substrate, StateRegime,
+    )
+    from money_signal.coupling import validate_composition, minsky_coefficient
+
+    cases = {
+        "A healthy deep":   DimensionalContext(
+            temporal=TemporalScope.SEASONAL,
+            cultural=CulturalScope.INSTITUTIONAL,
+            attribution=AttributedValue.STATE_ENFORCED,
+            observer=ObserverPosition.TOKEN_HOLDER_DEEP,
+            substrate=Substrate.DIGITAL,
+            state=StateRegime.HEALTHY,
+        ),
+        "B healthy thin":   DimensionalContext(
+            temporal=TemporalScope.SEASONAL,
+            cultural=CulturalScope.INSTITUTIONAL,
+            attribution=AttributedValue.STATE_ENFORCED,
+            observer=ObserverPosition.TOKEN_HOLDER_THIN,
+            substrate=Substrate.DIGITAL,
+            state=StateRegime.HEALTHY,
+        ),
+        "C collapsing thin": DimensionalContext(
+            temporal=TemporalScope.SEASONAL,
+            cultural=CulturalScope.INSTITUTIONAL,
+            attribution=AttributedValue.STATE_ENFORCED,
+            observer=ObserverPosition.TOKEN_HOLDER_THIN,
+            substrate=Substrate.DIGITAL,
+            state=StateRegime.NEAR_COLLAPSE,
+        ),
+        "D reciprocity":    DimensionalContext(
+            temporal=TemporalScope.GENERATIONAL,
+            cultural=CulturalScope.HIGH_RECIPROCITY,
+            attribution=AttributedValue.RECIPROCITY_TOKEN,
+            observer=ObserverPosition.SUBSTRATE_PRODUCER,
+            substrate=Substrate.TRUST_LEDGER,
+            state=StateRegime.STRESSED,
+        ),
+    }
+    for name, ctx in cases.items():
+        validate_composition(ctx)
+        print(f"  {name:<20s} minsky={minsky_coefficient(ctx):.2f}x")
+    print("PASS")
+
+
 def test_4_end_to_end_coupling_matrix():
     print("\n--- TEST 4: coupling_matrix_as_dict runs end-to-end ---")
     from money_signal.dimensions import (
@@ -245,6 +300,7 @@ if __name__ == "__main__":
     test_1_all_modules_import()
     test_2_passing_validators_still_pass()
     test_3_cultural_validator_passes_at_composed_level()
+    test_3b_validate_composition_passes_on_readme_cases()
     test_4_end_to_end_coupling_matrix()
     test_5_minsky_holds_at_composed_level()
     test_6_near_collapse_permits_sign_flips()

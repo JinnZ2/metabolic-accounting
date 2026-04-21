@@ -150,7 +150,7 @@ now runs clean. The test was flipped to
 success on both `validate_cultural_factors()` and
 `validate_all_factor_modules()`.
 
-### B.5 Second ship-breaking bug surfaced downstream   `[DETECTED]`
+### B.5 Second ship-breaking bug surfaced downstream   `[CLOSED]` (Option 1 applied)
 
 Once § B fix landed, `python -m money_signal.coupling` progressed
 past factor validation but then raised on the CLI's own NEAR_COLLAPSE
@@ -183,7 +183,19 @@ Three options, parallel to § B.3:
 3. The CLI's example case is too extreme; replace with a less-
    stacked one. Discards the demonstration of claim #8.
 
-Option 1 recommended; deferred for decision, same pattern as § B.3.
+Option 1 applied: sanity bound widened from `[-3.0, 3.0]` to
+`[-5.0, 5.0]` in `coupling.py::validate_composition`. Rationale in
+the docstring: `[-5.0, 5.0]` accommodates legitimate collapse-
+regime stacking (case_c composes to 3.66) while still catching
+pathological runaway (>10 indicates a broken factor module, not
+an extreme-but-real case). `python -m money_signal.coupling` now
+runs end-to-end across all four README example cases with output
+consistent with README claims: Minsky coefficients A:1.24×,
+B:1.41×, C:1.73×, D:1.94× — showing that reciprocity-ledger
+systems have stronger Minsky asymmetry than even collapsing fiat
+(but at an order of magnitude smaller coupling magnitude, which
+is the actual damping). Tripwire landed in
+`tests/test_money_signal.py::test_3b_validate_composition_passes_on_readme_cases`.
 
 
 ## Part C — Other drift / smaller findings

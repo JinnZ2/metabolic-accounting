@@ -386,14 +386,19 @@ verdict: sustainable_yield 0.056, trajectory -0.0017, ttr 21.67,
     `validate_all_factor_modules()` runs clean.
     `tests/test_money_signal.py::test_3` flipped from DETECTOR to
     PASS assertion.
-21. **NEW DETECTED bug** (AUDIT_11 § B.5): post-fix,
-    `python -m money_signal.coupling` progresses but crashes on the
-    CLI's own NEAR_COLLAPSE example (composed K[N][R] = 3.66 exceeds
-    the `validate_composition` sanity bound `[-3.0, 3.0]`). The
-    bound contradicts README claim #8 ("|K[N][R]| dominates all
-    other off-diagonals in collapse"). Three options in AUDIT_11
-    § B.5; Option 1 (widen bound) recommended. Deferred for
-    decision.
+21. **FIXED bug** (AUDIT_11 § B.5, Option 1 applied): once the
+    factor-validator fix landed, `python -m money_signal.coupling`
+    hit a second sanity-bound assertion: composed K[N][R] = 3.66
+    on the module's own NEAR_COLLAPSE example (case_c) exceeded
+    the bound `[-3.0, 3.0]`. The bound contradicted README claim
+    #8 ("|K[N][R]| dominates all other off-diagonals in collapse").
+    Fix: bound widened to `[-5.0, 5.0]`. Accommodates legitimate
+    collapse-regime stacking; still catches pathological runaway
+    (>10). `python -m money_signal.coupling` now runs end-to-end
+    across all four README example cases. Tripwire in
+    `tests/test_money_signal.py::test_3b` asserts
+    `validate_composition` passes on cases A–D with expected Minsky
+    coefficients 1.24×/1.41×/1.73×/1.94×.
 
 ## What the framework does end-to-end
 
