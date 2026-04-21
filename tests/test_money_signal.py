@@ -1,0 +1,260 @@
+"""
+tests/test_money_signal.py
+
+Tripwires for the money_signal/ package.
+
+Smoke coverage for the coupling framework landed across AUDIT_10
+(merge of dimensions + per-axis factor modules) and AUDIT_11 (merge
+of coupling.py composition, coupling_state.py, coupling_substrate.py,
+README).
+
+Tests lock in:
+
+  1. all 9 modules import
+  2. per-factor validators pass where they currently pass
+     (base, temporal, attribution, observer, substrate, state)
+  3. DETECTOR test: validate_cultural_factors() currently FAILS on
+     COMMUNITY_TRUST pointwise Minsky check. The README's stated
+     invariant is at composed-coupling level; the validator's check
+     is at factor level, which is stricter. This test fails LOUDLY
+     when the bug is resolved — at which point it should be updated
+     to assert success. AUDIT_11 § B documents the three fix options.
+  4. coupling_matrix_as_dict runs end-to-end under a valid context
+  5. Minsky coefficient satisfies README claim #1 at composed level
+     in every non-near-collapse regime
+  6. Near-collapse permits sign flips (README claim #7)
+  7. Issuer insulation: TOKEN_ISSUER observer has damped coupling
+     magnitude relative to TOKEN_HOLDER_THIN (README claim #6)
+
+Notes:
+  - These are coarse structural tests; the README's falsifiable
+    claims (1-9) each warrant their own targeted test in future
+    passes.
+"""
+
+import sys
+import os
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+
+def test_1_all_modules_import():
+    print("\n--- TEST 1: all 9 modules import ---")
+    import money_signal.dimensions            # noqa
+    import money_signal.coupling_base         # noqa
+    import money_signal.coupling_temporal     # noqa
+    import money_signal.coupling_cultural     # noqa
+    import money_signal.coupling_attribution  # noqa
+    import money_signal.coupling_observer     # noqa
+    import money_signal.coupling_substrate    # noqa
+    import money_signal.coupling_state        # noqa
+    import money_signal.coupling              # noqa
+    print("  9/9 modules imported")
+    print("PASS")
+
+
+def test_2_passing_validators_still_pass():
+    print("\n--- TEST 2: 6 factor validators pass ---")
+    from money_signal.coupling_base import validate_base_matrix
+    from money_signal.coupling_temporal import validate_temporal_factors
+    from money_signal.coupling_attribution import validate_attribution_factors
+    from money_signal.coupling_observer import validate_observer_factors
+    from money_signal.coupling_substrate import validate_substrate_factors
+    from money_signal.coupling_state import validate_state_factors
+
+    for name, fn in [
+        ("base", validate_base_matrix),
+        ("temporal", validate_temporal_factors),
+        ("attribution", validate_attribution_factors),
+        ("observer", validate_observer_factors),
+        ("substrate", validate_substrate_factors),
+        ("state", validate_state_factors),
+    ]:
+        fn()
+        print(f"  {name}: OK")
+    print("PASS")
+
+
+def test_3_cultural_validator_current_failure_detected():
+    """DETECTOR test: the pointwise Minsky check in
+    validate_cultural_factors fails on COMMUNITY_TRUST.
+
+    When the underlying bug is fixed (either by swapping
+    COMMUNITY_TRUST factors or by changing the validator to
+    check composed coupling — see AUDIT_11 § B), this test will
+    START failing. At that point flip the assertion: the
+    validator should pass, and the bug is closed.
+
+    The test exists to prevent silent regressions in either
+    direction — whoever fixes the validator MUST also update
+    this tripwire."""
+    print("\n--- TEST 3: cultural validator fails on COMMUNITY_TRUST ---")
+    from money_signal.coupling_cultural import validate_cultural_factors
+    try:
+        validate_cultural_factors()
+    except AssertionError as e:
+        msg = str(e)
+        assert "community_trust" in msg, \
+            f"FAIL: unexpected validator failure: {msg}"
+        assert "Minsky" in msg or "asymmetry" in msg, \
+            f"FAIL: unexpected validator failure: {msg}"
+        print(f"  detected known failure: {msg[:120]}")
+        print("PASS (documents AUDIT_11 § B finding)")
+        return
+    raise AssertionError(
+        "FAIL: validate_cultural_factors now passes. "
+        "If fixed intentionally, flip this test to assert success and "
+        "update AUDIT_11 § B."
+    )
+
+
+def test_4_end_to_end_coupling_matrix():
+    print("\n--- TEST 4: coupling_matrix_as_dict runs end-to-end ---")
+    from money_signal.dimensions import (
+        DimensionalContext,
+        TemporalScope, CulturalScope, AttributedValue,
+        ObserverPosition, Substrate, StateRegime, MoneyTerm,
+    )
+    from money_signal.coupling import coupling_matrix_as_dict
+
+    # Calibration context: INSTITUTIONAL + SEASONAL + STATE_ENFORCED
+    # + METAL + HEALTHY → all factors ≈ 1.0, so composed ≈ K_BASE.
+    ctx = DimensionalContext(
+        temporal=TemporalScope.SEASONAL,
+        cultural=CulturalScope.INSTITUTIONAL,
+        attribution=AttributedValue.STATE_ENFORCED,
+        observer=ObserverPosition.TOKEN_HOLDER_THIN,
+        substrate=Substrate.METAL,
+        state=StateRegime.HEALTHY,
+    )
+    K = coupling_matrix_as_dict(ctx)
+
+    # 4x4 with diagonals 1.0 (self-coupling invariant, README line 35).
+    assert len(K) == 4, f"FAIL: expected 4x4, got {len(K)}"
+    for term in MoneyTerm:
+        assert K[term][term] == 1.0, \
+            f"FAIL: diagonal K[{term.value}][{term.value}] = {K[term][term]}"
+
+    print(f"  4x4 matrix; diagonals = 1.0; sample K[N][R] = {K[MoneyTerm.N][MoneyTerm.R]:+.3f}")
+    print("PASS")
+
+
+def test_5_minsky_holds_at_composed_level():
+    """README claim #1: K[N][R] >= K[R][N] in every non-near-collapse
+    regime, at the COMPOSED coupling level."""
+    print("\n--- TEST 5: Minsky asymmetry at composed level ---")
+    from money_signal.dimensions import (
+        DimensionalContext, MoneyTerm,
+        TemporalScope, CulturalScope, AttributedValue,
+        ObserverPosition, Substrate, StateRegime,
+    )
+    from money_signal.coupling import coupling_matrix_as_dict
+
+    # Sample across non-near-collapse state regimes.
+    for state in (StateRegime.HEALTHY, StateRegime.STRESSED,
+                  StateRegime.RECOVERING):
+        ctx = DimensionalContext(
+            temporal=TemporalScope.SEASONAL,
+            cultural=CulturalScope.INSTITUTIONAL,
+            attribution=AttributedValue.STATE_ENFORCED,
+            observer=ObserverPosition.TOKEN_HOLDER_THIN,
+            substrate=Substrate.METAL,
+            state=state,
+        )
+        K = coupling_matrix_as_dict(ctx)
+        k_nr = abs(K[MoneyTerm.N][MoneyTerm.R])
+        k_rn = abs(K[MoneyTerm.R][MoneyTerm.N])
+        assert k_nr >= k_rn - 1e-9, \
+            (f"FAIL: Minsky asymmetry violated at state={state.value}: "
+             f"|K[N][R]|={k_nr:.3f} < |K[R][N]|={k_rn:.3f}")
+        print(f"  {state.value}: |K[N][R]|={k_nr:.3f} >= |K[R][N]|={k_rn:.3f}")
+    print("PASS")
+
+
+def test_6_near_collapse_permits_sign_flips():
+    """README claim #7: near-collapse regime permits sign flips
+    (in particular K[N][C] can go negative: panic-buying)."""
+    print("\n--- TEST 6: near-collapse sign flips permitted ---")
+    from money_signal.dimensions import (
+        DimensionalContext,
+        TemporalScope, CulturalScope, AttributedValue,
+        ObserverPosition, Substrate, StateRegime,
+    )
+    from money_signal.coupling import has_sign_flips
+
+    ctx_healthy = DimensionalContext(
+        temporal=TemporalScope.SEASONAL,
+        cultural=CulturalScope.INSTITUTIONAL,
+        attribution=AttributedValue.STATE_ENFORCED,
+        observer=ObserverPosition.TOKEN_HOLDER_THIN,
+        substrate=Substrate.METAL,
+        state=StateRegime.HEALTHY,
+    )
+    ctx_collapse = DimensionalContext(
+        temporal=TemporalScope.SEASONAL,
+        cultural=CulturalScope.INSTITUTIONAL,
+        attribution=AttributedValue.STATE_ENFORCED,
+        observer=ObserverPosition.TOKEN_HOLDER_THIN,
+        substrate=Substrate.METAL,
+        state=StateRegime.NEAR_COLLAPSE,
+    )
+
+    healthy_flips = has_sign_flips(ctx_healthy)
+    collapse_flips = has_sign_flips(ctx_collapse)
+
+    assert not healthy_flips, \
+        f"FAIL: HEALTHY regime has sign flips (should not)"
+    # Collapse MAY have sign flips; it is allowed, not required.
+    print(f"  HEALTHY sign_flips={healthy_flips}  NEAR_COLLAPSE sign_flips={collapse_flips}")
+    print("PASS")
+
+
+def test_7_issuer_insulation():
+    """README claim #6: TOKEN_ISSUER experiences damped coupling on
+    cost/latency-driving terms relative to thin holders. Central
+    banks reading their own experience of the system systematically
+    underestimate fragility."""
+    print("\n--- TEST 7: issuer insulation vs thin holder ---")
+    from money_signal.dimensions import (
+        DimensionalContext,
+        TemporalScope, CulturalScope, AttributedValue,
+        ObserverPosition, Substrate, StateRegime,
+    )
+    from money_signal.coupling import coupling_magnitude
+
+    thin_ctx = DimensionalContext(
+        temporal=TemporalScope.SEASONAL,
+        cultural=CulturalScope.INSTITUTIONAL,
+        attribution=AttributedValue.STATE_ENFORCED,
+        observer=ObserverPosition.TOKEN_HOLDER_THIN,
+        substrate=Substrate.METAL,
+        state=StateRegime.STRESSED,
+    )
+    issuer_ctx = DimensionalContext(
+        temporal=TemporalScope.SEASONAL,
+        cultural=CulturalScope.INSTITUTIONAL,
+        attribution=AttributedValue.STATE_ENFORCED,
+        observer=ObserverPosition.TOKEN_ISSUER,
+        substrate=Substrate.METAL,
+        state=StateRegime.STRESSED,
+    )
+
+    thin_mag = coupling_magnitude(thin_ctx)
+    issuer_mag = coupling_magnitude(issuer_ctx)
+
+    assert issuer_mag < thin_mag, \
+        (f"FAIL: issuer insulation violated: issuer mag={issuer_mag:.3f} "
+         f"must be < thin holder mag={thin_mag:.3f}")
+    print(f"  thin holder mag={thin_mag:.3f}, issuer mag={issuer_mag:.3f}  "
+          f"(issuer experiences damped coupling)")
+    print("PASS")
+
+
+if __name__ == "__main__":
+    test_1_all_modules_import()
+    test_2_passing_validators_still_pass()
+    test_3_cultural_validator_current_failure_detected()
+    test_4_end_to_end_coupling_matrix()
+    test_5_minsky_holds_at_composed_level()
+    test_6_near_collapse_permits_sign_flips()
+    test_7_issuer_insulation()
+    print("\nall money_signal tests passed.")

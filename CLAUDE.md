@@ -108,7 +108,7 @@ Land on the right file without grepping blind. Each row lists the primary file a
 | Emit AI-readable expertise profiles (JSON-LD) | `term_audit/machine_readable_expertise.py` | `term_audit/audits/expertise_x_cross_domain_closure.py` |
 | Audit a law, regulation, or ordinance against its own first-principles purpose | `term_audit/legislative_audit/first_principles_legislative_audit.py` | `tests/test_legislative_audit.py`, `docs/AUDIT_09.md` |
 | Audit money across three marketed scopes (flow / community / lube) via 12 invariants | `term_audit/audits/money_three_scope_falsification.py` | `tests/test_money_three_scope_falsification.py`, `docs/AUDIT_10.md` |
-| Model money-as-signal coupling matrix (K_ij with temporal/cultural/attribution/observer modifiers) | `money_signal/dimensions.py`, `money_signal/coupling_base.py` | `money_signal/coupling_temporal.py` etc. |
+| Model money-as-signal coupling matrix (K_ij with temporal/cultural/attribution/observer modifiers) | `money_signal/dimensions.py`, `money_signal/coupling_base.py` | `money_signal/coupling.py`, `money_signal/README.md`, `tests/test_money_signal.py`, `docs/AUDIT_11.md` |
 | Score a proposed alternative to a captured measurement | `term_audit/alternative_viability.py` | CAPTURE / RELOCATION / IMPLEMENTATION / STRUCTURAL classifications |
 | Reason about measurement appropriateness by civilization scale | `term_audit/civilization_substrate_scaling.py` | `term_audit/collapse_propensity.py` |
 | Think about what must be preserved through collapse / how recovery proceeds | `term_audit/recovery_pathways.py` | `tests/test_recovery_pathways.py` |

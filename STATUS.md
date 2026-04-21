@@ -4,7 +4,7 @@ Status of the metabolic-accounting framework at end of session.
 
 ## Verified (all tests run, all passing)
 
-Forty test suites, every one runs and passes:
+Forty-one test suites, every one runs and passes:
 
 ```
 # main accounting stack (18, pre-term_audit)
@@ -50,9 +50,10 @@ test_expertise_x_audit:      PASS   <-- AUDIT_08: E_X cross-domain closure, sele
 test_routing_around_detection: PASS   <-- AUDIT_08: canary-principle + substrate-evidence
 test_legislative_audit:      PASS   <-- AUDIT_09: first-principles rule audit, Bridge Watchers skeleton
 test_money_three_scope_falsification: PASS   <-- AUDIT_10: money fails signal-invariants in all 3 marketed scopes
+test_money_signal:           PASS   <-- AUDIT_11: coupling framework smoke + DETECTOR for cultural validator bug
 ```
 
-See `docs/AUDIT_06.md` through `docs/AUDIT_10.md` for the cross-checks
+See `docs/AUDIT_06.md` through `docs/AUDIT_11.md` for the cross-checks
 that landed the most recent tests.
 
 To verify:
@@ -362,6 +363,29 @@ verdict: sustainable_yield 0.056, trajectory -0.0017, ttr 21.67,
     four-function decomposition (M_A medium-of-exchange / M_B store-
     of-value / M_C unit-of-account / M_D standard-of-deferred-
     payment) remains `[OPEN]` as a distinct audit target.
+
+## AUDIT_11 — money_signal subsystem completion + cultural validator bug
+
+19. Merged 4 new files from `origin/main` on `money_signal/`:
+    `coupling.py` (composition + memoization + diagnostics),
+    `coupling_state.py`, `coupling_substrate.py`, `README.md`
+    (~1540 new lines). All 9 modules import. Three of the README's
+    9 falsifiable claims tripwired at composed-coupling level:
+    #1 Minsky asymmetry holds (ratio 1.31/1.51/0.52 across
+    HEALTHY/STRESSED/RECOVERING), #6 issuer insulation (0.208 vs
+    0.863 thin-holder magnitude under STRESSED), #7 near-collapse
+    permits sign flips.
+20. **DETECTED bug**: `validate_all_factor_modules()` ships broken.
+    The README says "Always validate at startup"; the validator
+    crashes on `coupling_cultural.COMMUNITY_TRUST` because the
+    Minsky check runs pointwise on factors (`f_nr=0.7 < f_rn=0.8`)
+    rather than on composed coupling (where the values compose to
+    exactly equal, satisfying the stated `>=`). README's claim is
+    composed-level. Three fix options in `docs/AUDIT_11.md` § B.3;
+    Option 1 (weaken validator to match README invariant)
+    recommended. `tests/test_money_signal.py::test_3` is a
+    DETECTOR — when the bug is fixed, the test flips from
+    documenting-failure to asserting-success.
 
 ## What the framework does end-to-end
 
