@@ -338,15 +338,27 @@ Ordered by cost:
 
 - 4 new modules merged in (coupling.py, coupling_state.py,
   coupling_substrate.py, README.md), 9/9 import.
-- **`validate_all_factor_modules()` ships broken**: pointwise
-  Minsky check in cultural rejects COMMUNITY_TRUST even though
-  the composed invariant it's meant to enforce holds. Three fix
-  options in § B.3; Option 1 recommended; detector test landed.
-- 6 of 7 factor validators tripwired as passing; cultural
-  tripwired as the specific documented failure.
-- 3 of the README's 9 falsifiable claims are now tripwired;
-  remaining 6 scoped for next pass.
-- Integration with three-scope audit (AUDIT_10 § D.1) and main
-  accounting stack (AUDIT_11 § D.2) named but not coded.
+- Two ship-breaking bugs detected and CLOSED (§ B Option 1,
+  § B.5 Option 1): factor-level Minsky check replaced with
+  composed-level; sanity bound widened from [-3, 3] to [-5, 5].
+  `python -m money_signal.coupling` now runs end-to-end.
+- `money_signal/__init__.py` added (§ C.1 closed).
+- **All 9 README falsifiable claims now tripwired** (originally
+  3/9 when AUDIT_11 closed):
+    1. composed Minsky asymmetry — tests 5, 3b, 12
+    2. hysteresis (recovering < healthy) — test 8
+    3. reciprocity damping (trust-ledger / reciprocity-token) — test 9
+    4. speculative amplification — test 10
+    5. observer asymmetry (thin > deep) — test 11
+    6. issuer insulation — test 7
+    7. near-collapse sign flips — test 6
+    8. Minsky dominance in collapse — test 12
+    9. digital infrastructure coupling — test 13
+- Still [OPEN]: `money_signal/historical_cases.py` empirical
+  calibration (requires external research); glucose-flow
+  integration with `accounting/glucose.py` (architectural
+  bridge).
+- Integration with three-scope audit (AUDIT_10 § D.1) still
+  [NAMED].
 - Regression 41/41. Main stack untouched; first-law closure
   unchanged.

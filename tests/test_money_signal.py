@@ -296,6 +296,183 @@ def test_7_issuer_insulation():
     print("PASS")
 
 
+def _helper_ctx(**overrides):
+    """Build a DimensionalContext with baseline defaults, allowing
+    a caller to vary one or more dimensions. Baseline is the calibration
+    regime (INSTITUTIONAL + SEASONAL + STATE_ENFORCED + METAL + HEALTHY)
+    with a THIN holder observer as the default (no observer calibration
+    case exists per README)."""
+    from money_signal.dimensions import (
+        DimensionalContext,
+        TemporalScope, CulturalScope, AttributedValue,
+        ObserverPosition, Substrate, StateRegime,
+    )
+    defaults = dict(
+        temporal=TemporalScope.SEASONAL,
+        cultural=CulturalScope.INSTITUTIONAL,
+        attribution=AttributedValue.STATE_ENFORCED,
+        observer=ObserverPosition.TOKEN_HOLDER_THIN,
+        substrate=Substrate.METAL,
+        state=StateRegime.HEALTHY,
+    )
+    defaults.update(overrides)
+    return DimensionalContext(**defaults)
+
+
+def test_8_hysteresis_recovering_damped_vs_healthy():
+    """README claim #2: RECOVERING state has off-diagonal coupling
+    factors strictly less than HEALTHY. Post-collapse systems operate
+    with damped coupling regardless of nominal metric recovery."""
+    print("\n--- TEST 8: README claim #2 hysteresis ---")
+    from money_signal.dimensions import StateRegime, MoneyTerm
+    from money_signal.coupling import coupling_matrix_as_dict
+
+    k_healthy = coupling_matrix_as_dict(_helper_ctx(state=StateRegime.HEALTHY))
+    k_recovering = coupling_matrix_as_dict(_helper_ctx(state=StateRegime.RECOVERING))
+
+    for i in MoneyTerm:
+        for j in MoneyTerm:
+            if i == j:
+                continue
+            h, r = abs(k_healthy[i][j]), abs(k_recovering[i][j])
+            assert r < h, \
+                (f"FAIL: |K[{i.value}][{j.value}]| recovering={r:.3f} "
+                 f"must be < healthy={h:.3f}")
+    print("  all 12 off-diagonals: recovering < healthy")
+    print("PASS")
+
+
+def test_9_reciprocity_damping_trust_and_token():
+    """README claim #3: TRUST_LEDGER substrate and RECIPROCITY_TOKEN
+    attribution both damp K[N][R] below the metal/state-enforced
+    baseline. Relational substrates carry repair protocols physical
+    substrates lack."""
+    print("\n--- TEST 9: README claim #3 reciprocity damping ---")
+    from money_signal.dimensions import (
+        Substrate, AttributedValue, MoneyTerm,
+    )
+    from money_signal.coupling import coupling_matrix_as_dict
+
+    N, R = MoneyTerm.N, MoneyTerm.R
+    baseline = coupling_matrix_as_dict(_helper_ctx())
+    trust = coupling_matrix_as_dict(_helper_ctx(substrate=Substrate.TRUST_LEDGER))
+    recip = coupling_matrix_as_dict(
+        _helper_ctx(attribution=AttributedValue.RECIPROCITY_TOKEN)
+    )
+
+    base_nr = abs(baseline[N][R])
+    assert abs(trust[N][R]) < base_nr, \
+        f"FAIL: trust_ledger |K[N][R]|={abs(trust[N][R]):.3f} not < baseline {base_nr:.3f}"
+    assert abs(recip[N][R]) < base_nr, \
+        f"FAIL: reciprocity_token |K[N][R]|={abs(recip[N][R]):.3f} not < baseline {base_nr:.3f}"
+
+    print(f"  baseline K[N][R]={base_nr:.3f}  "
+          f"trust={abs(trust[N][R]):.3f}  recip={abs(recip[N][R]):.3f}")
+    print("PASS")
+
+
+def test_10_speculative_amplification():
+    """README claim #4: SPECULATIVE_CLAIM attribution amplifies K[N][R]
+    above baseline. Pure financialization has no substrate floor,
+    institutional floor, relational floor, or sacred floor to catch
+    collapse."""
+    print("\n--- TEST 10: README claim #4 speculative amplification ---")
+    from money_signal.dimensions import AttributedValue, MoneyTerm
+    from money_signal.coupling import coupling_matrix_as_dict
+
+    N, R = MoneyTerm.N, MoneyTerm.R
+    baseline = coupling_matrix_as_dict(_helper_ctx())
+    spec = coupling_matrix_as_dict(
+        _helper_ctx(attribution=AttributedValue.SPECULATIVE_CLAIM)
+    )
+
+    assert abs(spec[N][R]) > abs(baseline[N][R]), \
+        (f"FAIL: speculative |K[N][R]|={abs(spec[N][R]):.3f} "
+         f"not > baseline {abs(baseline[N][R]):.3f}")
+    print(f"  baseline K[N][R]={abs(baseline[N][R]):.3f}  "
+          f"speculative={abs(spec[N][R]):.3f}  "
+          f"amplification={abs(spec[N][R])/abs(baseline[N][R]):.2f}x")
+    print("PASS")
+
+
+def test_11_observer_asymmetry_thin_amplified():
+    """README claim #5: TOKEN_HOLDER_THIN experiences amplified
+    coupling on K[R][C], K[R][L], and K[N][R] relative to
+    TOKEN_HOLDER_DEEP. Thin holders see more fragility than aggregate
+    metrics reveal."""
+    print("\n--- TEST 11: README claim #5 observer asymmetry ---")
+    from money_signal.dimensions import ObserverPosition, MoneyTerm
+    from money_signal.coupling import coupling_matrix_as_dict
+
+    R, N, C, L = MoneyTerm.R, MoneyTerm.N, MoneyTerm.C, MoneyTerm.L
+    thin = coupling_matrix_as_dict(
+        _helper_ctx(observer=ObserverPosition.TOKEN_HOLDER_THIN)
+    )
+    deep = coupling_matrix_as_dict(
+        _helper_ctx(observer=ObserverPosition.TOKEN_HOLDER_DEEP)
+    )
+
+    for (i, j) in [(R, C), (R, L), (N, R)]:
+        a_thin, a_deep = abs(thin[i][j]), abs(deep[i][j])
+        assert a_thin > a_deep, \
+            (f"FAIL: |K[{i.value}][{j.value}]| "
+             f"thin={a_thin:.3f} not > deep={a_deep:.3f}")
+        print(f"  K[{i.value[:3]}][{j.value[:3]}]: thin={a_thin:.3f} > deep={a_deep:.3f}")
+    print("PASS")
+
+
+def test_12_minsky_dominance_in_collapse():
+    """README claim #8: In NEAR_COLLAPSE, |K[N][R]| dominates all
+    other off-diagonal coefficients in magnitude. Trust collapse
+    becomes the only thing that matters; every other dynamic is
+    second-order."""
+    print("\n--- TEST 12: README claim #8 Minsky dominance in collapse ---")
+    from money_signal.dimensions import StateRegime, Substrate, MoneyTerm
+    from money_signal.coupling import coupling_matrix_as_dict
+
+    # Use DIGITAL + TOKEN_HOLDER_THIN + NEAR_COLLAPSE per the README
+    # case_c example. This is where claim #8 should show most clearly.
+    K = coupling_matrix_as_dict(_helper_ctx(
+        state=StateRegime.NEAR_COLLAPSE,
+        substrate=Substrate.DIGITAL,
+    ))
+    N, R = MoneyTerm.N, MoneyTerm.R
+    dominant = abs(K[N][R])
+
+    for i in MoneyTerm:
+        for j in MoneyTerm:
+            if i == j:
+                continue
+            if i == N and j == R:
+                continue
+            v = abs(K[i][j])
+            assert dominant > v, \
+                (f"FAIL: |K[N][R]|={dominant:.3f} does not dominate "
+                 f"|K[{i.value}][{j.value}]|={v:.3f}")
+    print(f"  |K[N][R]|={dominant:.3f} dominates all 11 other off-diagonals")
+    print("PASS")
+
+
+def test_13_digital_amplifies_reliability_on_network():
+    """README claim #9: DIGITAL substrate amplifies K[R][N] above
+    metal baseline. Reliability is coupled to infrastructure
+    continuity in a way physical substrates never were."""
+    print("\n--- TEST 13: README claim #9 digital infrastructure coupling ---")
+    from money_signal.dimensions import Substrate, MoneyTerm
+    from money_signal.coupling import coupling_matrix_as_dict
+
+    R, N = MoneyTerm.R, MoneyTerm.N
+    metal = coupling_matrix_as_dict(_helper_ctx(substrate=Substrate.METAL))
+    digital = coupling_matrix_as_dict(_helper_ctx(substrate=Substrate.DIGITAL))
+
+    assert abs(digital[R][N]) > abs(metal[R][N]), \
+        (f"FAIL: digital |K[R][N]|={abs(digital[R][N]):.3f} "
+         f"not > metal {abs(metal[R][N]):.3f}")
+    print(f"  metal K[R][N]={abs(metal[R][N]):.3f}  "
+          f"digital={abs(digital[R][N]):.3f}")
+    print("PASS")
+
+
 if __name__ == "__main__":
     test_1_all_modules_import()
     test_2_passing_validators_still_pass()
@@ -305,4 +482,10 @@ if __name__ == "__main__":
     test_5_minsky_holds_at_composed_level()
     test_6_near_collapse_permits_sign_flips()
     test_7_issuer_insulation()
+    test_8_hysteresis_recovering_damped_vs_healthy()
+    test_9_reciprocity_damping_trust_and_token()
+    test_10_speculative_amplification()
+    test_11_observer_asymmetry_thin_amplified()
+    test_12_minsky_dominance_in_collapse()
+    test_13_digital_amplifies_reliability_on_network()
     print("\nall money_signal tests passed.")

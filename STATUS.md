@@ -399,6 +399,17 @@ verdict: sustainable_yield 0.056, trajectory -0.0017, ttr 21.67,
     `tests/test_money_signal.py::test_3b` asserts
     `validate_composition` passes on cases A–D with expected Minsky
     coefficients 1.24×/1.41×/1.73×/1.94×.
+22. **Coverage completion**: `money_signal/__init__.py` added
+    (AUDIT_11 § C.1 closed). All 9 README falsifiable claims now
+    tripwired (originally 3/9 at AUDIT_11 close): tests 8/9/10/11/12/13
+    cover claims #2 hysteresis, #3 reciprocity damping, #4 speculative
+    amplification, #5 observer asymmetry, #8 Minsky dominance in
+    collapse, #9 digital infrastructure coupling. Tests 5/7/6/12/3b
+    cover claims #1/#6/#7/#8/composed-Minsky across the framework.
+    Test suite for the money_signal subsystem: 14 cases. Still
+    [OPEN]: historical_cases.py empirical calibration (external
+    research); glucose-flow bridge to accounting/glucose.py
+    (architectural).
 
 ## What the framework does end-to-end
 
