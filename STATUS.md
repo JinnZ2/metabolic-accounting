@@ -480,6 +480,28 @@ verdict: sustainable_yield 0.056, trajectory -0.0017, ttr 21.67,
     of the 23 README falsifiable claims, plus the import and
     validator regressions. README usage example now runs end-to-end.
 
+## AUDIT_14 — Part A (E.1 + E.3): investment_signal 23/23 + Todo.md integrated
+
+29. **investment_signal coverage 11/23 → 23/23**: 14 new tests in
+    `test_investment_signal.py` cover the remaining README
+    falsifiable claims (#3 #4 #6 #7 #8 #10 #12 #13 #14 #16 #17 #18
+    #19 #21). All 23 claims now directly tripwired; no longer
+    dependent only on `validate_*` transitively. Any factor-value
+    edit that silently changes a locked value breaks the
+    corresponding test with a named message.
+30. **Todo.md integrated**: CLAUDE.md nav table gets a new row
+    pointing at `Todo.md` as the forward-priority list; `Todo.md`
+    itself gets an "Audit cross-reference" section mapping its
+    three priorities to audit entries. Scope of AUDIT_13 § E.4
+    closed in light of Todo.md's routing: distributional work
+    lives in the sister repo
+    (`thermodynamic-accountability-framework/money_distribution/`,
+    `investment_distribution/`), not here. AUDIT_14 Part C will
+    ship a lean interface stub instead of a full local consumer.
+31. **AUDIT_14 chunking**: Parts B (investment_signal
+    historical_cases.py) and C (distributional stub) ship in
+    subsequent commits on this branch, extending `docs/AUDIT_14.md`.
+
 ## What the framework does end-to-end
 
 Main accounting stack:

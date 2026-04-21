@@ -246,6 +246,208 @@ def test_12_near_collapse_breaks_evaluation():
     print("PASS")
 
 
+# ---------------------------------------------------------------------------
+# AUDIT_14 § E.1: remaining 14 README falsifiable claims tripwired.
+# ---------------------------------------------------------------------------
+
+def test_13_attention_extracted_before_money():
+    """README claim #3: C[ATTENTION][MONEY] <= 0.4 — intermediaries
+    capture attention value before the attention-investor can realize
+    monetary return."""
+    print("\n--- TEST 13: README claim #3 attention extracted before money ---")
+    from investment_signal.conversion_matrix import base_conversion
+    from investment_signal.dimensions import InvestmentSubstrate as S
+    v = base_conversion(S.ATTENTION, S.MONEY)
+    assert v <= 0.4, f"FAIL: C[ATTENTION][MONEY]={v} not <= 0.4"
+    print(f"  C[ATTENTION][MONEY]={v:.2f} <= 0.4")
+    print("PASS")
+
+
+def test_14_thermodynamic_conversions_well_understood():
+    """README claim #4: C[RESOURCE][ENERGY] >= 0.6 — physics sets a
+    floor on this conversion."""
+    print("\n--- TEST 14: README claim #4 thermodynamic conversions ---")
+    from investment_signal.conversion_matrix import base_conversion
+    from investment_signal.dimensions import InvestmentSubstrate as S
+    v = base_conversion(S.RESOURCE, S.ENERGY)
+    assert v >= 0.6, f"FAIL: C[RESOURCE][ENERGY]={v} not >= 0.6"
+    print(f"  C[RESOURCE][ENERGY]={v:.2f} >= 0.6")
+    print("PASS")
+
+
+def test_15_money_cannot_produce_genuine_trust():
+    """README claim #6: R[MONEY][RELATIONAL] <= 0.2."""
+    print("\n--- TEST 15: README claim #6 money cannot produce trust ---")
+    from investment_signal.realization_matrix import base_realization
+    from investment_signal.dimensions import InvestmentSubstrate as S
+    v = base_realization(S.MONEY, S.RELATIONAL_CAPITAL)
+    assert v <= 0.2, f"FAIL: R[MONEY][RELATIONAL]={v} not <= 0.2"
+    print(f"  R[MONEY][RELATIONAL]={v:.2f} <= 0.2")
+    print("PASS")
+
+
+def test_16_relational_vehicles_cannot_realize_as_money():
+    """README claim #7: R[RELATIONAL][MONEY] <= 0.4 — monetizing
+    destroys the vehicle."""
+    print("\n--- TEST 16: README claim #7 relational cannot realize as money ---")
+    from investment_signal.realization_matrix import base_realization
+    from investment_signal.dimensions import InvestmentSubstrate as S
+    v = base_realization(S.RELATIONAL_CAPITAL, S.MONEY)
+    assert v <= 0.4, f"FAIL: R[RELATIONAL][MONEY]={v} not <= 0.4"
+    print(f"  R[RELATIONAL][MONEY]={v:.2f} <= 0.4")
+    print("PASS")
+
+
+def test_17_relational_compounds_in_own_substrate():
+    """README claim #8: R[RELATIONAL][RELATIONAL] >= 0.9 — institutional
+    accounting misses this."""
+    print("\n--- TEST 17: README claim #8 relational compounds ---")
+    from investment_signal.realization_matrix import base_realization
+    from investment_signal.dimensions import InvestmentSubstrate as S
+    v = base_realization(S.RELATIONAL_CAPITAL, S.RELATIONAL_CAPITAL)
+    assert v >= 0.9, f"FAIL: R[RELATIONAL][RELATIONAL]={v} not >= 0.9"
+    print(f"  R[RELATIONAL][RELATIONAL]={v:.2f} >= 0.9")
+    print("PASS")
+
+
+def test_18_labor_consumes_time_not_produces():
+    """README claim #10: R[LABOR][TIME] <= 0.3 — contradicts the
+    common small-business-as-investment framing."""
+    print("\n--- TEST 18: README claim #10 labor consumes time ---")
+    from investment_signal.realization_matrix import base_realization
+    from investment_signal.dimensions import InvestmentSubstrate as S
+    v = base_realization(S.LABOR, S.TIME)
+    assert v <= 0.3, f"FAIL: R[LABOR][TIME]={v} not <= 0.3"
+    print(f"  R[LABOR][TIME]={v:.2f} <= 0.3 (labor vehicles don't produce time)")
+    print("PASS")
+
+
+def test_19_multi_generational_dominates_at_epochal():
+    """README claim #12: only MULTI_GENERATIONAL has strictly higher
+    integrity at EPOCHAL scope than any other binding."""
+    print("\n--- TEST 19: README claim #12 MULTI_GENERATIONAL dominates at epochal ---")
+    from investment_signal.time_binding import base_time_binding_integrity
+    from investment_signal.dimensions import TimeBinding
+    from money_signal.dimensions import TemporalScope
+    mg = base_time_binding_integrity(
+        TimeBinding.MULTI_GENERATIONAL, TemporalScope.EPOCHAL
+    )
+    for tb in TimeBinding:
+        if tb == TimeBinding.MULTI_GENERATIONAL:
+            continue
+        other = base_time_binding_integrity(tb, TemporalScope.EPOCHAL)
+        assert mg > other, \
+            f"FAIL: MULTI_GENERATIONAL {mg} not > {tb.value} {other} at EPOCHAL"
+    print(f"  MULTI_GENERATIONAL={mg:.2f} at EPOCHAL dominates all 5 other bindings")
+    print("PASS")
+
+
+def test_20_time_attention_cannot_bind_long_term():
+    """README claim #13: substrate modifiers for TIME and ATTENTION
+    are strictly less than 1.0 — both degrade across long horizons."""
+    print("\n--- TEST 20: README claim #13 time and attention modifiers < 1.0 ---")
+    from investment_signal.time_binding import iter_substrate_modifiers
+    from investment_signal.dimensions import InvestmentSubstrate as S
+    mods = dict(iter_substrate_modifiers())
+    assert mods[S.TIME] < 1.0, f"FAIL: TIME modifier {mods[S.TIME]} not < 1.0"
+    assert mods[S.ATTENTION] < 1.0, \
+        f"FAIL: ATTENTION modifier {mods[S.ATTENTION]} not < 1.0"
+    print(f"  TIME={mods[S.TIME]:.2f} < 1.0, ATTENTION={mods[S.ATTENTION]:.2f} < 1.0")
+    print("PASS")
+
+
+def test_21_relational_highest_binding_modifier():
+    """README claim #14: RELATIONAL_CAPITAL has the highest binding
+    modifier — the only substrate that structurally compounds across
+    generations."""
+    print("\n--- TEST 21: README claim #14 relational highest binding modifier ---")
+    from investment_signal.time_binding import iter_substrate_modifiers
+    from investment_signal.dimensions import InvestmentSubstrate as S
+    mods = dict(iter_substrate_modifiers())
+    rc = mods[S.RELATIONAL_CAPITAL]
+    for s, v in mods.items():
+        if s == S.RELATIONAL_CAPITAL:
+            continue
+        assert rc > v, \
+            f"FAIL: RELATIONAL modifier {rc} not > {s.value} {v}"
+    print(f"  RELATIONAL modifier={rc:.2f} is max across 7 substrates")
+    print("PASS")
+
+
+def test_22_substrate_visibility_monotone_in_distance():
+    """README claim #16: substrate visibility decreases monotonically
+    with distance."""
+    print("\n--- TEST 22: README claim #16 visibility monotone in distance ---")
+    from investment_signal.derivative_distance import substrate_visibility
+    from investment_signal.dimensions import DerivativeDistance as D
+    ordered = [D.DIRECT, D.ONE_LAYER, D.TWO_LAYER, D.DERIVATIVE, D.SYNTHETIC]
+    vals = [substrate_visibility(d) for d in ordered]
+    for a, b in zip(vals, vals[1:]):
+        assert a > b, f"FAIL: visibility not monotone: {vals}"
+    print(f"  visibility: {[f'{v:.2f}' for v in vals]}")
+    print("PASS")
+
+
+def test_23_cascade_coupling_monotone_in_distance():
+    """README claim #17: cascade coupling increases monotonically
+    with distance."""
+    print("\n--- TEST 23: README claim #17 cascade coupling monotone in distance ---")
+    from investment_signal.derivative_distance import cascade_coupling
+    from investment_signal.dimensions import DerivativeDistance as D
+    ordered = [D.DIRECT, D.ONE_LAYER, D.TWO_LAYER, D.DERIVATIVE, D.SYNTHETIC]
+    vals = [cascade_coupling(d) for d in ordered]
+    for a, b in zip(vals, vals[1:]):
+        assert a < b, f"FAIL: cascade coupling not monotone: {vals}"
+    print(f"  cascade: {[f'{v:.2f}' for v in vals]}")
+    print("PASS")
+
+
+def test_24_reverse_causation_monotone_in_distance():
+    """README claim #18: reverse causation increases monotonically
+    with distance."""
+    print("\n--- TEST 24: README claim #18 reverse causation monotone in distance ---")
+    from investment_signal.derivative_distance import reverse_causation
+    from investment_signal.dimensions import DerivativeDistance as D
+    ordered = [D.DIRECT, D.ONE_LAYER, D.TWO_LAYER, D.DERIVATIVE, D.SYNTHETIC]
+    vals = [reverse_causation(d) for d in ordered]
+    for a, b in zip(vals, vals[1:]):
+        assert a < b, f"FAIL: reverse causation not monotone: {vals}"
+    print(f"  reverse: {[f'{v:.2f}' for v in vals]}")
+    print("PASS")
+
+
+def test_25_direct_baseline_clean():
+    """README claim #19: DIRECT has zero reverse causation and
+    near-perfect substrate visibility."""
+    print("\n--- TEST 25: README claim #19 DIRECT baseline clean ---")
+    from investment_signal.derivative_distance import (
+        reverse_causation, substrate_visibility,
+    )
+    from investment_signal.dimensions import DerivativeDistance as D
+    rev = reverse_causation(D.DIRECT)
+    vis = substrate_visibility(D.DIRECT)
+    assert rev == 0.0, f"FAIL: DIRECT reverse_causation={rev} not 0.0"
+    assert vis >= 0.95, \
+        f"FAIL: DIRECT visibility={vis} not near-perfect (>= 0.95)"
+    print(f"  DIRECT: reverse=0.0, visibility={vis:.2f}")
+    print("PASS")
+
+
+def test_26_time_attention_relational_low_derivatization_tolerance():
+    """README claim #21: time, attention, and relational capital
+    cannot be derivatized without losing their nature — abstraction
+    tolerance for each is strictly below 0.35."""
+    print("\n--- TEST 26: README claim #21 time/attention/relational low tolerance ---")
+    from investment_signal.derivative_distance import substrate_abstraction_tolerance
+    from investment_signal.dimensions import InvestmentSubstrate as S
+    for substrate in (S.TIME, S.ATTENTION, S.RELATIONAL_CAPITAL):
+        v = substrate_abstraction_tolerance(substrate)
+        assert v < 0.35, \
+            f"FAIL: {substrate.value} tolerance {v} not < 0.35"
+        print(f"  {substrate.value:20s}: {v:.2f} < 0.35")
+    print("PASS")
+
+
 if __name__ == "__main__":
     test_1_all_modules_import()
     test_2_validate_all_passes()
@@ -259,4 +461,19 @@ if __name__ == "__main__":
     test_10_synthetic_financialized()
     test_11_money_highest_abstraction_tolerance()
     test_12_near_collapse_breaks_evaluation()
+    # AUDIT_14 § E.1: remaining 14 README claims
+    test_13_attention_extracted_before_money()
+    test_14_thermodynamic_conversions_well_understood()
+    test_15_money_cannot_produce_genuine_trust()
+    test_16_relational_vehicles_cannot_realize_as_money()
+    test_17_relational_compounds_in_own_substrate()
+    test_18_labor_consumes_time_not_produces()
+    test_19_multi_generational_dominates_at_epochal()
+    test_20_time_attention_cannot_bind_long_term()
+    test_21_relational_highest_binding_modifier()
+    test_22_substrate_visibility_monotone_in_distance()
+    test_23_cascade_coupling_monotone_in_distance()
+    test_24_reverse_causation_monotone_in_distance()
+    test_25_direct_baseline_clean()
+    test_26_time_attention_relational_low_derivatization_tolerance()
     print("\nall investment_signal tests passed.")
