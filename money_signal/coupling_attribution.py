@@ -403,13 +403,24 @@ def validate_attribution_factors() -> None:
                 f"(calibration attribution), got K[{i.value}][{j.value}] = {v}"
             )
 
-    # 5. Minsky asymmetry direction preserved for every attribution.
+    # 5. Minsky asymmetry direction preserved for every attribution,
+    #    at the COMPOSED coupling level (README claim #1). AUDIT_11
+    #    § B: changed from pointwise factor check to composed check
+    #    to match the stated invariant and allow attributions that
+    #    damp asymmetry without inverting it.
+    from .coupling_base import K_BASE
+    base_nr = K_BASE[MoneyTerm.N][MoneyTerm.R]
+    base_rn = K_BASE[MoneyTerm.R][MoneyTerm.N]
     for attribution in AttributedValue:
         f_nr = _ATTRIBUTION_FACTORS[attribution][MoneyTerm.N][MoneyTerm.R]
         f_rn = _ATTRIBUTION_FACTORS[attribution][MoneyTerm.R][MoneyTerm.N]
-        assert f_nr >= f_rn, (
+        composed_nr = base_nr * f_nr
+        composed_rn = base_rn * f_rn
+        assert composed_nr + 1e-9 >= composed_rn, (
             f"Minsky asymmetry violated for {attribution.value}: "
-            f"K[N][R] factor={f_nr} must be >= K[R][N] factor={f_rn}"
+            f"composed K[N][R]={composed_nr:.4f} must be >= "
+            f"composed K[R][N]={composed_rn:.4f} "
+            f"(factors: f_nr={f_nr}, f_rn={f_rn})"
         )
 
     # 6. SPECULATIVE_CLAIM must amplify coupling relative to STATE_ENFORCED.

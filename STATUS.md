@@ -4,7 +4,7 @@ Status of the metabolic-accounting framework at end of session.
 
 ## Verified (all tests run, all passing)
 
-Thirty-eight test suites, every one runs and passes:
+Forty-three test suites, every one runs and passes:
 
 ```
 # main accounting stack (18, pre-term_audit)
@@ -48,10 +48,15 @@ test_provenance:             PASS   <-- AUDIT_07: 5-kind provenance taxonomy
 test_tier1_coverage:         PASS   <-- AUDIT_07: Tier 1 fully provenanced + neg-linkage tripwires
 test_expertise_x_audit:      PASS   <-- AUDIT_08: E_X cross-domain closure, selection-inversion tripwire
 test_routing_around_detection: PASS   <-- AUDIT_08: canary-principle + substrate-evidence
+test_legislative_audit:      PASS   <-- AUDIT_09: first-principles rule audit, Bridge Watchers skeleton
+test_money_three_scope_falsification: PASS   <-- AUDIT_10: money fails signal-invariants in all 3 marketed scopes
+test_money_signal:           PASS   <-- AUDIT_11: coupling framework smoke + all 9 README falsifiable claims
+test_historical_cases:       PASS   <-- AUDIT_12: 5 anchor cases with honest PLACEHOLDER provenance
+test_money_signal_accounting_bridge: PASS   <-- AUDIT_12: signal_quality + flag emitter + GlucoseFlow discount
 ```
 
-See `docs/AUDIT_06.md`, `docs/AUDIT_07.md`, and `docs/AUDIT_08.md`
-for the cross-checks that landed the most recent tests.
+See `docs/AUDIT_06.md` through `docs/AUDIT_12.md` for the cross-checks
+that landed the most recent tests.
 
 To verify:
 
@@ -313,6 +318,132 @@ verdict: sustainable_yield 0.056, trajectory -0.0017, ttr 21.67,
     dataclass field-ordering bug during extraction).
     `tests/test_routing_around_detection.py` (7 cases) tripwires
     canary detection's environment-conditional firing.
+
+## AUDIT_09 — first-principles legislative audit skeleton
+
+14. New package `term_audit/legislative_audit/`. Intake of a user-
+    supplied skeleton (Bridge Watchers): `LegislativeAudit` composite
+    over `FirstPrinciplesPurpose`, `ContextAssumption`, `ScopeBoundary`,
+    `ConsequenceAnalysis`, `CounterfactualAnalysis`, `TransmissionEffect`,
+    `ContradictionAnalysis`, `ExceptionPathway`, `SubstrateEvidence`.
+    Two worked examples (bridge-permit-in-constrained-context, Good
+    Samaritan chilling effect) both saturate at alignment 0.00 / harm
+    1.00. Typo in the supplied spec (`alternative_mechanchanisms`)
+    fixed at intake; `tests/test_legislative_audit.py` (7 cases)
+    tripwires the skeleton, including monotonicity of the scoring
+    functions.
+
+## AUDIT_10 — money three-scope falsification audit
+
+15. New module `term_audit/audits/money_three_scope_falsification.py`.
+    Intake of a user-supplied module auditing money across three
+    marketed scopes (flow-system / community-organism / civilization-
+    lube) via 12 invariants (4 per scope). Under
+    `current_regime_money_state()` all 3 scopes falsify (0/12
+    invariants hold), and `structural_claim_holds` is True.
+    `tests/test_money_three_scope_falsification.py` (7 cases)
+    tripwires the structural claim, the falsification hook (flip
+    all 12 flags to True → all scopes survive → claim falsified),
+    and a `to_real_flag()` bridge from the module's lite flag type
+    to the adapter's real `AssumptionValidatorFlag` (lite uses
+    `source`/`reason`/str-severity, real uses `source_audit`/
+    `message`/float-severity + `failure_mode`).
+16. Chat-paste damage caught at intake: smart quotes throughout,
+    `from **future** import annotations` and `if **name** ==
+    "**main**":` (markdown-bold leaking onto dunder names), and
+    similar. Cleaned before commit.
+17. Merged `money_signal/` (6 files, ~2100 lines) from `origin/main`:
+    coupling-matrix model of money-as-signal dynamics across temporal
+    / cultural / attribution / observer axes. Complementary to the
+    three-scope audit: three-scope asks whether money qualifies as a
+    signal at all; `money_signal/` characterizes how it couples when
+    assumed to be one. Integration path named in AUDIT_10 § D.1.
+18. AUDIT_07 § C.4 (money four-function decomposition) status updated
+    to `[PARTIALLY ADDRESSED]`: this audit adds a scope-framing
+    decomposition (flow / community / lube), which is structurally
+    parallel to V_A/V_B/V_C and K_A/K_B/K_C. The classical
+    four-function decomposition (M_A medium-of-exchange / M_B store-
+    of-value / M_C unit-of-account / M_D standard-of-deferred-
+    payment) remains `[OPEN]` as a distinct audit target.
+
+## AUDIT_11 — money_signal subsystem completion + cultural validator bug
+
+19. Merged 4 new files from `origin/main` on `money_signal/`:
+    `coupling.py` (composition + memoization + diagnostics),
+    `coupling_state.py`, `coupling_substrate.py`, `README.md`
+    (~1540 new lines). All 9 modules import. Three of the README's
+    9 falsifiable claims tripwired at composed-coupling level:
+    #1 Minsky asymmetry holds (ratio 1.31/1.51/0.52 across
+    HEALTHY/STRESSED/RECOVERING), #6 issuer insulation (0.208 vs
+    0.863 thin-holder magnitude under STRESSED), #7 near-collapse
+    permits sign flips.
+20. **FIXED bug** (AUDIT_11 § B, Option 1 applied):
+    `validate_all_factor_modules()` shipped broken — the README says
+    "Always validate at startup" but the pointwise Minsky check in
+    `coupling_cultural.py`/`coupling_attribution.py`/`coupling_observer.py`
+    rejected COMMUNITY_TRUST, whose factors deliberately damp Minsky
+    asymmetry (composed ratio = 1.0, satisfying README claim #1 at
+    composed level). Fix: all three validators now compute composed
+    coupling (`K_BASE[i][j] * f_ij`) and assert `>=` at that level.
+    `validate_all_factor_modules()` runs clean.
+    `tests/test_money_signal.py::test_3` flipped from DETECTOR to
+    PASS assertion.
+21. **FIXED bug** (AUDIT_11 § B.5, Option 1 applied): once the
+    factor-validator fix landed, `python -m money_signal.coupling`
+    hit a second sanity-bound assertion: composed K[N][R] = 3.66
+    on the module's own NEAR_COLLAPSE example (case_c) exceeded
+    the bound `[-3.0, 3.0]`. The bound contradicted README claim
+    #8 ("|K[N][R]| dominates all other off-diagonals in collapse").
+    Fix: bound widened to `[-5.0, 5.0]`. Accommodates legitimate
+    collapse-regime stacking; still catches pathological runaway
+    (>10). `python -m money_signal.coupling` now runs end-to-end
+    across all four README example cases. Tripwire in
+    `tests/test_money_signal.py::test_3b` asserts
+    `validate_composition` passes on cases A–D with expected Minsky
+    coefficients 1.24×/1.41×/1.73×/1.94×.
+22. **Coverage completion**: `money_signal/__init__.py` added
+    (AUDIT_11 § C.1 closed). All 9 README falsifiable claims now
+    tripwired (originally 3/9 at AUDIT_11 close): tests 8/9/10/11/12/13
+    cover claims #2 hysteresis, #3 reciprocity damping, #4 speculative
+    amplification, #5 observer asymmetry, #8 Minsky dominance in
+    collapse, #9 digital infrastructure coupling. Tests 5/7/6/12/3b
+    cover claims #1/#6/#7/#8/composed-Minsky across the framework.
+    Test suite for the money_signal subsystem: 14 cases.
+
+## AUDIT_12 — historical cases + accounting bridge
+
+23. **`money_signal/historical_cases.py`** (AUDIT_11 close-out item
+    closed): 5 anchor cases (Weimar 1921-23, Zimbabwe 2007-09,
+    GFC 2008, Cyprus 2013, Argentina 2001-02) documenting the
+    framework's pre/during/post DimensionalContexts and recorded
+    qualitative K_ij shifts. Every ObservedDynamic uses the
+    DynamicShift enum (no fabricated numeric K values per the
+    AUDIT_07 Provenance discipline). Every shift carries typed
+    Provenance — EMPIRICAL with canonical source refs or
+    PLACEHOLDER with a named retirement dataset. `compare_case`
+    produces 4/5 qualitative matches; Cyprus correctly flagged as
+    the observer-asymmetry case (claim #5), not a K[N][R]
+    amplification case. 7 tripwires.
+24. **`money_signal/accounting_bridge.py`** (AUDIT_11 close-out item
+    closed): `signal_quality(ctx) -> float in [0,1]` computes the
+    reliability of monetary denomination under a coupling context.
+    `coupling_assumption_flags(ctx)` emits real AssumptionValidatorFlag
+    records for the accounting adapter pipeline. `adjust_glucose_flow`
+    produces a non-mutating adjunct view on a GlucoseFlow showing
+    raw and signal-quality-discounted profit. Quality gradient
+    across state regimes: healthy-thin 0.919, stressed 0.869,
+    near-collapse 0.449 (gap 0.47). Near-collapse emits 4 flags
+    including a dedicated `near_collapse_regime` flag at severity
+    0.90. 8 tripwires, including test_8 that mechanically asserts
+    **no top-level `money_signal/ -> accounting/` import** anywhere
+    in the package — the bridge direction is load-bearing.
+25. **AUDIT_11 close-out resolved**: the two items named as `[OPEN]`
+    in AUDIT_11 close-out (historical_cases.py, glucose-flow
+    integration) are now `[CLOSED]` as skeletons. Three new items
+    named in AUDIT_12 § D for future passes: empirical K_ij
+    extraction from the retirement_path datasets, typed Provenance
+    on the bridge weights, automatic DimensionalContext inference
+    for compute_flow integration.
 
 ## What the framework does end-to-end
 

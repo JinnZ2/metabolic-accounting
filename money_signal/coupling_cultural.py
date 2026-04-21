@@ -318,15 +318,30 @@ def validate_cultural_factors() -> None:
                 f"(calibration scope), got K[{i.value}][{j.value}] = {v}"
             )
 
-    # 5. Minsky asymmetry direction must be preserved at every scope.
-    #    K[N][R] factor >= K[R][N] factor. Trust never rebuilds faster
-    #    than it collapses in any cultural regime.
+    # 5. Minsky asymmetry direction must be preserved at every scope,
+    #    at the COMPOSED coupling level (README claim #1). The factor
+    #    matrix may reduce or amplify asymmetry relative to base, but
+    #    the composed K[N][R] must not fall below composed K[R][N].
+    #
+    #    AUDIT_11 § B: this check was previously pointwise on factors
+    #    (f_nr >= f_rn), which is strictly stronger than the README
+    #    invariant and rejected COMMUNITY_TRUST, whose factors
+    #    (f_nr=0.7, f_rn=0.8) are deliberately set to damp asymmetry
+    #    — composed K[N][R] = 0.8 * 0.7 = 0.56 = 0.7 * 0.8 = K[R][N].
+    #    The composed check matches the documented invariant exactly.
+    from .coupling_base import K_BASE
+    base_nr = K_BASE[MoneyTerm.N][MoneyTerm.R]
+    base_rn = K_BASE[MoneyTerm.R][MoneyTerm.N]
     for scope in CulturalScope:
         f_nr = _CULTURAL_FACTORS[scope][MoneyTerm.N][MoneyTerm.R]
         f_rn = _CULTURAL_FACTORS[scope][MoneyTerm.R][MoneyTerm.N]
-        assert f_nr >= f_rn, (
+        composed_nr = base_nr * f_nr
+        composed_rn = base_rn * f_rn
+        assert composed_nr + 1e-9 >= composed_rn, (
             f"Minsky asymmetry violated at cultural scope {scope.value}: "
-            f"K[N][R] factor={f_nr} must be >= K[R][N] factor={f_rn}"
+            f"composed K[N][R]={composed_nr:.4f} must be >= "
+            f"composed K[R][N]={composed_rn:.4f} "
+            f"(factors: f_nr={f_nr}, f_rn={f_rn})"
         )
 
     # 6. HIGH_RECIPROCITY must damp the R<->N coupling relative to

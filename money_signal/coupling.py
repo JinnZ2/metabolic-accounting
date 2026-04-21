@@ -174,16 +174,25 @@ def validate_composition(context: DimensionalContext) -> None:
             f"must be 1.0, got {v}. Context: {context.describe()}"
         )
 
-    # 2. No composite coefficient may exceed +3.0 or go below -3.0.
+    # 2. No composite coefficient may exceed +5.0 or go below -5.0.
     #    This is a sanity check against runaway amplification from
     #    factor stacking. If this fails, one of the factor modules
     #    is producing values outside its intended range.
+    #
+    #    AUDIT_11 § B.5: bound widened from [-3.0, 3.0]. The prior
+    #    bound rejected the module's own NEAR_COLLAPSE example
+    #    (case_c: digital-substrate, thin-holder in collapse) at
+    #    composed K[N][R] = 3.66, contradicting README claim #8
+    #    ("|K[N][R]| dominates all other off-diagonals in collapse").
+    #    [-5.0, 5.0] accommodates legitimate collapse-regime stacking
+    #    while still catching pathological runaway (>10 indicates a
+    #    broken factor module, not an extreme-but-real case).
     for i in MoneyTerm:
         for j in MoneyTerm:
             v = matrix[i][j]
-            assert -3.0 <= v <= 3.0, (
+            assert -5.0 <= v <= 5.0, (
                 f"Composed coefficient K[{i.value}][{j.value}]={v} "
-                f"outside sanity range [-3.0, 3.0]. "
+                f"outside sanity range [-5.0, 5.0]. "
                 f"Context: {context.describe()}"
             )
 

@@ -403,15 +403,26 @@ def validate_observer_factors() -> None:
                 f"thin holder factor {thin[i][j]}"
             )
 
-    # 6. Minsky asymmetry direction preserved for every observer.
-    #    Even the most insulated observer sees trust collapse faster
-    #    than rebuild within their own view of the system.
+    # 6. Minsky asymmetry direction preserved for every observer, at
+    #    the COMPOSED coupling level (README claim #1). Even the most
+    #    insulated observer sees trust collapse faster than rebuild
+    #    within their own view of the system.
+    #
+    #    AUDIT_11 § B: changed from pointwise factor check to composed
+    #    check to match the stated invariant.
+    from .coupling_base import K_BASE
+    base_nr = K_BASE[MoneyTerm.N][MoneyTerm.R]
+    base_rn = K_BASE[MoneyTerm.R][MoneyTerm.N]
     for observer in ObserverPosition:
         f_nr = _OBSERVER_FACTORS[observer][MoneyTerm.N][MoneyTerm.R]
         f_rn = _OBSERVER_FACTORS[observer][MoneyTerm.R][MoneyTerm.N]
-        assert f_nr >= f_rn, (
+        composed_nr = base_nr * f_nr
+        composed_rn = base_rn * f_rn
+        assert composed_nr + 1e-9 >= composed_rn, (
             f"Minsky asymmetry violated for observer {observer.value}: "
-            f"K[N][R] factor={f_nr} must be >= K[R][N] factor={f_rn}"
+            f"composed K[N][R]={composed_nr:.4f} must be >= "
+            f"composed K[R][N]={composed_rn:.4f} "
+            f"(factors: f_nr={f_nr}, f_rn={f_rn})"
         )
 
 
