@@ -55,7 +55,7 @@ outputs, relation to two sibling repos, and usage example. First
 user-facing README inside `money_signal/`.
 
 
-## Part B — Real bug surfaced at intake   `[DETECTED]`
+## Part B — Real bug surfaced at intake   `[CLOSED]` (Option 1 applied post-AUDIT_11)
 
 ### B.1 `validate_all_factor_modules()` crashes on import-time call
 
@@ -139,12 +139,51 @@ decision before applying.
 ### B.4 Tripwire landed
 
 `tests/test_money_signal.py::test_3_cultural_validator_current_failure_detected`
-is a DETECTOR test — it explicitly asserts the current failure
-mode. When the bug is fixed (via any of the three options), this
-test will start failing. At that point the test should be flipped
-to assert `validate_cultural_factors()` succeeds, and this audit
-item moves to `[CLOSED]`. Same discipline as AUDIT_06 § A.2's
-stage-ordering failure.
+was a DETECTOR test — it explicitly asserted the current failure
+mode. **Post-AUDIT_11, Option 1 applied**: the Minsky pointwise
+checks in `coupling_cultural.py`, `coupling_attribution.py`, and
+`coupling_observer.py` were rewritten to compute composed coupling
+(`K_BASE[i][j] * f_ij`) and assert the `>=` relation at that level,
+matching README claim #1 exactly. `validate_all_factor_modules()`
+now runs clean. The test was flipped to
+`test_3_cultural_validator_passes_at_composed_level` and asserts
+success on both `validate_cultural_factors()` and
+`validate_all_factor_modules()`.
+
+### B.5 Second ship-breaking bug surfaced downstream   `[DETECTED]`
+
+Once § B fix landed, `python -m money_signal.coupling` progressed
+past factor validation but then raised on the CLI's own NEAR_COLLAPSE
+example case (case_c: SEASONAL / INSTITUTIONAL / STATE_ENFORCED /
+TOKEN_HOLDER_THIN / DIGITAL / NEAR_COLLAPSE):
+
+```
+AssertionError: Composed coefficient
+K[network_acceptance][reversal_reliability]=3.6608 outside sanity
+range [-3.0, 3.0].
+```
+
+`validate_composition` enforces a `[-3.0, 3.0]` sanity bound on
+composed coefficients as a check against runaway amplification.
+But README claim #8 (Minsky dominance in collapse) expects
+`|K[N][R]|` to *dominate* all other off-diagonals in NEAR_COLLAPSE
+— and the CLI's own example is built to exercise that. The
+stacking of NEAR_COLLAPSE state × DIGITAL substrate × TOKEN_HOLDER_THIN
+observer all amplifying in the same direction produces 3.66,
+exceeding the sanity bound.
+
+Three options, parallel to § B.3:
+
+1. Widen the sanity bound (e.g., `[-5.0, 5.0]`) to accommodate
+   legitimate NEAR_COLLAPSE stacking. Matches the documented claim
+   that `|K[N][R]|` should dominate in collapse.
+2. Relax the bound specifically for NEAR_COLLAPSE (the bound is
+   there to catch accidental runaway; NEAR_COLLAPSE amplification
+   is by design).
+3. The CLI's example case is too extreme; replace with a less-
+   stacked one. Discards the demonstration of claim #8.
+
+Option 1 recommended; deferred for decision, same pattern as § B.3.
 
 
 ## Part C — Other drift / smaller findings

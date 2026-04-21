@@ -74,37 +74,29 @@ def test_2_passing_validators_still_pass():
     print("PASS")
 
 
-def test_3_cultural_validator_current_failure_detected():
-    """DETECTOR test: the pointwise Minsky check in
-    validate_cultural_factors fails on COMMUNITY_TRUST.
+def test_3_cultural_validator_passes_at_composed_level():
+    """Formerly a DETECTOR for the pointwise Minsky bug in
+    validate_cultural_factors (AUDIT_11 § B). AUDIT_12 applied
+    Option 1: the Minsky checks in cultural, attribution, and
+    observer validators now run at the COMPOSED coupling level,
+    matching the README's claim #1.
 
-    When the underlying bug is fixed (either by swapping
-    COMMUNITY_TRUST factors or by changing the validator to
-    check composed coupling — see AUDIT_11 § B), this test will
-    START failing. At that point flip the assertion: the
-    validator should pass, and the bug is closed.
+    COMMUNITY_TRUST previously tripped the pointwise check
+    (f_nr=0.7 < f_rn=0.8). At composed level:
+      K_BASE[N][R] * f_nr = 0.8 * 0.7 = 0.56
+      K_BASE[R][N] * f_rn = 0.7 * 0.8 = 0.56
+    Equal. Satisfies >=. Passes.
 
-    The test exists to prevent silent regressions in either
-    direction — whoever fixes the validator MUST also update
-    this tripwire."""
-    print("\n--- TEST 3: cultural validator fails on COMMUNITY_TRUST ---")
+    And validate_all_factor_modules() — which the README calls
+    out as "Always validate at startup" — now runs clean."""
+    print("\n--- TEST 3: cultural validator passes at composed level ---")
     from money_signal.coupling_cultural import validate_cultural_factors
-    try:
-        validate_cultural_factors()
-    except AssertionError as e:
-        msg = str(e)
-        assert "community_trust" in msg, \
-            f"FAIL: unexpected validator failure: {msg}"
-        assert "Minsky" in msg or "asymmetry" in msg, \
-            f"FAIL: unexpected validator failure: {msg}"
-        print(f"  detected known failure: {msg[:120]}")
-        print("PASS (documents AUDIT_11 § B finding)")
-        return
-    raise AssertionError(
-        "FAIL: validate_cultural_factors now passes. "
-        "If fixed intentionally, flip this test to assert success and "
-        "update AUDIT_11 § B."
-    )
+    from money_signal.coupling import validate_all_factor_modules
+
+    validate_cultural_factors()
+    validate_all_factor_modules()
+    print("  validate_cultural_factors + validate_all_factor_modules pass")
+    print("PASS")
 
 
 def test_4_end_to_end_coupling_matrix():
@@ -252,7 +244,7 @@ def test_7_issuer_insulation():
 if __name__ == "__main__":
     test_1_all_modules_import()
     test_2_passing_validators_still_pass()
-    test_3_cultural_validator_current_failure_detected()
+    test_3_cultural_validator_passes_at_composed_level()
     test_4_end_to_end_coupling_matrix()
     test_5_minsky_holds_at_composed_level()
     test_6_near_collapse_permits_sign_flips()

@@ -375,17 +375,25 @@ verdict: sustainable_yield 0.056, trajectory -0.0017, ttr 21.67,
     HEALTHY/STRESSED/RECOVERING), #6 issuer insulation (0.208 vs
     0.863 thin-holder magnitude under STRESSED), #7 near-collapse
     permits sign flips.
-20. **DETECTED bug**: `validate_all_factor_modules()` ships broken.
-    The README says "Always validate at startup"; the validator
-    crashes on `coupling_cultural.COMMUNITY_TRUST` because the
-    Minsky check runs pointwise on factors (`f_nr=0.7 < f_rn=0.8`)
-    rather than on composed coupling (where the values compose to
-    exactly equal, satisfying the stated `>=`). README's claim is
-    composed-level. Three fix options in `docs/AUDIT_11.md` § B.3;
-    Option 1 (weaken validator to match README invariant)
-    recommended. `tests/test_money_signal.py::test_3` is a
-    DETECTOR — when the bug is fixed, the test flips from
-    documenting-failure to asserting-success.
+20. **FIXED bug** (AUDIT_11 § B, Option 1 applied):
+    `validate_all_factor_modules()` shipped broken — the README says
+    "Always validate at startup" but the pointwise Minsky check in
+    `coupling_cultural.py`/`coupling_attribution.py`/`coupling_observer.py`
+    rejected COMMUNITY_TRUST, whose factors deliberately damp Minsky
+    asymmetry (composed ratio = 1.0, satisfying README claim #1 at
+    composed level). Fix: all three validators now compute composed
+    coupling (`K_BASE[i][j] * f_ij`) and assert `>=` at that level.
+    `validate_all_factor_modules()` runs clean.
+    `tests/test_money_signal.py::test_3` flipped from DETECTOR to
+    PASS assertion.
+21. **NEW DETECTED bug** (AUDIT_11 § B.5): post-fix,
+    `python -m money_signal.coupling` progresses but crashes on the
+    CLI's own NEAR_COLLAPSE example (composed K[N][R] = 3.66 exceeds
+    the `validate_composition` sanity bound `[-3.0, 3.0]`). The
+    bound contradicts README claim #8 ("|K[N][R]| dominates all
+    other off-diagonals in collapse"). Three options in AUDIT_11
+    § B.5; Option 1 (widen bound) recommended. Deferred for
+    decision.
 
 ## What the framework does end-to-end
 
