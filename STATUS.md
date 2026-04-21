@@ -4,7 +4,7 @@ Status of the metabolic-accounting framework at end of session.
 
 ## Verified (all tests run, all passing)
 
-Forty-six test suites, every one runs and passes:
+Forty-seven test suites, every one runs and passes:
 
 ```
 # main accounting stack (18, pre-term_audit)
@@ -56,6 +56,7 @@ test_money_signal_accounting_bridge: PASS   <-- AUDIT_12: signal_quality + flag 
 test_investment_signal:      PASS   <-- AUDIT_13 + AUDIT_14 Part A: investment_signal/ intake, 23/23 README claims tripwired
 test_investment_historical_cases: PASS   <-- AUDIT_14 Part B: 5 anchor cases, CLT counter-example, 4/5 framework-covers-observed
 test_study_scope_audit:      PASS   <-- AUDIT_15: scope-bounded measurement audit framework
+test_signal_asymmetry:       PASS   <-- AUDIT_14 Part C: distributional stub + 4 literature anchors
 ```
 
 See `docs/AUDIT_06.md` through `docs/AUDIT_15.md` for the cross-checks
@@ -528,7 +529,25 @@ verdict: sustainable_yield 0.056, trajectory -0.0017, ttr 21.67,
 
 ## AUDIT_14 — Part B (E.2): investment_signal/historical_cases.py
 
-34. **`investment_signal/historical_cases.py`** shipped. Five anchor
+## AUDIT_14 — Part C (E.4): distributional/signal_asymmetry stub
+
+35. **`distributional/signal_asymmetry.py`** shipped as a lean
+    interface stub per Todo.md priority 2 routing: production
+    cross-observer analysis lives in the sister repo
+    (`thermodynamic-accountability-framework/money_distribution/`,
+    `investment_distribution/`). This stub provides a shared
+    `ObserverAsymmetryReport` dataclass, an `observer_delta()`
+    helper, a pointer constant to the sister repo, and
+    `LITERATURE_ANCHORS` with four typed-Provenance entries:
+    Distributional National Accounts (Piketty-Saez-Zucman /
+    WID.world), Heterogeneous Agent Macro (Kaplan-Moll-Violante
+    HANK), Stratification Economics (Darity-Hamilton), Fiscal
+    Incidence (Harberger / CBO / JCT). 6 tripwires.
+    AUDIT_13 Part E fully closed across chunks A/B/C.
+
+## AUDIT_14 — Part B (E.2): investment_signal/historical_cases.py
+
+36. **`investment_signal/historical_cases.py`** shipped. Five anchor
     cases parallel to money_signal/historical_cases.py: Enron 2001
     (SYNTHETIC reverse causation, conf 0.95), MBS 2004-2008 (multi-
     layer opacity + terminal money near-collapse, conf 0.95), ZIRP

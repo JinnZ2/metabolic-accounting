@@ -183,38 +183,65 @@ The framework's thresholds did not move.
   discipline.
 
 
-## Part C — AUDIT_13 § E.4: distributional stub   `[PENDING, chunk 3]`
+## Part C — AUDIT_13 § E.4: distributional stub   `[CLOSED]`
 
-To land in the final commit on this branch. Per § A.3 above:
-lean interface stub with literature-anchor registry, not a full
-implementation.
+Shipped per § A.3: lean interface stub with literature-anchor
+registry, NOT a full implementation. Production cross-observer
+analysis lives in
+`thermodynamic-accountability-framework/money_distribution/` and
+`investment_distribution/` per `Todo.md` priority 2.
 
-Planned shape:
+### C.1 What landed
 
-```python
-# distributional/signal_asymmetry.py
+`distributional/signal_asymmetry.py` (~260 lines):
 
-@dataclass(frozen=True)
-class ObserverAsymmetryReport:
-    """Cross-observer comparison of signal quality / coupling under
-    the same system state. See docs/AUDIT_14.md § C."""
-    ...
+- **`LITERATURE_ANCHORS`** dict: four mature empirical strands,
+  each a complete typed `Provenance` record under the AUDIT_07
+  taxonomy.
+  - `distributional_national_accounts` — EMPIRICAL (Piketty-Saez-
+    Zucman QJE 2018; WID.world open-data corpus)
+  - `heterogeneous_agent_macro` — EMPIRICAL (Kaplan-Moll-Violante
+    AER 2018; Bhandari et al. Econometrica 2021)
+  - `stratification_economics` — THEORETICAL (Darity 2005; Darity-
+    Hamilton 2015). Defensive anchor for the framework's discrete
+    `ObserverPosition` enum against continuous-percentile critique.
+  - `fiscal_incidence` — EMPIRICAL (Harberger 1962; CBO annual
+    distributional analyses; JCT methodology)
+- **`ObserverAsymmetryReport`** frozen dataclass: shared data shape
+  the sister-repo implementation can target. Minimal fields
+  (`subject`, `observers`, `values`, `delta`, `asymmetry_ratio`,
+  `caveats`, `literature_anchor_key`) — the sister repo is
+  expected to attach richer telemetry.
+- **`observer_delta()`** helper: simplest-possible asymmetry
+  diagnostic — subtract two scalar observer-indexed values. Rejects
+  unknown `literature_anchor_key` with a named `ValueError`.
+- **`SISTER_REPO_IMPLEMENTATION_NOTE`** constant: explicit pointer
+  to the sister-repo targets.
 
-LITERATURE_ANCHORS: Dict[str, Provenance] = {
-    "distributional_national_accounts": empirical(...),  # Piketty-Saez-Zucman / WID.world
-    "heterogeneous_agent_macro":        empirical(...),  # Kaplan-Moll-Violante HANK
-    "stratification_economics":         theoretical(...), # Darity-Hamilton
-    "fiscal_incidence":                 empirical(...),   # Harberger / CBO / JCT
-}
+### C.2 Tripwires
 
-# Concrete implementation: see
-# thermodynamic-accountability-framework/money_distribution/ and
-# investment_distribution/
-```
+`tests/test_signal_asymmetry.py` (6 cases):
 
-No K-matrix consumption or numeric reporting here. The point is
-to leave an anchor in the repo that the sister-repo implementation
-can reference, with the literature framework pre-identified.
+- 1: four literature anchors registered with expected keys
+- 2: **load-bearing** — every anchor carries complete typed
+  Provenance. Regressing this erases the epistemic grounding of
+  the stub.
+- 3: `observer_delta` builds a structurally valid report
+- 4: unknown `literature_anchor_key` → `ValueError` (not silent
+  acceptance)
+- 5: `value_a == 0` → `asymmetry_ratio = None` (no silent
+  `ZeroDivisionError`, no silent infinity)
+- 6: sister-repo pointer names both target repos
+
+### C.3 What this stub does NOT do
+
+- No K-matrix consumption.
+- No numeric reporting against `money_signal/coupling_observer.py`
+  or `investment_signal/`.
+- No gating of any accounting-pipeline result.
+
+If you need full cross-observer analysis, go to the sister repos
+named in `SISTER_REPO_IMPLEMENTATION_NOTE`.
 
 
 ## Part D — AUDIT_13 Part E status at end of audit
@@ -222,18 +249,31 @@ can reference, with the literature framework pre-identified.
 | Item | Status |
 | --- | --- |
 | § E.1 remaining README claims | `[CLOSED]` — 14 new tests, 23/23 tripwired |
-| § E.2 investment historical_cases | `[PENDING, chunk 2]` |
+| § E.2 investment historical_cases | `[CLOSED]` — 5 anchors, 4/5 framework-covers-observed |
 | § E.3 Todo.md integration | `[CLOSED]` — nav row + cross-reference section |
-| § E.4 distributional consumer | `[PENDING, chunk 3]` — confirmed Option (Y), lean stub |
+| § E.4 distributional consumer | `[CLOSED]` — lean stub with 4 literature anchors; production lives in sister repo |
 
 
-## Close-out (Part A commit)
+## Close-out (all three chunks)
 
-- 14 new tripwires bring investment_signal coverage to 23/23
-  README falsifiable claims.
-- Todo.md integrated into the nav surface + audit trail.
-- Scope decision on E.4 closed via Todo.md's own routing.
-- Parts B and C follow in subsequent commits on this branch.
-- Regression: **44/44 PASS** post-Part A (same file count; all 14
-  new tests are inside the existing `test_investment_signal.py`,
-  growing it from 12 cases to 26).
+- AUDIT_13 Part E fully closed across three commits.
+- 14 + 8 + 6 = 28 new tripwire tests added across Parts A / B / C.
+- Two sibling audits landed during the chunking:
+  - AUDIT_15 (STUDY_SCOPE_AUDIT, new user-supplied methodology module)
+- `money_signal/` and `investment_signal/` subsystems both have:
+  - complete README-claim coverage tripwired
+  - an honest-placeholder historical_cases module
+  - a live accounting-bridge path (money_signal only, so far)
+  - a distributional interface stub routing to the sister repo
+- Regression across all three chunks: **47/47 PASS** at close
+  (was 44/44 before Part A).
+- Three items `[OPEN]` for future passes across the entire AUDIT_14
+  cycle:
+  1. ZIRP single-case-encoding outlier (subdivide into investor-type
+     sub-cases) — documented in Part B § B.3.
+  2. Extended Todo.md case list (Bitcoin flash crashes, Roman
+     denarius, Pacific shell networks, Indigenous reciprocity,
+     colonial resource extraction, 401k generational) — documented
+     in Todo.md audit cross-reference.
+  3. Full cross-observer analytic implementation — sister-repo
+     scope per Todo.md priority 2; not built here.
