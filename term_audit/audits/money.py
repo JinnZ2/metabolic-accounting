@@ -25,6 +25,298 @@ from term_audit.schema import (
 from term_audit.provenance import (
     empirical, theoretical, design_choice, placeholder, stipulative,
 )
+from term_audit.study_scope_audit import (
+    StudyScopeAudit, InstrumentAudit, ProtocolAudit, DomainCouplingAudit,
+    RegimeAudit, CausalModelAudit, ScopeBoundary,
+    Coupling, Regime,
+)
+
+
+# ---------------------------------------------------------------------------
+# AUDIT_19 § C: StudyScopeAudit retrofits for two Tier 1 citations.
+#
+# These are REAL scope audits grounded in public methodology
+# documents (Boskin Commission 1996 final report; McLeay/Radia/Thomas
+# 2014 BoE Quarterly Bulletin). They are NOT templates for the
+# remaining 72 EMPIRICAL records on this TermAudit tree — those
+# require per-citation research that AUDIT_19 explicitly declines
+# to fabricate. These two demonstrate the pattern.
+# ---------------------------------------------------------------------------
+
+_BOSKIN_CPI_SCOPE_AUDIT = StudyScopeAudit(
+    claim=(
+        "CPI approximates cost-of-living changes for US urban consumers"
+    ),
+    citation=(
+        "Boskin et al. 1996, 'Toward a More Accurate Measure of the "
+        "Cost of Living', Final Report to the Senate Finance Committee"
+    ),
+    instrument=InstrumentAudit(
+        instrument_name="BLS CPI survey + Consumer Expenditure Survey",
+        physical_quantity_measured=(
+            "monthly weighted price-change index over a basket of "
+            "consumer goods and services"
+        ),
+        measurement_range=(0.0, 10000.0),  # index values, not bounded physically
+        resolution=0.1,                     # index point
+        noise_floor=0.1,
+        sampling_rate_hz=None,              # monthly survey
+        spatial_resolution="US urban areas only; rural excluded",
+        calibration_source="1982-84 base period re-weighted periodically",
+        calibration_traceability="BLS re-weighting against CEX biennially",
+        drift_rate=(
+            "substitution bias ~0.4%/yr; quality/new-product bias "
+            "~0.6%/yr per Boskin Commission estimates"
+        ),
+    ),
+    protocol=ProtocolAudit(
+        sample_preparation=(
+            "83 strata × 38 pricing areas; price quotes collected from "
+            "~23,000 retail establishments monthly"
+        ),
+        environmental_controls={
+            "urban_population": True,
+            "fixed_basket_weights": "until biennial re-weight",
+        },
+        excluded_conditions=[
+            "rural consumer baskets",
+            "imputed owner-occupied housing inflation (treated via "
+            "rental equivalence, not direct)",
+            "quality improvements at pace exceeding hedonic adjustment",
+            "new-product categories prior to survey inclusion (lag of "
+            "years)",
+        ],
+        control_group_definition="n/a (observational index, not RCT)",
+        measurement_duration="monthly publication, continuous since 1913",
+        replication_count=1,  # single official series, no independent replication
+        blinding=False,
+        pre_registration=False,  # methodology public but revised periodically
+    ),
+    coupling=DomainCouplingAudit(
+        physical_domain="consumer price measurement",
+        instrument_coupling=Coupling.TIGHT,   # CPI IS the BLS instrument
+        protocol_coupling=Coupling.TIGHT,     # survey design determines the output
+        substrate_coupling=Coupling.MODERATE, # basket shifts with consumption
+        regime_coupling=Coupling.TIGHT,       # 1960s vs 2020s consumption patterns differ
+    ),
+    regime=RegimeAudit(
+        assumed_baseline=(
+            "stable consumption composition; representative urban "
+            "household; fixed-basket methodology"
+        ),
+        baseline_validity_window="1913-present, re-weighted periodically",
+        regime_state=Regime.DRIFTING,
+        regime_drift_indicators=[
+            "rise of services share of consumption",
+            "digital goods with near-zero marginal cost",
+            "housing-as-investment vs housing-as-consumption divergence",
+            "quality adjustment outpacing hedonic methodology",
+        ],
+        extrapolation_horizon=(
+            "intended as current-period indicator; long-horizon "
+            "extrapolation not a claim of the index"
+        ),
+    ),
+    causal_model=CausalModelAudit(
+        causal_frame=(
+            "statistical — CPI is not a causal model, it is an "
+            "aggregation rule over sampled prices"
+        ),
+        confounders_identified=[
+            "substitution bias",
+            "quality bias",
+            "new-product bias",
+            "outlet/retailer substitution",
+        ],
+        confounders_controlled=[
+            "substitution bias (partially, via geometric mean formula "
+            "at lower levels since 1999)",
+        ],
+        confounders_unmeasured=[
+            "housing bubble effects on owner-equivalent rent",
+            "financialization of consumer goods categories",
+            "observer asymmetry across income strata (deep vs thin "
+            "holder per money_signal vocabulary)",
+        ],
+        unknown_unknowns_acknowledged=True,  # Boskin explicitly flags
+        alternative_frames_considered=[
+            "true cost-of-living index (theoretical ideal)",
+            "PCE deflator (Fed's preferred alternative)",
+            "chained CPI (adopted 2002)",
+        ],
+    ),
+    scope=ScopeBoundary(
+        in_scope_conditions=[
+            "US urban consumer price movements, current period",
+            "aggregated measurement across the basket",
+        ],
+        edge_conditions=[
+            "regional sub-index comparison",
+            "sub-population cost-of-living comparison",
+        ],
+        out_of_scope_conditions=[
+            "cross-regime dollar-denominated comparison over long "
+            "horizons",
+            "individual-level purchasing power",
+            "rural or non-urban consumer experience",
+            "cost-of-living for income strata outside the survey's "
+            "representative household",
+        ],
+        undeclared_scope=[
+            "international purchasing-power comparisons",
+            "observer-position heterogeneity (different strata "
+            "experience different effective inflation)",
+        ],
+        extrapolation_claims=[
+            "multi-decade real-value comparisons frequently made by "
+            "downstream users, not by BLS itself",
+        ],
+    ),
+)
+
+
+_BOE_2014_MONEY_CREATION_SCOPE_AUDIT = StudyScopeAudit(
+    claim=(
+        "Commercial banks create money in the modern economy through "
+        "credit issuance; central bank reserves are a consequence of "
+        "that process, not a cause of it"
+    ),
+    citation=(
+        "McLeay, Radia & Thomas 2014, 'Money Creation in the Modern "
+        "Economy', Bank of England Quarterly Bulletin 2014 Q1"
+    ),
+    instrument=InstrumentAudit(
+        instrument_name=(
+            "BoE monetary-aggregate accounting + banking-sector "
+            "balance-sheet analysis"
+        ),
+        physical_quantity_measured=(
+            "broad monetary aggregates (M2, M4), reserves, bank "
+            "credit flows at aggregate UK level"
+        ),
+        measurement_range=(0.0, 1e13),  # £ aggregates, not physically bounded
+        resolution=1e6,                  # £1m in reported aggregates
+        noise_floor=1e6,
+        sampling_rate_hz=None,          # monthly/quarterly publication
+        spatial_resolution=(
+            "UK banking system aggregate; not cross-jurisdictional"
+        ),
+        calibration_source=(
+            "BoE reporting standards applied to regulated UK banks"
+        ),
+        calibration_traceability=(
+            "statistical returns from commercial banks under BoE "
+            "regulatory authority"
+        ),
+        drift_rate=(
+            "methodology generally stable; re-classification of "
+            "non-bank financial institutions occasionally moves "
+            "aggregates"
+        ),
+    ),
+    protocol=ProtocolAudit(
+        sample_preparation=(
+            "aggregate UK commercial-banking statistical returns"
+        ),
+        environmental_controls={
+            "regulatory_regime": "BoE reporting standards",
+            "currency": "GBP, post-1971",
+        },
+        excluded_conditions=[
+            "shadow-banking credit creation outside the regulated "
+            "reporting perimeter (partial)",
+            "cross-border bank credit interactions",
+            "fintech / stablecoin issuance outside regulated banks",
+        ],
+        control_group_definition=(
+            "comparison with textbook multiplier model and with "
+            "pre-QE baseline regime"
+        ),
+        measurement_duration="continuous monthly/quarterly reporting",
+        replication_count=1,  # one central-bank source; not independently replicated
+        blinding=False,
+        pre_registration=False,
+    ),
+    coupling=DomainCouplingAudit(
+        physical_domain="monetary economics / banking-sector accounting",
+        instrument_coupling=Coupling.TIGHT,   # aggregates ARE the instrument
+        protocol_coupling=Coupling.TIGHT,     # BoE definitions shape the output
+        substrate_coupling=Coupling.MODERATE, # claim about credit creation generalizes
+        regime_coupling=Coupling.MODERATE,    # post-gold-standard fiat regime
+    ),
+    regime=RegimeAudit(
+        assumed_baseline=(
+            "modern fiat regime; regulated commercial banks with "
+            "reserve requirements; central bank as rate-setter"
+        ),
+        baseline_validity_window="post-Bretton-Woods (1971-present)",
+        regime_state=Regime.DRIFTING,
+        regime_drift_indicators=[
+            "growth of shadow banking outside the direct measurement "
+            "perimeter",
+            "stablecoin and crypto credit creation outside regulated "
+            "reporting",
+            "CBDC proposals would restructure the instrument itself",
+        ],
+        extrapolation_horizon=(
+            "current-period structural claim; regime-change scenarios "
+            "(CBDC, full-reserve banking) explicitly out of scope"
+        ),
+    ),
+    causal_model=CausalModelAudit(
+        causal_frame=(
+            "mechanistic — identifies the accounting mechanism by "
+            "which commercial-bank loans create deposits, replacing "
+            "the textbook 'multiplier' causal frame"
+        ),
+        confounders_identified=[
+            "household deposit demand",
+            "regulatory capital constraints",
+            "central-bank interest-rate policy",
+            "quantitative-easing reserve injections",
+        ],
+        confounders_controlled=[
+            "accounting-level reserve/deposit distinction is explicit",
+        ],
+        confounders_unmeasured=[
+            "non-bank credit channels at full scope",
+            "cross-border credit interactions",
+            "behavioral-finance feedback on credit demand",
+        ],
+        unknown_unknowns_acknowledged=True,
+        alternative_frames_considered=[
+            "textbook money multiplier (explicitly rejected)",
+            "full-reserve / positive-money proposals (noted)",
+        ],
+    ),
+    scope=ScopeBoundary(
+        in_scope_conditions=[
+            "modern regulated-bank fiat regimes with a central bank",
+            "current-period aggregate-level claim about causation",
+        ],
+        edge_conditions=[
+            "emerging-market banking systems with weaker regulatory "
+            "reporting",
+            "economies with large dollarization or foreign-currency "
+            "deposits",
+        ],
+        out_of_scope_conditions=[
+            "gold-standard or commodity-backed regimes",
+            "CBDC-only regimes (hypothetical)",
+            "full-reserve banking regimes",
+            "individual firm-level or household-level predictions",
+        ],
+        undeclared_scope=[
+            "shadow-banking credit creation beyond the measurement "
+            "perimeter",
+            "crypto/stablecoin credit dynamics",
+        ],
+        extrapolation_claims=[
+            "broader claims about how monetary policy transmits to the "
+            "real economy often cite this paper but extend its scope",
+        ],
+    ),
+)
 
 
 MONEY_AUDIT = TermAudit(
@@ -221,6 +513,9 @@ MONEY_AUDIT = TermAudit(
                     "fixed physical or informational referent that is "
                     "stable across regime changes"
                 ),
+                # AUDIT_19 § C: real StudyScopeAudit attached, clearing
+                # the soft_gap that the scope_caveat otherwise creates.
+                scope_audit=_BOSKIN_CPI_SCOPE_AUDIT,
             ),
         ),
         SignalScore(
@@ -301,6 +596,8 @@ MONEY_AUDIT = TermAudit(
                     "property of the institutional arrangements that is "
                     "not itself set by those institutions"
                 ),
+                # AUDIT_19 § C: real StudyScopeAudit attached.
+                scope_audit=_BOE_2014_MONEY_CREATION_SCOPE_AUDIT,
             ),
         ),
         SignalScore(

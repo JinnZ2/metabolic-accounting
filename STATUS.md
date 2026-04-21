@@ -4,7 +4,7 @@ Status of the metabolic-accounting framework at end of session.
 
 ## Verified (all tests run, all passing)
 
-Forty-nine test suites, every one runs and passes:
+Fifty test suites, every one runs and passes:
 
 ```
 # main accounting stack (18, pre-term_audit)
@@ -59,6 +59,7 @@ test_study_scope_audit:      PASS   <-- AUDIT_15: scope-bounded measurement audi
 test_signal_asymmetry:       PASS   <-- AUDIT_14 Part C: distributional stub + 4 literature anchors
 test_informational_cost_audit: PASS   <-- AUDIT_16: why false certainty costs exponentially
 test_provenance_study_scope_integration: PASS   <-- AUDIT_17: Provenance optionally carries a StudyScopeAudit
+test_audit_19_integrations:  PASS   <-- AUDIT_19: scope↔cost wiring, PLACEHOLDER deferred_cost, 2 Tier 1 retrofits
 ```
 
 See `docs/AUDIT_06.md` through `docs/AUDIT_15.md` for the cross-checks
@@ -508,6 +509,32 @@ verdict: sustainable_yield 0.056, trajectory -0.0017, ttr 21.67,
     subsequent commits on this branch, extending `docs/AUDIT_14.md`.
 
 ## AUDIT_14 — Part B (E.2): investment_signal/historical_cases.py
+
+## AUDIT_19 — scope↔cost integration + 2 Tier 1 scope-audit retrofits
+
+41. `StudyScopeAudit.audit_report` now includes
+    `cost_growth_if_applied_out_of_scope` cross-referencing the
+    `CostGrowth` vocabulary from informational_cost_audit. Mapping:
+    IN_SCOPE/EDGE_OF_SCOPE → LINEAR, OUT_OF_SCOPE → EXPONENTIAL,
+    SCOPE_UNDECLARED → "unknown". Closes AUDIT_16 § D.1.
+42. `Provenance.deferred_cost` optional field landed on PLACEHOLDER
+    records. `placeholder()` constructor accepts `deferred_cost` kwarg.
+    `Provenance.soft_gap()` now also fires on PLACEHOLDER +
+    deferred_cost=EXPONENTIAL (compounding debt signal). LINEAR / None
+    are honest defaults and do not fire. Closes AUDIT_16 § D.2.
+43. Two real StudyScopeAudits demonstrated on money.py:
+    `_BOSKIN_CPI_SCOPE_AUDIT` attached to `calibration_exists` score
+    (grounded in Boskin Commission 1996 Final Report + BLS CPI
+    Handbook) and `_BOE_2014_MONEY_CREATION_SCOPE_AUDIT` attached to
+    `conservation_or_law` (grounded in McLeay/Radia/Thomas 2014 BoE
+    Q1 Bulletin). Each populates all 6 layers with facts drawn from
+    the published methodology — nothing fabricated. Remaining 72
+    Tier 1 EMPIRICAL records honestly left `[OPEN]` rather than
+    fabricated in bulk (AUDIT_19 § C.2). Coverage picture on
+    money.py post-retrofit: 7/7 complete, 2 scope_audits attached,
+    2 remaining soft gaps (the EMPIRICAL records with scope_caveats
+    that AUDIT_19 did not retrofit). AUDIT_07's 74/74 coverage
+    preserved. Demonstrates AUDIT_17 § D.1.
 
 ## AUDIT_18 — extended historical cases (Todo.md priority 1)
 
