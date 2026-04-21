@@ -4,7 +4,7 @@ Status of the metabolic-accounting framework at end of session.
 
 ## Verified (all tests run, all passing)
 
-Forty-one test suites, every one runs and passes:
+Forty-three test suites, every one runs and passes:
 
 ```
 # main accounting stack (18, pre-term_audit)
@@ -50,10 +50,12 @@ test_expertise_x_audit:      PASS   <-- AUDIT_08: E_X cross-domain closure, sele
 test_routing_around_detection: PASS   <-- AUDIT_08: canary-principle + substrate-evidence
 test_legislative_audit:      PASS   <-- AUDIT_09: first-principles rule audit, Bridge Watchers skeleton
 test_money_three_scope_falsification: PASS   <-- AUDIT_10: money fails signal-invariants in all 3 marketed scopes
-test_money_signal:           PASS   <-- AUDIT_11: coupling framework smoke + DETECTOR for cultural validator bug
+test_money_signal:           PASS   <-- AUDIT_11: coupling framework smoke + all 9 README falsifiable claims
+test_historical_cases:       PASS   <-- AUDIT_12: 5 anchor cases with honest PLACEHOLDER provenance
+test_money_signal_accounting_bridge: PASS   <-- AUDIT_12: signal_quality + flag emitter + GlucoseFlow discount
 ```
 
-See `docs/AUDIT_06.md` through `docs/AUDIT_11.md` for the cross-checks
+See `docs/AUDIT_06.md` through `docs/AUDIT_12.md` for the cross-checks
 that landed the most recent tests.
 
 To verify:
@@ -406,10 +408,42 @@ verdict: sustainable_yield 0.056, trajectory -0.0017, ttr 21.67,
     amplification, #5 observer asymmetry, #8 Minsky dominance in
     collapse, #9 digital infrastructure coupling. Tests 5/7/6/12/3b
     cover claims #1/#6/#7/#8/composed-Minsky across the framework.
-    Test suite for the money_signal subsystem: 14 cases. Still
-    [OPEN]: historical_cases.py empirical calibration (external
-    research); glucose-flow bridge to accounting/glucose.py
-    (architectural).
+    Test suite for the money_signal subsystem: 14 cases.
+
+## AUDIT_12 — historical cases + accounting bridge
+
+23. **`money_signal/historical_cases.py`** (AUDIT_11 close-out item
+    closed): 5 anchor cases (Weimar 1921-23, Zimbabwe 2007-09,
+    GFC 2008, Cyprus 2013, Argentina 2001-02) documenting the
+    framework's pre/during/post DimensionalContexts and recorded
+    qualitative K_ij shifts. Every ObservedDynamic uses the
+    DynamicShift enum (no fabricated numeric K values per the
+    AUDIT_07 Provenance discipline). Every shift carries typed
+    Provenance — EMPIRICAL with canonical source refs or
+    PLACEHOLDER with a named retirement dataset. `compare_case`
+    produces 4/5 qualitative matches; Cyprus correctly flagged as
+    the observer-asymmetry case (claim #5), not a K[N][R]
+    amplification case. 7 tripwires.
+24. **`money_signal/accounting_bridge.py`** (AUDIT_11 close-out item
+    closed): `signal_quality(ctx) -> float in [0,1]` computes the
+    reliability of monetary denomination under a coupling context.
+    `coupling_assumption_flags(ctx)` emits real AssumptionValidatorFlag
+    records for the accounting adapter pipeline. `adjust_glucose_flow`
+    produces a non-mutating adjunct view on a GlucoseFlow showing
+    raw and signal-quality-discounted profit. Quality gradient
+    across state regimes: healthy-thin 0.919, stressed 0.869,
+    near-collapse 0.449 (gap 0.47). Near-collapse emits 4 flags
+    including a dedicated `near_collapse_regime` flag at severity
+    0.90. 8 tripwires, including test_8 that mechanically asserts
+    **no top-level `money_signal/ -> accounting/` import** anywhere
+    in the package — the bridge direction is load-bearing.
+25. **AUDIT_11 close-out resolved**: the two items named as `[OPEN]`
+    in AUDIT_11 close-out (historical_cases.py, glucose-flow
+    integration) are now `[CLOSED]` as skeletons. Three new items
+    named in AUDIT_12 § D for future passes: empirical K_ij
+    extraction from the retirement_path datasets, typed Provenance
+    on the bridge weights, automatic DimensionalContext inference
+    for compute_flow integration.
 
 ## What the framework does end-to-end
 
