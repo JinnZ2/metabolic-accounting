@@ -85,14 +85,14 @@ from .derivative_distance import (
 )
 
 # Money-signal imports for the dependency relationship.
-from ..money_signal.coupling import (
+from money_signal.coupling import (
     coupling_matrix_as_dict as money_coupling_matrix,
     minsky_coefficient as money_minsky_coefficient,
     coupling_magnitude as money_coupling_magnitude,
     has_sign_flips as money_has_sign_flips,
     validate_all_factor_modules as validate_money_factor_modules,
 )
-from ..money_signal.dimensions import StateRegime as MoneyStateRegime
+from money_signal.dimensions import StateRegime as MoneyStateRegime
 
 
 # ============================================================================

@@ -35,7 +35,11 @@ from money_signal.accounting_bridge import (
     coupling_assumption_flags,
     adjust_glucose_flow,
     SignalAdjustedFlow,
+    regime_from_verdict_signal,
+    context_from_verdict_signal,
+    ALL_WEIGHTS,
 )
+from term_audit.provenance import coverage_report, ProvenanceKind
 
 
 def _ctx(state):
@@ -205,6 +209,121 @@ def test_8_one_way_bridge_no_accounting_import_in_money_signal():
     print("PASS")
 
 
+def test_9_weight_provenance_complete():
+    """AUDIT_13 § A: every tunable weight in signal_quality carries
+    typed Provenance per the AUDIT_07 discipline. This test locks
+    that in — drops in coverage are load-bearing and surface the
+    specific weight that regressed."""
+    print("\n--- TEST 9: weight Provenance coverage complete ---")
+    assert len(ALL_WEIGHTS) == 6, \
+        f"FAIL: expected 6 weighted thresholds, got {len(ALL_WEIGHTS)}"
+    provs = [w.provenance for w in ALL_WEIGHTS]
+    cov = coverage_report(provs)
+    assert cov["none"] == 0, f"FAIL: {cov['none']} weights without provenance"
+    assert cov["incomplete"] == 0, \
+        f"FAIL: {cov['incomplete']} weights incomplete: {cov['incomplete_details']}"
+    assert cov["by_kind"]["design_choice"] == 6, \
+        f"FAIL: expected all 6 weights DESIGN_CHOICE, got {cov['by_kind']}"
+    print(f"  {cov['complete']}/{cov['total']} complete, all DESIGN_CHOICE")
+    print("PASS")
+
+
+def test_10_regime_from_verdict_signal():
+    print("\n--- TEST 10: regime_from_verdict_signal maps correctly ---")
+    from money_signal.dimensions import StateRegime
+    assert regime_from_verdict_signal("GREEN") == StateRegime.HEALTHY
+    assert regime_from_verdict_signal("AMBER") == StateRegime.STRESSED
+    assert regime_from_verdict_signal("RED") == StateRegime.NEAR_COLLAPSE
+    assert regime_from_verdict_signal("BLACK") == StateRegime.NEAR_COLLAPSE
+    # lower-case should work (forgiving)
+    assert regime_from_verdict_signal("green") == StateRegime.HEALTHY
+    # recovering override
+    assert regime_from_verdict_signal("GREEN", recovering=True) == StateRegime.RECOVERING
+    # unknown signal raises
+    try:
+        regime_from_verdict_signal("PURPLE")
+    except ValueError:
+        pass
+    else:
+        raise AssertionError("FAIL: accepted unknown verdict signal")
+    print("  GREEN->HEALTHY, AMBER->STRESSED, RED/BLACK->NEAR_COLLAPSE, recovering override, PURPLE rejected")
+    print("PASS")
+
+
+def test_11_context_from_verdict_signal_end_to_end():
+    """Build a full DimensionalContext from a verdict + 5 declared
+    dimensions, run it through signal_quality. Covers the common
+    caller path named in AUDIT_12 § D.3."""
+    print("\n--- TEST 11: context_from_verdict_signal end-to-end ---")
+    from money_signal.dimensions import (
+        TemporalScope, CulturalScope, AttributedValue,
+        ObserverPosition, Substrate, StateRegime,
+    )
+    ctx_green = context_from_verdict_signal(
+        "GREEN",
+        temporal=TemporalScope.SEASONAL,
+        cultural=CulturalScope.INSTITUTIONAL,
+        attribution=AttributedValue.STATE_ENFORCED,
+        observer=ObserverPosition.TOKEN_HOLDER_THIN,
+        substrate=Substrate.METAL,
+    )
+    assert ctx_green.state == StateRegime.HEALTHY
+
+    ctx_red = context_from_verdict_signal(
+        "RED",
+        temporal=TemporalScope.SEASONAL,
+        cultural=CulturalScope.INSTITUTIONAL,
+        attribution=AttributedValue.STATE_ENFORCED,
+        observer=ObserverPosition.TOKEN_HOLDER_THIN,
+        substrate=Substrate.METAL,
+    )
+    assert ctx_red.state == StateRegime.NEAR_COLLAPSE
+
+    q_green = signal_quality(ctx_green)
+    q_red = signal_quality(ctx_red)
+    assert q_green > q_red, \
+        f"FAIL: GREEN quality {q_green:.3f} not > RED quality {q_red:.3f}"
+    print(f"  GREEN -> HEALTHY -> quality {q_green:.3f}")
+    print(f"  RED   -> NEAR_COLLAPSE -> quality {q_red:.3f}")
+    print("PASS")
+
+
+def test_12_real_verdict_object_integration():
+    """The helper takes a verdict signal string, so a caller holding
+    an actual Verdict from verdict/assess.py can pipe
+    verdict.sustainable_yield_signal straight in. This test closes
+    the AUDIT_12 § D.3 concrete integration path."""
+    print("\n--- TEST 12: real Verdict object integration ---")
+    from verdict.assess import Verdict
+    from money_signal.dimensions import (
+        TemporalScope, CulturalScope, AttributedValue,
+        ObserverPosition, Substrate, StateRegime,
+    )
+    v = Verdict(
+        sustainable_yield_signal="AMBER",
+        basin_trajectory="DEGRADING",
+        time_to_red=3.0,
+        forced_drawdown=50.0,
+        regeneration_debt=0.0,
+        metabolic_profit=100.0,
+        reported_profit=200.0,
+        profit_gap=100.0,
+    )
+    ctx = context_from_verdict_signal(
+        v.sustainable_yield_signal,
+        temporal=TemporalScope.SEASONAL,
+        cultural=CulturalScope.INSTITUTIONAL,
+        attribution=AttributedValue.STATE_ENFORCED,
+        observer=ObserverPosition.TOKEN_HOLDER_THIN,
+        substrate=Substrate.DIGITAL,
+    )
+    assert ctx.state == StateRegime.STRESSED
+    q = signal_quality(ctx)
+    assert 0.0 < q < 0.92, f"FAIL: STRESSED quality {q:.3f} out of expected band"
+    print(f"  AMBER verdict -> STRESSED regime -> quality {q:.3f}")
+    print("PASS")
+
+
 if __name__ == "__main__":
     test_1_signal_quality_bounded()
     test_2_healthy_stressed_collapse_gradient()
@@ -214,4 +333,8 @@ if __name__ == "__main__":
     test_6_flag_shape_compatible()
     test_7_adjust_glucose_flow_passes_through()
     test_8_one_way_bridge_no_accounting_import_in_money_signal()
+    test_9_weight_provenance_complete()
+    test_10_regime_from_verdict_signal()
+    test_11_context_from_verdict_signal_end_to_end()
+    test_12_real_verdict_object_integration()
     print("\nall accounting_bridge tests passed.")

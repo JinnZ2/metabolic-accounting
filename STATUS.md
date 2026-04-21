@@ -4,7 +4,7 @@ Status of the metabolic-accounting framework at end of session.
 
 ## Verified (all tests run, all passing)
 
-Forty-three test suites, every one runs and passes:
+Forty-four test suites, every one runs and passes:
 
 ```
 # main accounting stack (18, pre-term_audit)
@@ -52,10 +52,11 @@ test_legislative_audit:      PASS   <-- AUDIT_09: first-principles rule audit, B
 test_money_three_scope_falsification: PASS   <-- AUDIT_10: money fails signal-invariants in all 3 marketed scopes
 test_money_signal:           PASS   <-- AUDIT_11: coupling framework smoke + all 9 README falsifiable claims
 test_historical_cases:       PASS   <-- AUDIT_12: 5 anchor cases with honest PLACEHOLDER provenance
-test_money_signal_accounting_bridge: PASS   <-- AUDIT_12: signal_quality + flag emitter + GlucoseFlow discount
+test_money_signal_accounting_bridge: PASS   <-- AUDIT_12: signal_quality + flag emitter + GlucoseFlow discount; AUDIT_13: weight Provenance + verdict inference
+test_investment_signal:      PASS   <-- AUDIT_13: investment_signal/ intake, 11/23 README claims tripwired
 ```
 
-See `docs/AUDIT_06.md` through `docs/AUDIT_12.md` for the cross-checks
+See `docs/AUDIT_06.md` through `docs/AUDIT_13.md` for the cross-checks
 that landed the most recent tests.
 
 To verify:
@@ -444,6 +445,40 @@ verdict: sustainable_yield 0.056, trajectory -0.0017, ttr 21.67,
     extraction from the retirement_path datasets, typed Provenance
     on the bridge weights, automatic DimensionalContext inference
     for compute_flow integration.
+
+## AUDIT_13 — follow-ups + investment_signal intake
+
+26. AUDIT_12 § D.2 closed: `accounting_bridge.py` weights wrapped
+    in `WeightedThreshold` records with typed `Provenance`
+    (6/6 DESIGN_CHOICE, each with alternatives_considered +
+    falsification_test pointing at historical_cases as retirement
+    path). `ALL_WEIGHTS` tuple exposes the collection for coverage
+    auditing.
+27. AUDIT_12 § D.3 closed: `regime_from_verdict_signal` maps
+    GREEN/AMBER/RED/BLACK → HEALTHY/STRESSED/NEAR_COLLAPSE/
+    NEAR_COLLAPSE. RECOVERING requires explicit `recovering=True`
+    flag (single-period signal cannot distinguish recovery from
+    steady-state health). `context_from_verdict_signal` builds
+    a full DimensionalContext with only the five monetary-regime
+    dimensions requiring explicit declaration. 3 new tests cover
+    the helpers including a real-Verdict end-to-end integration.
+28. **`investment_signal/` subsystem intake** (new from
+    origin/main, ~3450 lines, 8 files). Coupled-dynamics framework
+    for investment as cross-substrate commitment — seven substrates
+    (TIME/RESOURCE/ENERGY/LABOR/ATTENTION/MONEY/RELATIONAL_CAPITAL),
+    7×7 conversion + realization matrices, time binding × scope
+    integrity, 5-level derivative-distance abstraction, dependency
+    coupling to money_signal. README ships 23 falsifiable claims.
+    Ship-breaking bug caught at intake: three files used
+    `..money_signal` relative imports which fail because
+    `investment_signal/` and `money_signal/` are sibling top-level
+    packages, not children of a common package. Fixed by replacing
+    `..money_signal` with absolute `money_signal` in
+    `dimensions.py`, `coupling.py` (two sites), `time_binding.py`.
+    `__init__.py` added (was missing despite README tree showing
+    it — same drift as AUDIT_11 § C.1). 12 new tests tripwire 11
+    of the 23 README falsifiable claims, plus the import and
+    validator regressions. README usage example now runs end-to-end.
 
 ## What the framework does end-to-end
 

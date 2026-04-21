@@ -26,7 +26,7 @@ from enum import Enum
 # Investment inherits the full money-signal context because investment
 # is money-plus-time. All money-signal dimensions apply to the money
 # component of any investment analysis.
-from ..money_signal.dimensions import DimensionalContext as MoneyContext
+from money_signal.dimensions import DimensionalContext as MoneyContext
 
 
 # ============================================================================
