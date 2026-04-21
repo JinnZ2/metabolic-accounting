@@ -33,19 +33,23 @@ from investment_signal.historical_cases import (
     CaseComparison, VALID_FAILURE_TAGS,
     compare_case,
     ENRON_2001, MBS_2008, ZIRP_2009_2021, GIG_ECONOMY, COMMUNITY_LAND_TRUSTS,
+    COLONIAL_RESOURCE_EXTRACTION, RETIREMENT_401K_GENERATIONAL,
 )
 from term_audit.provenance import Provenance
 
 
-def test_1_five_anchor_cases():
-    print("\n--- TEST 1: five anchor cases registered ---")
-    assert len(ALL_CASES) == 5
+def test_1_all_anchor_cases():
+    """AUDIT_12 shipped 5; AUDIT_18 extended to 7."""
+    print("\n--- TEST 1: seven anchor cases registered ---")
+    assert len(ALL_CASES) == 7
     expected = {
         "Enron — synthetic mark-to-market collapse",
         "Mortgage-backed securities — multi-layer opacity",
         "Zero-interest-rate policy era — investment under stressed money",
         "Platform gig economy — TIME/ATTENTION extraction",
         "Community Land Trusts — relational capital preserved through time",
+        "Colonial resource-extraction investment (Dutch East India Company era)",
+        "US 401(k) system — generational realization-rate divergence",
     }
     names = {c.name for c in ALL_CASES}
     assert names == expected, f"FAIL: expected {expected}, got {names}"
@@ -102,27 +106,32 @@ def test_4_compare_case_runs_end_to_end():
     print("PASS")
 
 
-def test_5_four_of_five_match_with_zirp_outlier():
+def test_5_six_of_seven_match_with_zirp_outlier():
     """LOAD-BEARING: framework predicted-covers-observed for
-    exactly 4 of 5 cases; ZIRP is the expected outlier (documented
-    in the case's notes as an honest single-case-encoding limitation
-    rather than a framework bug).
+    exactly 6 of 7 cases post-AUDIT_18; ZIRP remains the single
+    expected outlier (retail TWO_LAYER encoding cannot fire
+    financialized_reverse_causation — the firm-level buyback
+    dynamics documented by Lazonick/Borio are DERIVATIVE-distance
+    phenomena that a single-case encoding cannot capture
+    simultaneously with the retail liquidity-illusion finding).
 
     If this count changes, either factor values moved, observed
     failures were edited, or case context classifications drifted
     — all warrant explicit review."""
-    print("\n--- TEST 5: expected 4/5 match, ZIRP outlier ---")
+    print("\n--- TEST 5: expected 6/7 match, ZIRP outlier ---")
     results = {c.name: compare_case(c) for c in ALL_CASES}
     match_count = sum(1 for r in results.values() if r.predicted_contains_observed)
-    assert match_count == 4, \
-        f"FAIL: expected 4/5, got {match_count}/5"
+    assert match_count == 6, \
+        f"FAIL: expected 6/7, got {match_count}/7"
     zirp_result = results[ZIRP_2009_2021.name]
     assert not zirp_result.predicted_contains_observed, \
         "FAIL: ZIRP is expected to be the documented single outlier"
-    for other in (ENRON_2001, MBS_2008, GIG_ECONOMY, COMMUNITY_LAND_TRUSTS):
+    for other in (ENRON_2001, MBS_2008, GIG_ECONOMY, COMMUNITY_LAND_TRUSTS,
+                  COLONIAL_RESOURCE_EXTRACTION,
+                  RETIREMENT_401K_GENERATIONAL):
         assert results[other.name].predicted_contains_observed, \
             f"FAIL: {other.name} expected to match but didn't"
-    print(f"  4/5 match; ZIRP correctly flagged as single-encoding outlier")
+    print(f"  6/7 match; ZIRP correctly flagged as single-encoding outlier")
     print("PASS")
 
 
@@ -173,11 +182,11 @@ def test_8_community_land_trusts_zero_observed_failures():
 
 
 if __name__ == "__main__":
-    test_1_five_anchor_cases()
+    test_1_all_anchor_cases()
     test_2_all_failure_tags_valid()
     test_3_observed_failures_have_provenance()
     test_4_compare_case_runs_end_to_end()
-    test_5_four_of_five_match_with_zirp_outlier()
+    test_5_six_of_seven_match_with_zirp_outlier()
     test_6_mbs_near_collapse_propagates()
     test_7_gig_economy_financialized_at_derivative_distance()
     test_8_community_land_trusts_zero_observed_failures()

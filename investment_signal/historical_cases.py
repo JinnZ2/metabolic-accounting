@@ -599,12 +599,205 @@ COMMUNITY_LAND_TRUSTS = HistoricalInvestmentCase(
 )
 
 
+# ---------------------------------------------------------------------------
+# Extended anchor cases (AUDIT_18)
+# ---------------------------------------------------------------------------
+
+COLONIAL_RESOURCE_EXTRACTION = HistoricalInvestmentCase(
+    name="Colonial resource-extraction investment (Dutch East India Company era)",
+    period="1602-1799",
+    location="Dutch / British / Iberian colonial networks",
+    context_pre=InvestmentContext(
+        money_context=_HEALTHY_FIAT,
+        attribution=InvestmentAttribution.PRODUCTIVE_CAPACITY,
+        derivative_distance=DerivativeDistance.ONE_LAYER,
+        time_binding=TimeBinding.MULTI_YEAR,
+    ),
+    context_during=InvestmentContext(
+        # The DURING context models the chartered company at peak
+        # derivative distance: investors in Amsterdam / London could
+        # not see conditions in Banda, Ambon, or Bengal. SPECULATIVE_BET
+        # attribution captures that shareholder-position returns were
+        # bet on extraction outcomes the shareholders never directly
+        # observed.
+        money_context=_HEALTHY_FIAT,
+        attribution=InvestmentAttribution.EXTRACTIVE_CLAIM,
+        derivative_distance=DerivativeDistance.DERIVATIVE,
+        time_binding=TimeBinding.MULTI_YEAR,
+    ),
+    context_post=None,
+    characteristic_input=SubstrateVector.from_dict({
+        InvestmentSubstrate.MONEY: 1000.0,
+    }),
+    characteristic_expected=SubstrateVector.from_dict({
+        InvestmentSubstrate.MONEY: 2500.0,
+    }),
+    observed_failures=(
+        ObservedInvestmentFailure(
+            failure_tag="substrate_invisible_at_distance",
+            evidence=(
+                "VOC / EIC shareholders in Europe had zero direct view of "
+                "the substrate being extracted (nutmeg monopoly enforced "
+                "by Banda massacres 1621; opium cultivation in Bengal; "
+                "spice plantations on Ambon). Factor-ship reports reached "
+                "home months to years late; auditing was effectively "
+                "impossible."
+            ),
+            provenance=empirical(
+                source_refs=[
+                    "De Vries & van der Woude 1997, 'The First Modern "
+                    "Economy: Success, Failure, and Perseverance of the "
+                    "Dutch Economy, 1500-1815'",
+                    "Hanna 1978, 'Indonesian Banda: Colonialism and Its "
+                    "Aftermath in the Nutmeg Islands'",
+                    "Robins 2006, 'The Corporation that Changed the "
+                    "World: How the East India Company Shaped the "
+                    "Modern Multinational'",
+                ],
+                rationale=(
+                    "colonial chartered-company substrate invisibility "
+                    "is a canonical case in the history of finance; the "
+                    "Banda massacres are the cleanest single-event "
+                    "anchor for the substrate-extraction failure mode"
+                ),
+            ),
+        ),
+        ObservedInvestmentFailure(
+            failure_tag="financialized_reverse_causation",
+            evidence=(
+                "VOC dividend pressure drove quota increases on Banda "
+                "nutmeg and Bengal opium — the financial-layer demand "
+                "governed the substrate production level, not the "
+                "substrate's capacity to produce sustainably"
+            ),
+            provenance=empirical(
+                source_refs=[
+                    "Adas 1974, 'The Burma Delta: Economic Development "
+                    "and Social Change on an Asian Rice Frontier, "
+                    "1852-1941'",
+                    "Washbrook 1988, 'Progress and Problems: South "
+                    "Asian Economic and Social History c. 1720-1860', "
+                    "Modern Asian Studies 22(1)",
+                ],
+                rationale=(
+                    "historiography directly documents dividend-pressure "
+                    "→ extraction-rate causation from Amsterdam / "
+                    "London board decisions to on-the-ground quotas"
+                ),
+            ),
+        ),
+    ),
+    primary_refs=[
+        "De Vries & van der Woude 1997",
+        "Hanna 1978",
+        "Robins 2006",
+    ],
+    historical_confidence=0.85,
+    notes=(
+        "The canonical DERIVATIVE-distance + EXTRACTIVE_CLAIM anchor. "
+        "Attribution shifts from PRODUCTIVE_CAPACITY (early voyage "
+        "financing) to EXTRACTIVE_CLAIM (established quota-driven "
+        "extraction) as the chartered companies matured. Tests "
+        "framework claim #16 (substrate visibility falls monotonically "
+        "with derivative distance) and claim #18 (reverse causation "
+        "rises monotonically with distance) across multi-century "
+        "historical span."
+    ),
+)
+
+
+RETIREMENT_401K_GENERATIONAL = HistoricalInvestmentCase(
+    name="US 401(k) system — generational realization-rate divergence",
+    period="1978 (Revenue Act) - present",
+    location="United States",
+    context_pre=InvestmentContext(
+        money_context=_HEALTHY_FIAT,
+        attribution=InvestmentAttribution.PRODUCTIVE_CAPACITY,
+        derivative_distance=DerivativeDistance.ONE_LAYER,
+        time_binding=TimeBinding.GENERATIONAL,
+    ),
+    context_during=InvestmentContext(
+        # Money at GENERATIONAL temporal (retirement horizon);
+        # investor/fund binding at SHORT_CYCLE (quarterly redemption,
+        # quarterly manager review). The binding × scope mismatch
+        # is exactly claim #11's liquidity-illusion signature.
+        money_context=_ZIRP_MONEY,
+        attribution=InvestmentAttribution.SPECULATIVE_BET,
+        derivative_distance=DerivativeDistance.TWO_LAYER,
+        time_binding=TimeBinding.SHORT_CYCLE,
+    ),
+    context_post=None,
+    characteristic_input=SubstrateVector.from_dict({
+        InvestmentSubstrate.MONEY: 50000.0,    # cumulative worker contribution
+        InvestmentSubstrate.TIME: 40.0,        # decades of labor-time committed
+    }),
+    characteristic_expected=SubstrateVector.from_dict({
+        InvestmentSubstrate.MONEY: 500000.0,   # expected retirement balance
+    }),
+    observed_failures=(
+        ObservedInvestmentFailure(
+            failure_tag="liquidity_illusion",
+            evidence=(
+                "401(k) presents as 'retirement security' (generational "
+                "horizon) while operating at quarterly-redemption, "
+                "quarterly-disclosure, quarterly-manager-review rhythm. "
+                "Boomers benefited from 40+ years of institutional bull "
+                "market that masked the structural mismatch; Millennials "
+                "face higher valuations at entry and lower realized "
+                "returns. The divergence is the mismatch surfacing."
+            ),
+            provenance=empirical(
+                source_refs=[
+                    "Munnell & Webb 2015, 'The Impact of Leakages from "
+                    "401(k)s and IRAs', CRR WP 2015-2",
+                    "Ghilarducci 2020, 'When I'm Sixty-Four: The Plot "
+                    "Against Pensions and the Plan to Save Them'",
+                    "Center for Retirement Research 2022, 'How Have "
+                    "401(k)s Fared Across Cohorts?'",
+                ],
+                rationale=(
+                    "CRR at Boston College publishes cohort-specific "
+                    "realization data; Ghilarducci's analysis of the DB "
+                    "→ DC pension shift documents the horizon mismatch"
+                ),
+                scope_caveat=(
+                    "generational realization rates are heavily "
+                    "confounded by individual contribution patterns, "
+                    "early withdrawals, fee structures, and cohort-"
+                    "specific labor-market conditions — this anchor "
+                    "locks in the direction of the failure mode, not "
+                    "a single summary number"
+                ),
+            ),
+        ),
+    ),
+    primary_refs=[
+        "Munnell & Webb 2015 CRR",
+        "Ghilarducci 2020",
+        "CRR cohort reports 2022",
+    ],
+    historical_confidence=0.75,
+    notes=(
+        "Tests claim #11 (liquidity illusion from short-binding / "
+        "long-scope mismatch) at generational scale. 401(k) is an "
+        "investment system DECLARED to serve a generational horizon "
+        "(retirement security) while OPERATING at quarterly "
+        "redemption, quarterly disclosure, quarterly manager-review "
+        "rhythm. The boomer/millennial realization divergence is the "
+        "empirical surfaced form of that mismatch."
+    ),
+)
+
+
 ALL_CASES: List[HistoricalInvestmentCase] = [
     ENRON_2001,
     MBS_2008,
     ZIRP_2009_2021,
     GIG_ECONOMY,
     COMMUNITY_LAND_TRUSTS,
+    # AUDIT_18 extensions:
+    COLONIAL_RESOURCE_EXTRACTION,
+    RETIREMENT_401K_GENERATIONAL,
 ]
 
 
