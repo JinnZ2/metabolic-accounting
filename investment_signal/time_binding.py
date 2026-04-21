@@ -53,7 +53,7 @@ from .dimensions import (
 )
 # Money-signal temporal scope enters here because the binding must
 # be evaluated against the monetary stability horizon.
-from ..money_signal.dimensions import TemporalScope
+from money_signal.dimensions import TemporalScope
 
 
 # ============================================================================
