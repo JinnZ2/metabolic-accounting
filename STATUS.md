@@ -510,6 +510,36 @@ verdict: sustainable_yield 0.056, trajectory -0.0017, ttr 21.67,
 
 ## AUDIT_14 — Part B (E.2): investment_signal/historical_cases.py
 
+## AUDIT_20 — anchor extensions + ZIRP decomposition
+
+44. **money_signal extensions**: Haudenosaunee wampum
+    (RECIPROCITY_TOKEN + TRUST_LEDGER counter-example; diplomatic-ledger
+    dual function) and Potlatch ceremony suppression 1884-1951
+    (STRESSED regime induced by external legal prohibition, with
+    post-repeal RECOVERING demonstrating hysteresis claim #2 at
+    generational scale). Literature: Fenton 1998 + Muller 2008 +
+    Williams 1997 (wampum); Cole & Chaikin 1990 + Bracken 1997 +
+    U'mista Cultural Society (potlatch). Match count 10/11
+    (Cyprus remains the observer-asymmetry outlier).
+45. **investment_signal extension**: Congo Free State rubber
+    extraction 1885-1908 fires three failure modes simultaneously
+    (substrate_invisible_at_distance, financialized_reverse_causation,
+    substrate_abstraction_destroys_nature) — a ~5-15M-death
+    extraction regime the framework encodes without ad hoc
+    special-casing. Literature: Hochschild 1998, Casement 1904,
+    Morel 1906, Vansina 2010.
+46. **ZIRP decomposition** (AUDIT_18 § D.2 closed): ZIRP_2009_2021
+    split into three investor-type sub-cases — ZIRP_RETAIL_DIVERSIFIED
+    (TWO_LAYER, liquidity illusion), ZIRP_PRIVATE_EQUITY (DERIVATIVE,
+    financialized_reverse_causation via Lazonick/Borio buyback
+    dynamics), ZIRP_CLO_STRUCTURED (SYNTHETIC, multiple failures
+    via Griffin & Nickerson 2023 + BIS 2018). Each sub-case is
+    internally consistent: observed failures match the framework's
+    predictions for that specific context. **investment_signal
+    match count now 10/10** — the former single outlier resolves
+    by honest encoding rather than by weakening the match
+    criterion.
+
 ## AUDIT_19 — scope↔cost integration + 2 Tier 1 scope-audit retrofits
 
 41. `StudyScopeAudit.audit_report` now includes

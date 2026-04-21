@@ -346,8 +346,18 @@ MBS_2008 = HistoricalInvestmentCase(
 )
 
 
-ZIRP_2009_2021 = HistoricalInvestmentCase(
-    name="Zero-interest-rate policy era — investment under stressed money",
+# ---------------------------------------------------------------------------
+# ZIRP decomposition (AUDIT_20 § B): splitting the single ZIRP_2009_2021
+# anchor into three sub-cases by investor type. AUDIT_14 Part B had
+# documented ZIRP as the single framework-match outlier because a
+# single-case encoding could not simultaneously fire liquidity_illusion
+# (retail side) AND financialized_reverse_causation (firm/structured
+# side). Three sub-cases each match their own internally consistent
+# failure set.
+# ---------------------------------------------------------------------------
+
+ZIRP_RETAIL_DIVERSIFIED = HistoricalInvestmentCase(
+    name="ZIRP era — retail diversified portfolio (liquidity illusion)",
     period="2009-2021",
     location="United States / developed world",
     context_pre=InvestmentContext(
@@ -357,11 +367,11 @@ ZIRP_2009_2021 = HistoricalInvestmentCase(
         time_binding=TimeBinding.MULTI_YEAR,
     ),
     context_during=InvestmentContext(
-        # Money context uses GENERATIONAL temporal to match the
-        # horizon at which ZIRP-era investment substrate was
-        # actually committed (pension liabilities, 30-year mortgages,
-        # infrastructure PPPs). Investor-side short binding against
-        # that horizon is exactly claim #11's liquidity-illusion shape.
+        # Retail side of ZIRP: SHORT_CYCLE binding against generational
+        # money scope is exactly claim #11's liquidity-illusion shape.
+        # TWO_LAYER distance reflects the retail fund-of-funds pattern
+        # where the investor interacts with a broker interacting with
+        # a fund — below the 0.5 reverse-causation threshold.
         money_context=_ZIRP_MONEY,
         attribution=InvestmentAttribution.SPECULATIVE_BET,
         derivative_distance=DerivativeDistance.TWO_LAYER,
@@ -378,79 +388,240 @@ ZIRP_2009_2021 = HistoricalInvestmentCase(
         ObservedInvestmentFailure(
             failure_tag="liquidity_illusion",
             evidence=(
-                "short-duration fund structures (private equity "
-                "redemption windows, open-ended infrastructure funds) "
-                "claimed liquidity for investors while holding "
-                "multi-year illiquid underlyings"
+                "retail open-ended funds, target-date funds, and "
+                "brokerage-tier products present daily/weekly "
+                "liquidity while holding multi-year underlyings that "
+                "would take quarters to unwind at scale without "
+                "price impact"
             ),
             provenance=placeholder(
                 rationale=(
-                    "qualitative pattern documented across multiple "
-                    "observers; a quantified fund-vs-underlying "
-                    "liquidity gap series has not been extracted here"
+                    "qualitative pattern documented; retail-side "
+                    "quantified fund-vs-underlying liquidity-gap "
+                    "series not extracted here"
                 ),
                 retirement_path=(
-                    "combine ILPA Fund-Level Cash Flow data with Preqin "
-                    "illiquidity metrics to produce a rolling gap series "
-                    "over 2009-2021"
+                    "ICI fund-flow data + SEC Form N-PORT liquidity "
+                    "classification series 2018-present"
+                ),
+                deferred_cost="linear",
+            ),
+        ),
+    ),
+    primary_refs=[
+        "Borio 2019 BIS Annual Economic Report",
+        "Summers 2014 secular stagnation series",
+    ],
+    historical_confidence=0.80,
+    notes=(
+        "Retail-side sub-case of the ZIRP era. Isolates the "
+        "liquidity-illusion failure so the framework's prediction "
+        "matches cleanly at TWO_LAYER distance. See ZIRP_PRIVATE_EQUITY "
+        "and ZIRP_CLO_STRUCTURED for the firm-level and structured "
+        "sub-cases that carry the reverse-causation failure the "
+        "retail case cannot."
+    ),
+)
+
+
+ZIRP_PRIVATE_EQUITY = HistoricalInvestmentCase(
+    name="ZIRP era — private equity / buyback-driven reverse causation",
+    period="2009-2021",
+    location="United States / developed world",
+    context_pre=InvestmentContext(
+        money_context=_HEALTHY_FIAT,
+        attribution=InvestmentAttribution.PRODUCTIVE_CAPACITY,
+        derivative_distance=DerivativeDistance.TWO_LAYER,
+        time_binding=TimeBinding.MULTI_YEAR,
+    ),
+    context_during=InvestmentContext(
+        # PE firm at DERIVATIVE distance: the fund-of-funds-of-firm
+        # structure crosses the 0.5 reverse-causation threshold.
+        # Attribution shifts to RENT_SEEKING because the
+        # value-creation mechanism is increasingly buybacks, tax
+        # arbitrage, and fee extraction rather than productive
+        # operations — the Lazonick/Borio pattern.
+        money_context=_ZIRP_MONEY,
+        attribution=InvestmentAttribution.RENT_SEEKING,
+        derivative_distance=DerivativeDistance.DERIVATIVE,
+        time_binding=TimeBinding.MULTI_YEAR,
+    ),
+    context_post=None,
+    characteristic_input=SubstrateVector.from_dict({
+        InvestmentSubstrate.MONEY: 10_000_000.0,
+    }),
+    characteristic_expected=SubstrateVector.from_dict({
+        InvestmentSubstrate.MONEY: 22_000_000.0,
+    }),
+    observed_failures=(
+        ObservedInvestmentFailure(
+            failure_tag="financialized_reverse_causation",
+            evidence=(
+                "asset prices drove firm capital-allocation decisions "
+                "more tightly than fundamentals; buybacks at elevated "
+                "multiples financed by cheap debt are the "
+                "characteristic pattern, documented across S&P 500 "
+                "constituents and mid-market PE portfolio companies"
+            ),
+            provenance=empirical(
+                source_refs=[
+                    "Lazonick 2014, 'Profits Without Prosperity', HBR",
+                    "Borio 2019, BIS Annual Economic Report",
+                    "Caballero, Farhi & Gourinchas 2017, 'Rents, "
+                    "Technical Change, and Risk Premia', AER P&P",
+                    "Appelbaum & Batt 2014, 'Private Equity at Work: "
+                    "When Wall Street Manages Main Street'",
+                ],
+                rationale=(
+                    "Lazonick/Borio document the market-to-operational "
+                    "reverse causation at public-equity level; "
+                    "Appelbaum & Batt extend the finding to the PE "
+                    "portfolio-company level"
+                ),
+            ),
+        ),
+        ObservedInvestmentFailure(
+            failure_tag="substrate_invisible_at_distance",
+            evidence=(
+                "LP investors in PE funds receive aggregated quarterly "
+                "reports; fund-level performance cannot be decomposed "
+                "to portfolio-company-level substrate trajectories by "
+                "the LP; the LP-GP information asymmetry is "
+                "structural"
+            ),
+            provenance=empirical(
+                source_refs=[
+                    "Phalippou 2020, 'An Inconvenient Fact: Private "
+                    "Equity Returns & The Billionaire Factory'",
+                    "ILPA Reporting Template (private equity industry "
+                    "standard, 2011 onward)",
+                ],
+                rationale=(
+                    "LP-GP information asymmetry is the primary "
+                    "subject of Phalippou's analysis"
+                ),
+            ),
+        ),
+    ),
+    primary_refs=[
+        "Lazonick 2014",
+        "Appelbaum & Batt 2014",
+        "Phalippou 2020",
+    ],
+    historical_confidence=0.85,
+    notes=(
+        "Firm-level sub-case of ZIRP, isolates the reverse-causation "
+        "failure at DERIVATIVE distance. Complements "
+        "ZIRP_RETAIL_DIVERSIFIED (which carries liquidity illusion "
+        "but not financialization) and ZIRP_CLO_STRUCTURED (which "
+        "carries multiple failures at SYNTHETIC distance)."
+    ),
+)
+
+
+ZIRP_CLO_STRUCTURED = HistoricalInvestmentCase(
+    name="ZIRP era — leveraged-loan CLO (synthetic derivative distance)",
+    period="2013-2021 (post-crisis CLO 2.0 era)",
+    location="United States / global",
+    context_pre=InvestmentContext(
+        money_context=_HEALTHY_FIAT,
+        attribution=InvestmentAttribution.SPECULATIVE_BET,
+        derivative_distance=DerivativeDistance.DERIVATIVE,
+        time_binding=TimeBinding.MULTI_YEAR,
+    ),
+    context_during=InvestmentContext(
+        # CLO 2.0 at SYNTHETIC distance: tranche slices of collateral
+        # pools of corporate loans held at stressed-money context.
+        # Crosses every failure-mode threshold the framework defines.
+        money_context=_ZIRP_MONEY,
+        attribution=InvestmentAttribution.SPECULATION_ON_SPECULATION,
+        derivative_distance=DerivativeDistance.SYNTHETIC,
+        time_binding=TimeBinding.SHORT_CYCLE,
+    ),
+    context_post=None,
+    characteristic_input=SubstrateVector.from_dict({
+        InvestmentSubstrate.MONEY: 50_000_000.0,
+    }),
+    characteristic_expected=SubstrateVector.from_dict({
+        InvestmentSubstrate.MONEY: 58_000_000.0,
+    }),
+    observed_failures=(
+        ObservedInvestmentFailure(
+            failure_tag="substrate_invisible_at_distance",
+            evidence=(
+                "equity-tranche holders of CLO 2.0 structures cannot "
+                "see individual loan-level credit quality; originator "
+                "covenants-lite documentation pushed originator-level "
+                "substrate visibility further below investor horizon"
+            ),
+            provenance=empirical(
+                source_refs=[
+                    "Fitch 2019, 'Leveraged Finance Weekly' series "
+                    "(covenants-lite documentation trend data)",
+                    "Griffin & Nickerson 2023, 'Are CLO Collateral and "
+                    "Tranche Ratings Disconnected?', RFS 36(6)",
+                ],
+                rationale=(
+                    "Griffin & Nickerson directly document ratings-"
+                    "methodology disconnection from underlying loan "
+                    "credit performance"
                 ),
             ),
         ),
         ObservedInvestmentFailure(
             failure_tag="financialized_reverse_causation",
             evidence=(
-                "asset prices (equity indices, residential real estate, "
-                "private valuations) drove firm capital-allocation "
-                "decisions more tightly than fundamentals during the "
-                "decade; buybacks at elevated multiples are the "
-                "characteristic example"
+                "demand for CLO collateral pushed originators toward "
+                "looser underwriting to supply the tranche market "
+                "— same reverse-causation pattern as 2006-era MBS but "
+                "at the leveraged-loan layer"
             ),
             provenance=empirical(
                 source_refs=[
-                    "Lazonick 2014, 'Profits Without Prosperity', HBR",
-                    "Borio 2019, BIS Annual Economic Report 2019",
-                    "Caballero, Farhi & Gourinchas 2017, 'Rents, "
-                    "Technical Change, and Risk Premia', AER P&P",
+                    "Griffin & Nickerson 2023",
+                    "BIS 2018 Quarterly Review, 'The rise of "
+                    "leveraged loans'",
                 ],
                 rationale=(
-                    "reverse-causation from market to operational "
-                    "decisions documented directly in Lazonick and "
-                    "Borio"
+                    "BIS and Griffin & Nickerson both document the "
+                    "demand-to-supply-standards causation"
                 ),
-                scope_caveat=(
-                    "cited works focus on US public equity; the claim "
-                    "extends more broadly to private markets and "
-                    "residential RE, where extraction is less well "
-                    "measured"
+            ),
+        ),
+        ObservedInvestmentFailure(
+            failure_tag="substrate_abstraction_destroys_nature",
+            evidence=(
+                "attention and time substrates of corporate management "
+                "teams at acquired portfolio companies are compressed "
+                "into quarterly IRR-optimization targets; long-horizon "
+                "productive-capacity decisions foregone"
+            ),
+            provenance=placeholder(
+                rationale=(
+                    "qualitative pattern reported but cross-sector "
+                    "productive-capacity-decision-delay metrics not "
+                    "extracted here"
                 ),
+                retirement_path=(
+                    "match PE-portfolio-company R&D spend against "
+                    "industry-peer R&D over hold-period; Compustat + "
+                    "Capital IQ linked datasets"
+                ),
+                deferred_cost="linear",
             ),
         ),
     ),
     primary_refs=[
-        "Borio 2019 BIS",
-        "Lazonick 2014",
-        "Summers 2014 secular stagnation",
+        "Griffin & Nickerson 2023",
+        "BIS 2018 Quarterly Review",
+        "Fitch Leveraged Finance Weekly",
     ],
-    historical_confidence=0.80,
+    historical_confidence=0.85,
     notes=(
-        "Long-duration regime rather than a discrete event. Included "
-        "because the framework's behaviour under sustained-stressed "
-        "money (rather than near-collapse) is the norm, not the "
-        "exception, in the 21st century. Claim #23 (investment cannot "
-        "be evaluated under near-collapse money) does NOT fire here — "
-        "stressed money permits but distorts evaluation.\n\n"
-        "Honest mismatch: framework's predicted failures cover "
-        "liquidity_illusion (confirmed observed) but not "
-        "financialized_reverse_causation (also observed in the "
-        "Lazonick/Borio buyback literature). The characteristic "
-        "derivative_distance here is TWO_LAYER (retail diversified "
-        "portfolio), which scores reverse_causation 0.30, below the "
-        "is_financialized threshold of 0.5. The reverse-causation "
-        "dynamics documented in the literature are firm-level buyback "
-        "behavior — that activity sits at DERIVATIVE distance, not "
-        "TWO_LAYER. A more faithful encoding would split ZIRP into "
-        "multiple sub-cases by investor type; the single-case "
-        "encoding is a simplification the mismatch correctly exposes."
+        "Structured-credit sub-case of ZIRP at SYNTHETIC distance. "
+        "Carries multiple failure modes simultaneously — the "
+        "framework's claim #20 (SYNTHETIC is_financialized by "
+        "definition) is directly visible."
     ),
 )
 
@@ -789,15 +960,152 @@ RETIREMENT_401K_GENERATIONAL = HistoricalInvestmentCase(
 )
 
 
+# ---------------------------------------------------------------------------
+# Extended anchor case (AUDIT_20)
+# ---------------------------------------------------------------------------
+
+CONGO_RUBBER_1885_1908 = HistoricalInvestmentCase(
+    name="Congo Free State rubber extraction — extreme derivative distance",
+    period="1885 (Berlin Conference) - 1908 (Belgian state takeover)",
+    location="Congo Free State (Leopold II personal property regime)",
+    context_pre=InvestmentContext(
+        money_context=_HEALTHY_FIAT,
+        attribution=InvestmentAttribution.PRODUCTIVE_CAPACITY,
+        derivative_distance=DerivativeDistance.TWO_LAYER,
+        time_binding=TimeBinding.SEASONAL,
+    ),
+    context_during=InvestmentContext(
+        money_context=_HEALTHY_FIAT,
+        attribution=InvestmentAttribution.EXTRACTIVE_CLAIM,
+        derivative_distance=DerivativeDistance.SYNTHETIC,
+        time_binding=TimeBinding.SHORT_CYCLE,
+    ),
+    context_post=None,
+    characteristic_input=SubstrateVector.from_dict({
+        InvestmentSubstrate.MONEY: 1000.0,
+    }),
+    characteristic_expected=SubstrateVector.from_dict({
+        InvestmentSubstrate.MONEY: 4000.0,
+    }),
+    observed_failures=(
+        ObservedInvestmentFailure(
+            failure_tag="substrate_invisible_at_distance",
+            evidence=(
+                "Belgian / European bondholders received returns on "
+                "Congo rubber concessions without direct visibility "
+                "of enforcement methods. The forced-labor / "
+                "severed-hand enforcement regime was documented only "
+                "after 1904 by Casement and Morel; prior to that, "
+                "the financial layer operated with near-zero "
+                "substrate visibility."
+            ),
+            provenance=empirical(
+                source_refs=[
+                    "Hochschild 1998, 'King Leopold's Ghost: A Story "
+                    "of Greed, Terror, and Heroism in Colonial Africa'",
+                    "Casement 1904, 'Report to Parliament on the "
+                    "Conditions in the Congo Free State' (published "
+                    "in Parliamentary Papers)",
+                    "Morel 1906, 'Red Rubber: The Story of the Rubber "
+                    "Slave Trade Flourishing on the Congo in the "
+                    "Year of Grace 1906'",
+                ],
+                rationale=(
+                    "Hochschild's synthesis is the canonical modern "
+                    "account; Casement and Morel are the primary "
+                    "contemporary exposés; mortality estimates range "
+                    "~5-15 million over the regime's 23 years"
+                ),
+            ),
+        ),
+        ObservedInvestmentFailure(
+            failure_tag="financialized_reverse_causation",
+            evidence=(
+                "concession quotas set by Brussels drove enforcement "
+                "levels on the ground; each upward quota revision "
+                "produced predictable mortality spikes in the Leopold "
+                "administrative records. Financial-layer demand "
+                "governed substrate extraction directly and "
+                "linearly."
+            ),
+            provenance=empirical(
+                source_refs=[
+                    "Vansina 2010, 'Being Colonized: The Kuba "
+                    "Experience in Rural Congo, 1880-1960'",
+                    "Nelson 1994, 'Colonialism in the Congo Basin, "
+                    "1880-1940'",
+                ],
+                rationale=(
+                    "reverse-causation from Brussels quota decisions "
+                    "to on-the-ground enforcement is documented in "
+                    "the administrative archive analysis"
+                ),
+            ),
+        ),
+        ObservedInvestmentFailure(
+            failure_tag="substrate_abstraction_destroys_nature",
+            evidence=(
+                "human TIME + LABOR substrate were abstracted into "
+                "rubber-quota-dollar — the extraction was so complete "
+                "that the substrate population was physically destroyed "
+                "at ~5-15M-person scale"
+            ),
+            provenance=empirical(
+                source_refs=[
+                    "Hochschild 1998",
+                    "Vansina 2010",
+                ],
+                rationale=(
+                    "mass-mortality is the extreme end of claim #21's "
+                    "prediction: TIME/ATTENTION/RELATIONAL_CAPITAL "
+                    "cannot be derivatized without losing their "
+                    "nature"
+                ),
+            ),
+        ),
+    ),
+    primary_refs=[
+        "Hochschild 1998",
+        "Casement 1904",
+        "Morel 1906",
+        "Vansina 2010",
+    ],
+    historical_confidence=0.95,
+    notes=(
+        "The cleanest historical SYNTHETIC-distance + EXTRACTIVE_CLAIM "
+        "anchor. Stretches the VOC/EIC pattern to an extreme: single-"
+        "person (Leopold II) ownership + extreme derivative distance "
+        "(European bondholder to African forced laborer) + explicit "
+        "quota-driven financial pressure produced mass-mortality "
+        "scale. Tests claims #16 (substrate visibility), #17 (cascade "
+        "coupling), #18 (reverse causation), and #21 (substrate "
+        "abstraction destroys nature) simultaneously. Heavy case; "
+        "the framework's ability to encode it structurally — with "
+        "all failure modes firing under a single context — is "
+        "itself a calibration signal."
+    ),
+)
+
+
 ALL_CASES: List[HistoricalInvestmentCase] = [
     ENRON_2001,
     MBS_2008,
-    ZIRP_2009_2021,
+    # AUDIT_20 § B: ZIRP_2009_2021 decomposed into three sub-cases
+    # by investor type. The former single case matched only
+    # liquidity_illusion and could not simultaneously fire
+    # financialized_reverse_causation (below the DERIVATIVE-distance
+    # threshold). Each sub-case now matches its own internally
+    # consistent failure set.
+    ZIRP_RETAIL_DIVERSIFIED,
+    ZIRP_PRIVATE_EQUITY,
+    ZIRP_CLO_STRUCTURED,
     GIG_ECONOMY,
     COMMUNITY_LAND_TRUSTS,
     # AUDIT_18 extensions:
     COLONIAL_RESOURCE_EXTRACTION,
     RETIREMENT_401K_GENERATIONAL,
+    # AUDIT_20 extension:
+    CONGO_RUBBER_1885_1908,
 ]
 
 

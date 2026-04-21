@@ -858,6 +858,215 @@ KULA_RING_EXCHANGE = HistoricalCase(
 )
 
 
+# ---------------------------------------------------------------------------
+# Extended anchor cases (AUDIT_20 — additional reciprocity counter-examples)
+# ---------------------------------------------------------------------------
+
+HAUDENOSAUNEE_WAMPUM = HistoricalCase(
+    name="Haudenosaunee wampum — diplomatic + ledger substrate",
+    period="~1450 CE (Great Law) - present",
+    location="Haudenosaunee Confederacy (Six Nations)",
+    context_pre=DimensionalContext(
+        temporal=TemporalScope.GENERATIONAL,
+        cultural=CulturalScope.HIGH_RECIPROCITY,
+        attribution=AttributedValue.RECIPROCITY_TOKEN,
+        observer=ObserverPosition.SUBSTRATE_PRODUCER,
+        substrate=Substrate.TRUST_LEDGER,
+        state=StateRegime.HEALTHY,
+    ),
+    context_during=DimensionalContext(
+        temporal=TemporalScope.GENERATIONAL,
+        cultural=CulturalScope.HIGH_RECIPROCITY,
+        attribution=AttributedValue.RECIPROCITY_TOKEN,
+        observer=ObserverPosition.SUBSTRATE_PRODUCER,
+        substrate=Substrate.TRUST_LEDGER,
+        state=StateRegime.HEALTHY,
+    ),
+    context_post=None,
+    observed_dynamics=[
+        ObservedDynamic(
+            term_i="R", term_j="R",
+            shift=DynamicShift.UNCHANGED,
+            evidence=(
+                "wampum belts served simultaneously as treaty records, "
+                "condolence protocol instruments, and mnemonic "
+                "structure for clan governance. Value was in the "
+                "recorded relationship, not the shell beads."
+            ),
+            provenance=empirical(
+                source_refs=[
+                    "Fenton 1998, 'The Great Law and the Longhouse: A "
+                    "Political History of the Iroquois Confederacy'",
+                    "Muller 2008, 'Recovering Wampum as a Living "
+                    "Tradition', Ethnohistory 55(1)",
+                    "Williams 1997, 'Linking Arms Together: American "
+                    "Indian Treaty Visions of Law and Peace, 1600-1800'",
+                ],
+                rationale=(
+                    "Fenton's political history is the canonical "
+                    "English-language source; Muller and Williams "
+                    "track the diplomatic-ledger function through "
+                    "colonial-treaty contact"
+                ),
+                scope_caveat=(
+                    "source literature is primarily English-language "
+                    "secondary scholarship; Haudenosaunee primary "
+                    "sources (oral tradition, Condolence Council "
+                    "records) carry information not fully captured "
+                    "in the cited works"
+                ),
+            ),
+        ),
+        ObservedDynamic(
+            term_i="N", term_j="N",
+            shift=DynamicShift.UNCHANGED,
+            evidence=(
+                "belts were regularly re-read at Confederacy meetings "
+                "to refresh network acceptance of treaty terms; the "
+                "reading protocol IS the maintenance mechanism"
+            ),
+            provenance=placeholder(
+                rationale=(
+                    "the maintenance protocol is documented "
+                    "qualitatively; K-structure quantification has "
+                    "not been extracted"
+                ),
+                retirement_path=(
+                    "ethnohistorical analysis of Condolence Council "
+                    "protocol frequency vs. treaty stability in the "
+                    "1600-1800 archival record"
+                ),
+            ),
+        ),
+    ],
+    primary_refs=[
+        "Fenton 1998",
+        "Muller 2008",
+        "Williams 1997",
+    ],
+    historical_confidence=0.75,
+    notes=(
+        "COUNTER-EXAMPLE. A TRUST_LEDGER + RECIPROCITY_TOKEN + "
+        "HIGH_RECIPROCITY anchor alongside Yap rai and Kula ring. "
+        "The wampum case is distinctive for carrying an explicit "
+        "political-governance function on the same substrate that "
+        "carries the economic-exchange function — the two are not "
+        "separated. This is a feature of the attribution, not a "
+        "failure mode: RECIPROCITY_TOKEN substrates can be "
+        "multi-functional in a way STATE_ENFORCED ones are not."
+    ),
+)
+
+
+POTLATCH_SUPPRESSION = HistoricalCase(
+    name="Potlatch ceremony — legal suppression and post-repeal recovery",
+    period="1884 (Canada) / 1885 (US Indian Affairs) - 1951 repeal",
+    location="Pacific Northwest Coast (Kwakwaka'wakw, Haida, Tlingit et al.)",
+    context_pre=DimensionalContext(
+        temporal=TemporalScope.GENERATIONAL,
+        cultural=CulturalScope.HIGH_RECIPROCITY,
+        attribution=AttributedValue.RECIPROCITY_TOKEN,
+        observer=ObserverPosition.SUBSTRATE_PRODUCER,
+        substrate=Substrate.TRUST_LEDGER,
+        state=StateRegime.HEALTHY,
+    ),
+    context_during=DimensionalContext(
+        # DURING context = the suppression period. Colonial
+        # prohibition acts as an external regime that attempts
+        # to invalidate the substrate ledger entirely — no
+        # near-collapse in the monetary-dynamics sense, but the
+        # enforcement regime was near-collapse for the
+        # substrate-producer observer.
+        temporal=TemporalScope.GENERATIONAL,
+        cultural=CulturalScope.HIGH_RECIPROCITY,
+        attribution=AttributedValue.RECIPROCITY_TOKEN,
+        observer=ObserverPosition.SUBSTRATE_PRODUCER,
+        substrate=Substrate.TRUST_LEDGER,
+        state=StateRegime.STRESSED,
+    ),
+    context_post=DimensionalContext(
+        temporal=TemporalScope.GENERATIONAL,
+        cultural=CulturalScope.HIGH_RECIPROCITY,
+        attribution=AttributedValue.RECIPROCITY_TOKEN,
+        observer=ObserverPosition.SUBSTRATE_PRODUCER,
+        substrate=Substrate.TRUST_LEDGER,
+        state=StateRegime.RECOVERING,
+    ),
+    observed_dynamics=[
+        ObservedDynamic(
+            term_i="R", term_j="R",
+            shift=DynamicShift.DAMPED_STRONG,
+            evidence=(
+                "overt ceremonial potlatch was criminalized; the "
+                "ledger-refreshment function moved underground or "
+                "partial (smaller-scale gifts, disguised rituals); "
+                "confiscated regalia was catalogued into museum "
+                "collections without ledger-context metadata"
+            ),
+            provenance=empirical(
+                source_refs=[
+                    "Cole & Chaikin 1990, 'An Iron Hand Upon the "
+                    "People: The Law Against the Potlatch on the "
+                    "Northwest Coast'",
+                    "Bracken 1997, 'The Potlatch Papers: A Colonial "
+                    "Case History'",
+                    "U'mista Cultural Society 1975-present, "
+                    "Repatriation Archive Project",
+                ],
+                rationale=(
+                    "Cole & Chaikin is the canonical legal and "
+                    "administrative history; Bracken centers the "
+                    "colonial archive itself; U'mista provides the "
+                    "primary-source repatriation record"
+                ),
+            ),
+        ),
+        ObservedDynamic(
+            term_i="R", term_j="N",
+            shift=DynamicShift.DAMPED_STRONG,
+            evidence=(
+                "post-1951 repeal, recovery of the ceremony proceeded "
+                "unevenly; multi-generational gap in active practice "
+                "is visible in elder-led revival efforts since the "
+                "1970s. README hysteresis claim #2 is directly "
+                "visible — the recovering regime does not restore "
+                "the pre-suppression coupling."
+            ),
+            provenance=empirical(
+                source_refs=[
+                    "Harkin 1997, 'The Heiltsuks: Dialogues of Culture "
+                    "and History on the Northwest Coast'",
+                    "U'mista Cultural Society reports on ceremonial "
+                    "revival, 1975-present",
+                ],
+                rationale=(
+                    "direct ethnohistorical observation of hysteresis "
+                    "between pre-suppression and post-repeal regimes"
+                ),
+            ),
+        ),
+    ],
+    primary_refs=[
+        "Cole & Chaikin 1990",
+        "Bracken 1997",
+        "U'mista Cultural Society",
+    ],
+    historical_confidence=0.85,
+    notes=(
+        "Third counter-example, but NOT a clean steady-state case "
+        "like Yap or Kula — this one documents what happens when an "
+        "external regime criminalizes the substrate ledger. Tests "
+        "README claim #2 (hysteresis: recovering regime has damped "
+        "coupling vs pre-suppression) at a political-regime-induced "
+        "scale rather than a monetary-dynamics scale. The suppression "
+        "period is encoded as STRESSED to distinguish from "
+        "NEAR_COLLAPSE monetary events; the state of the substrate "
+        "ledger itself approached collapse for substrate-producer "
+        "observers, and that experience remains in living memory."
+    ),
+)
+
+
 ALL_CASES: List[HistoricalCase] = [
     WEIMAR_1921_1923,
     ZIMBABWE_2007_2009,
@@ -869,6 +1078,9 @@ ALL_CASES: List[HistoricalCase] = [
     ROMAN_DENARIUS_DEBASEMENT,
     YAP_RAI_STONES,
     KULA_RING_EXCHANGE,
+    # AUDIT_20 extensions:
+    HAUDENOSAUNEE_WAMPUM,
+    POTLATCH_SUPPRESSION,
 ]
 
 
