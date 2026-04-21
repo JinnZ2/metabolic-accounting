@@ -4,7 +4,7 @@ Status of the metabolic-accounting framework at end of session.
 
 ## Verified (all tests run, all passing)
 
-Forty-four test suites, every one runs and passes:
+Forty-nine test suites, every one runs and passes:
 
 ```
 # main accounting stack (18, pre-term_audit)
@@ -53,10 +53,15 @@ test_money_three_scope_falsification: PASS   <-- AUDIT_10: money fails signal-in
 test_money_signal:           PASS   <-- AUDIT_11: coupling framework smoke + all 9 README falsifiable claims
 test_historical_cases:       PASS   <-- AUDIT_12: 5 anchor cases with honest PLACEHOLDER provenance
 test_money_signal_accounting_bridge: PASS   <-- AUDIT_12: signal_quality + flag emitter + GlucoseFlow discount; AUDIT_13: weight Provenance + verdict inference
-test_investment_signal:      PASS   <-- AUDIT_13: investment_signal/ intake, 11/23 README claims tripwired
+test_investment_signal:      PASS   <-- AUDIT_13 + AUDIT_14 Part A: investment_signal/ intake, 23/23 README claims tripwired
+test_investment_historical_cases: PASS   <-- AUDIT_14 Part B: 5 anchor cases, CLT counter-example, 4/5 framework-covers-observed
+test_study_scope_audit:      PASS   <-- AUDIT_15: scope-bounded measurement audit framework
+test_signal_asymmetry:       PASS   <-- AUDIT_14 Part C: distributional stub + 4 literature anchors
+test_informational_cost_audit: PASS   <-- AUDIT_16: why false certainty costs exponentially
+test_provenance_study_scope_integration: PASS   <-- AUDIT_17: Provenance optionally carries a StudyScopeAudit
 ```
 
-See `docs/AUDIT_06.md` through `docs/AUDIT_13.md` for the cross-checks
+See `docs/AUDIT_06.md` through `docs/AUDIT_15.md` for the cross-checks
 that landed the most recent tests.
 
 To verify:
@@ -501,6 +506,108 @@ verdict: sustainable_yield 0.056, trajectory -0.0017, ttr 21.67,
 31. **AUDIT_14 chunking**: Parts B (investment_signal
     historical_cases.py) and C (distributional stub) ship in
     subsequent commits on this branch, extending `docs/AUDIT_14.md`.
+
+## AUDIT_14 — Part B (E.2): investment_signal/historical_cases.py
+
+## AUDIT_17 — Provenance + StudyScopeAudit integration
+
+38. `term_audit/provenance.py` extended: `Provenance.scope_audit:
+    Optional[Any]` (type `Any` to avoid circular import with
+    study_scope_audit) lets an EMPIRICAL record optionally carry a
+    machine-readable StudyScopeAudit alongside the existing prose
+    `scope_caveat`. New `has_scope_audit()` and `soft_gap()`
+    methods. `empirical()` constructor accepts `scope_audit=None`
+    kwarg. `coverage_report()` gains `scope_audit_count`,
+    `soft_gap_count`, `soft_gap_details` fields. Integration is
+    OPTIONAL — absence of `scope_audit` does NOT break
+    `is_complete()`, so AUDIT_07's 74/74 Tier 1 provenance
+    coverage is preserved (tripwired in test 7). Three
+    load-bearing invariants: soft-gap fires on caveat-without-audit
+    (the signal AUDIT_17 exists to produce), soft-gap clears when
+    scope_audit attached (the repair pathway), and Tier 1 74/74
+    no-regression. 7 tripwires. Closes the `[NAMED]` item from
+    AUDIT_15 § D.2.
+
+## AUDIT_16 — INFORMATIONAL_COST_AUDIT (paired with study_scope_audit)
+
+37. **`term_audit/informational_cost_audit.py`** shipped as the
+    complement to AUDIT_15's study_scope_audit. study_scope_audit
+    answers "where does the claim hold?"; this module answers
+    "what's the cost of pretending it holds beyond that scope?"
+    Nine knowledge structures (geocentric comfort state, four
+    canonical anomalies, four-stage cost spiral, heliocentric
+    alternative, head-to-head comparison, Shannon-entropy insight,
+    AI implications, historical pattern, VERDICT) plus a small
+    `CostLedger` dataclass with `CostGrowth` symbolic tags
+    (FLAT / LINEAR / EXPONENTIAL / CATASTROPHIC_AT_REGIME_SHIFT).
+    `compare(ledger_a, ledger_b)` deliberately refuses to collapse
+    to a scalar verdict — the module is designed to warn against
+    exactly that false-certainty compression, and the tripwire test
+    catches any scalar key sneaking in. 7 tripwires including three
+    load-bearing invariants: narrative-order of the four-stage
+    spiral, the VERDICT booleans (comfort_is_expensive=True,
+    uncertainty_is_cheap=True), and the compare() scalar-collapse
+    refusal.
+
+## AUDIT_15 — STUDY_SCOPE_AUDIT methodology module
+
+33. **`term_audit/study_scope_audit.py`** shipped (new material, not
+    part of AUDIT_14 plan). Six layered audit dataclasses — Instrument
+    (range/resolution/noise-floor/sampling), Protocol (prep/controls/
+    exclusions/replication), DomainCoupling (4 Coupling strengths:
+    instrument/protocol/substrate/regime), Regime (4 states:
+    STATIONARY/DRIFTING/NON_STATIONARY/UNKNOWN), CausalModel
+    (frame + confounders + unknown-unknowns flag), ScopeBoundary
+    (IN/EDGE/OUT/UNDECLARED). Composite `StudyScopeAudit.audit_report()`
+    returns a scope-bounded verdict rather than true/false. Five
+    HISTORICAL_CASES (geocentrism, miasma, caloric, steady-state
+    cosmology, low-fat diet) calibrate the methodology against
+    documented scope-boundary expansion events. Load-bearing
+    discipline: OUT_OF_SCOPE dominates IN_SCOPE and EDGE_OF_SCOPE
+    when deployment context matches both — tripwired in test_7.
+    9 tripwire tests. NOT applied as a gate anywhere in the framework;
+    integration with `term_audit/provenance.py` is named for a
+    future pass (docs/AUDIT_15.md § D.2).
+
+## AUDIT_14 — Part B (E.2): investment_signal/historical_cases.py
+
+## AUDIT_14 — Part C (E.4): distributional/signal_asymmetry stub
+
+35. **`distributional/signal_asymmetry.py`** shipped as a lean
+    interface stub per Todo.md priority 2 routing: production
+    cross-observer analysis lives in the sister repo
+    (`thermodynamic-accountability-framework/money_distribution/`,
+    `investment_distribution/`). This stub provides a shared
+    `ObserverAsymmetryReport` dataclass, an `observer_delta()`
+    helper, a pointer constant to the sister repo, and
+    `LITERATURE_ANCHORS` with four typed-Provenance entries:
+    Distributional National Accounts (Piketty-Saez-Zucman /
+    WID.world), Heterogeneous Agent Macro (Kaplan-Moll-Violante
+    HANK), Stratification Economics (Darity-Hamilton), Fiscal
+    Incidence (Harberger / CBO / JCT). 6 tripwires.
+    AUDIT_13 Part E fully closed across chunks A/B/C.
+
+## AUDIT_14 — Part B (E.2): investment_signal/historical_cases.py
+
+36. **`investment_signal/historical_cases.py`** shipped. Five anchor
+    cases parallel to money_signal/historical_cases.py: Enron 2001
+    (SYNTHETIC reverse causation, conf 0.95), MBS 2004-2008 (multi-
+    layer opacity + terminal money near-collapse, conf 0.95), ZIRP
+    2009-2021 (liquidity illusion via scope mismatch, conf 0.80),
+    Gig economy 2013-present (DERIVATIVE distance + TIME/ATTENTION
+    extraction, conf 0.85), Community Land Trusts 1970-present
+    (**counter-example**: DIRECT + MULTI_GENERATIONAL +
+    RECIPROCAL_OBLIGATION produces 0 observed failures, conf 0.80).
+    Every ObservedInvestmentFailure uses a tag from the canonical
+    VALID_FAILURE_TAGS set and carries typed Provenance (EMPIRICAL
+    with literature refs or PLACEHOLDER with retirement paths).
+    `compare_case()` framework-covers-observed: **4/5**; ZIRP is the
+    documented single outlier (retail TWO_LAYER encoding doesn't hit
+    the 0.5 reverse-causation threshold that the firm-level buyback
+    literature describes — single-case-encoding limitation, not a
+    framework bug). `tests/test_investment_historical_cases.py` (8
+    cases) tripwires the structure, the 4/5 match count, and the
+    CLT zero-failure counter-example.
 
 ## What the framework does end-to-end
 
