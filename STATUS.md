@@ -509,6 +509,30 @@ verdict: sustainable_yield 0.056, trajectory -0.0017, ttr 21.67,
 
 ## AUDIT_14 — Part B (E.2): investment_signal/historical_cases.py
 
+## AUDIT_18 — extended historical cases (Todo.md priority 1)
+
+39. `money_signal/historical_cases.py` extended with four anchors:
+    Bitcoin flash crashes (DIGITAL + SPECULATIVE_CLAIM, tests
+    claim #4/#9), Roman denarius debasement (METAL, multi-century
+    slow stress), Yap rai stones (TRUST_LEDGER counter-example),
+    Kula ring (RECIPROCITY_TOKEN counter-example). Match criterion
+    tightened: `predicted_n_r_high` now requires elevated Minsky
+    AND coupling_magnitude ≥ 0.3, correctly classifying TRUST_LEDGER
+    cases (Minsky 1.68 / magnitude 0.13) as form-preserved / amplitude-
+    damped rather than amplified. `tests/test_historical_cases.py`
+    restructured to partition anchors by role (6 near-collapse, 1
+    stressed, 2 counter-examples). Match count 8/9 with Cyprus as the
+    documented outlier.
+40. `investment_signal/historical_cases.py` extended with two
+    anchors: Colonial resource extraction (VOC/EIC era, DERIVATIVE
+    + EXTRACTIVE_CLAIM) and US 401(k) generational realization
+    (SHORT_CYCLE binding × GENERATIONAL money scope). Draft
+    401(k) case initially included infrastructure_depreciation_trag
+    tag but it was removed — that tag describes long-binding-in-
+    short-scope, the opposite of 401(k)'s actual failure pattern;
+    keeping it would have been classification dishonesty. Match
+    count 6/7 with ZIRP as the documented single outlier.
+
 ## AUDIT_17 — Provenance + StudyScopeAudit integration
 
 38. `term_audit/provenance.py` extended: `Provenance.scope_audit:

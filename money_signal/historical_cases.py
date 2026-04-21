@@ -520,12 +520,355 @@ ARGENTINA_2001_2002 = HistoricalCase(
 )
 
 
+# ---------------------------------------------------------------------------
+# Extended anchor cases (AUDIT_18)
+# ---------------------------------------------------------------------------
+
+BITCOIN_FLASH_CRASHES = HistoricalCase(
+    name="Bitcoin flash crashes — digital speculative cascades",
+    period="2013 / 2017 / 2021-22 (selected episodes)",
+    location="global crypto markets",
+    context_pre=DimensionalContext(
+        temporal=TemporalScope.TRANSACTION,
+        cultural=CulturalScope.ATOMIZED_MARKET,
+        attribution=AttributedValue.SPECULATIVE_CLAIM,
+        observer=ObserverPosition.TOKEN_HOLDER_THIN,
+        substrate=Substrate.DIGITAL,
+        state=StateRegime.STRESSED,
+    ),
+    context_during=DimensionalContext(
+        temporal=TemporalScope.TRANSACTION,
+        cultural=CulturalScope.ATOMIZED_MARKET,
+        attribution=AttributedValue.SPECULATIVE_CLAIM,
+        observer=ObserverPosition.TOKEN_HOLDER_THIN,
+        substrate=Substrate.DIGITAL,
+        state=StateRegime.NEAR_COLLAPSE,
+    ),
+    context_post=DimensionalContext(
+        temporal=TemporalScope.SEASONAL,
+        cultural=CulturalScope.ATOMIZED_MARKET,
+        attribution=AttributedValue.SPECULATIVE_CLAIM,
+        observer=ObserverPosition.TOKEN_HOLDER_THIN,
+        substrate=Substrate.DIGITAL,
+        state=StateRegime.RECOVERING,
+    ),
+    observed_dynamics=[
+        ObservedDynamic(
+            term_i="N", term_j="R",
+            shift=DynamicShift.AMPLIFIED_STRONG,
+            evidence=(
+                "reversal reliability shocks (exchange outages, stablecoin "
+                "de-peg, Terra/UST collapse) trigger near-total acceptance "
+                "collapse on minute-scale; no substrate floor, no sacred "
+                "floor, no institutional backstop"
+            ),
+            provenance=empirical(
+                source_refs=[
+                    "Gandal, Hamrick, Moore & Oberman 2018, 'Price "
+                    "Manipulation in the Bitcoin Ecosystem', JME 95",
+                    "Liu, Tsyvinski & Wu 2022, 'Common Risk Factors in "
+                    "Cryptocurrency', Journal of Finance 77(3)",
+                    "Gorton & Zhang 2023, 'Taming Wildcat Stablecoins', "
+                    "University of Chicago Law Review 90(3)",
+                ],
+                rationale=(
+                    "reflexive K[N][R] dynamics directly documented in "
+                    "the crypto-microstructure literature; Terra/UST 2022 "
+                    "is the cleanest anchor for a substrate-less speculative "
+                    "collapse"
+                ),
+            ),
+        ),
+        ObservedDynamic(
+            term_i="R", term_j="R",
+            shift=DynamicShift.AMPLIFIED_STRONG,
+            evidence=(
+                "infrastructure coupling: exchange hot-wallet compromises, "
+                "chain reorganizations, and stablecoin-reserve opacity all "
+                "map directly to README claim #9 (DIGITAL substrate "
+                "amplifies K[R][N])"
+            ),
+            provenance=placeholder(
+                rationale=(
+                    "qualitative pattern widely reported; extraction of "
+                    "specific infrastructure-failure → acceptance-drop "
+                    "windows not performed here"
+                ),
+                retirement_path=(
+                    "event-study around Mt. Gox 2014, Binance outages, "
+                    "USDC March 2023 de-peg with orderbook + on-chain "
+                    "settlement data"
+                ),
+            ),
+        ),
+    ],
+    primary_refs=[
+        "Gandal, Hamrick, Moore & Oberman 2018",
+        "Liu, Tsyvinski & Wu 2022",
+        "Gorton & Zhang 2023",
+    ],
+    historical_confidence=0.75,
+    notes=(
+        "Short-period anchors rather than a sustained regime. Each "
+        "flash crash is its own near-collapse episode. Tests README "
+        "claim #4 (SPECULATIVE_CLAIM amplifies K[N][R]) and claim #9 "
+        "(DIGITAL substrate amplifies K[R][N]) in the same context. "
+        "CulturalScope is ATOMIZED_MARKET, not INSTITUTIONAL — crypto "
+        "markets have no shared institutional coordination mechanism."
+    ),
+)
+
+
+ROMAN_DENARIUS_DEBASEMENT = HistoricalCase(
+    name="Roman denarius debasement — multi-generational metal slide",
+    period="~200 BCE - 270 CE",
+    location="Roman Empire",
+    context_pre=DimensionalContext(
+        temporal=TemporalScope.GENERATIONAL,
+        cultural=CulturalScope.INSTITUTIONAL,
+        attribution=AttributedValue.COMMODITY_BACKED,
+        observer=ObserverPosition.TOKEN_HOLDER_THIN,
+        substrate=Substrate.METAL,
+        state=StateRegime.HEALTHY,
+    ),
+    context_during=DimensionalContext(
+        temporal=TemporalScope.GENERATIONAL,
+        cultural=CulturalScope.INSTITUTIONAL,
+        attribution=AttributedValue.STATE_ENFORCED,
+        observer=ObserverPosition.TOKEN_HOLDER_THIN,
+        substrate=Substrate.METAL,
+        state=StateRegime.STRESSED,
+    ),
+    context_post=DimensionalContext(
+        temporal=TemporalScope.GENERATIONAL,
+        cultural=CulturalScope.INSTITUTIONAL,
+        attribution=AttributedValue.STATE_ENFORCED,
+        observer=ObserverPosition.TOKEN_HOLDER_THIN,
+        substrate=Substrate.METAL,
+        state=StateRegime.NEAR_COLLAPSE,
+    ),
+    observed_dynamics=[
+        ObservedDynamic(
+            term_i="R", term_j="R",
+            shift=DynamicShift.DAMPED_STRONG,
+            evidence=(
+                "silver content in the denarius fell from ~95% under "
+                "Augustus to ~50% by 200 CE to ~5% by 268 CE; reversal "
+                "reliability declined continuously across that arc"
+            ),
+            provenance=empirical(
+                source_refs=[
+                    "Harl 1996, 'Coinage in the Roman Economy, 300 BC-700 AD'",
+                    "Duncan-Jones 1994, 'Money and Government in the "
+                    "Roman Empire'",
+                    "Butcher & Ponting 2014, 'The Metallurgy of Roman "
+                    "Silver Coinage: From the Reform of Nero to the Reform "
+                    "of Trajan'",
+                ],
+                rationale=(
+                    "silver-content series from X-ray fluorescence studies "
+                    "is the gold standard for this case"
+                ),
+                scope_caveat=(
+                    "silver content is a proxy for monetary reliability; "
+                    "the actual reliability dynamic involves taxation "
+                    "policy, legion pay, and tributary economics that the "
+                    "metal-content alone does not capture"
+                ),
+            ),
+        ),
+        ObservedDynamic(
+            term_i="N", term_j="R",
+            shift=DynamicShift.AMPLIFIED,
+            evidence=(
+                "provincial markets increasingly refused denarii or "
+                "demanded payment by weight rather than face count; the "
+                "Crisis of the Third Century (235-284 CE) is the "
+                "near-collapse episode"
+            ),
+            provenance=empirical(
+                source_refs=[
+                    "Harper 2017, 'The Fate of Rome: Climate, Disease, "
+                    "and the End of an Empire'",
+                    "Temin 2013, 'The Roman Market Economy'",
+                ],
+                rationale=(
+                    "network-acceptance collapse documented in the "
+                    "Crisis of the Third Century literature"
+                ),
+            ),
+        ),
+    ],
+    primary_refs=[
+        "Harl 1996",
+        "Butcher & Ponting 2014",
+        "Harper 2017",
+    ],
+    historical_confidence=0.85,
+    notes=(
+        "Centuries-long slow stress rather than a discrete event — "
+        "useful as a counter-anchor to the rapid-onset cases (Weimar, "
+        "GFC) and as the canonical pre-modern example of "
+        "COMMODITY_BACKED → STATE_ENFORCED attribution drift. "
+        "Diocletian's 301 CE Edict on Maximum Prices is the best-"
+        "documented exception-pathway attempt under Roman money."
+    ),
+)
+
+
+YAP_RAI_STONES = HistoricalCase(
+    name="Yap rai stones — trust-ledger substrate, multi-generational",
+    period="~1400 CE - present",
+    location="Yap (Federated States of Micronesia)",
+    context_pre=DimensionalContext(
+        temporal=TemporalScope.GENERATIONAL,
+        cultural=CulturalScope.HIGH_RECIPROCITY,
+        attribution=AttributedValue.RECIPROCITY_TOKEN,
+        observer=ObserverPosition.SUBSTRATE_PRODUCER,
+        substrate=Substrate.TRUST_LEDGER,
+        state=StateRegime.HEALTHY,
+    ),
+    context_during=DimensionalContext(
+        temporal=TemporalScope.GENERATIONAL,
+        cultural=CulturalScope.HIGH_RECIPROCITY,
+        attribution=AttributedValue.RECIPROCITY_TOKEN,
+        observer=ObserverPosition.SUBSTRATE_PRODUCER,
+        substrate=Substrate.TRUST_LEDGER,
+        state=StateRegime.HEALTHY,
+    ),
+    context_post=None,
+    observed_dynamics=[
+        ObservedDynamic(
+            term_i="R", term_j="R",
+            shift=DynamicShift.UNCHANGED,
+            evidence=(
+                "rai stones frequently do not move physically; ownership "
+                "is tracked in collective memory; one stone lies at the "
+                "bottom of a lagoon and its value is unimpaired. The "
+                "substrate is the community ledger, not the stone."
+            ),
+            provenance=empirical(
+                source_refs=[
+                    "Friedman 1991, 'The Island of Stone Money', "
+                    "Federal Reserve Bank of San Francisco working paper",
+                    "Gillilland 1975, 'The Stone Money of Yap: A "
+                    "Numismatic Survey', Smithsonian Contributions to "
+                    "Anthropology 23",
+                ],
+                rationale=(
+                    "Friedman's monograph is the canonical economic "
+                    "reading of Yap monetary structure"
+                ),
+                scope_caveat=(
+                    "the case is an anchor for TRUST_LEDGER substrate; "
+                    "extrapolating quantitative K values from Yap to "
+                    "other reciprocity systems requires independent "
+                    "confirmation per system"
+                ),
+            ),
+        ),
+    ],
+    primary_refs=[
+        "Friedman 1991 (FRBSF WP)",
+        "Gillilland 1975 Smithsonian",
+    ],
+    historical_confidence=0.80,
+    notes=(
+        "COUNTER-EXAMPLE. The canonical TRUST_LEDGER + "
+        "RECIPROCITY_TOKEN + HIGH_RECIPROCITY anchor. Stable across "
+        "multiple centuries without a near-collapse episode. Tests "
+        "README claim #3 (reciprocity damping) directly: the composed "
+        "Minsky coefficient for this context is the highest across "
+        "the cases in this file, but the coupling MAGNITUDE is the "
+        "lowest. Form preserved, amplitude damped — the signature of "
+        "substrate-grounded reciprocity."
+    ),
+)
+
+
+KULA_RING_EXCHANGE = HistoricalCase(
+    name="Kula ring — Melanesian reciprocity network",
+    period="documented 1915 onward, antecedents pre-contact",
+    location="Trobriand Islands and surrounding archipelago",
+    context_pre=DimensionalContext(
+        temporal=TemporalScope.GENERATIONAL,
+        cultural=CulturalScope.HIGH_RECIPROCITY,
+        attribution=AttributedValue.RECIPROCITY_TOKEN,
+        observer=ObserverPosition.SUBSTRATE_PRODUCER,
+        substrate=Substrate.TRUST_LEDGER,
+        state=StateRegime.HEALTHY,
+    ),
+    context_during=DimensionalContext(
+        temporal=TemporalScope.GENERATIONAL,
+        cultural=CulturalScope.HIGH_RECIPROCITY,
+        attribution=AttributedValue.RECIPROCITY_TOKEN,
+        observer=ObserverPosition.SUBSTRATE_PRODUCER,
+        substrate=Substrate.TRUST_LEDGER,
+        state=StateRegime.HEALTHY,
+    ),
+    context_post=None,
+    observed_dynamics=[
+        ObservedDynamic(
+            term_i="N", term_j="N",
+            shift=DynamicShift.UNCHANGED,
+            evidence=(
+                "soulava necklaces and mwali armshells circulate in fixed "
+                "directions around the ring; the carriers' prestige is "
+                "the substrate. Direct commodity exchange (gimwali) is "
+                "explicitly separated from kula exchange."
+            ),
+            provenance=empirical(
+                source_refs=[
+                    "Malinowski 1922, 'Argonauts of the Western Pacific'",
+                    "Damon 1980, 'The Kula and Generalised Exchange: "
+                    "Considering Some Unconsidered Aspects of The "
+                    "Elementary Structures of Kinship', Man 15(2)",
+                    "Leach & Leach eds. 1983, 'The Kula: New Perspectives "
+                    "on Massim Exchange'",
+                ],
+                rationale=(
+                    "Malinowski's ethnography is the foundational source; "
+                    "the 1983 volume updates the analysis through the "
+                    "1980s."
+                ),
+                scope_caveat=(
+                    "indigenous-system data; cross-cultural extrapolation "
+                    "of framework K values would misread the source "
+                    "ethnography. The case anchors the existence of "
+                    "TRUST_LEDGER monetary systems, not quantitative "
+                    "calibration of them."
+                ),
+            ),
+        ),
+    ],
+    primary_refs=[
+        "Malinowski 1922",
+        "Damon 1980",
+        "Leach & Leach 1983",
+    ],
+    historical_confidence=0.80,
+    notes=(
+        "COUNTER-EXAMPLE (paired with YAP_RAI_STONES). Separates the "
+        "claim that RECIPROCITY_TOKEN attribution + TRUST_LEDGER "
+        "substrate CAN exist stably for generations — refuting any "
+        "implicit framework bias that 'money must be commodity-backed "
+        "or state-enforced to persist.' Cross-cultural corroboration "
+        "for README claim #3 (reciprocity damping)."
+    ),
+)
+
+
 ALL_CASES: List[HistoricalCase] = [
     WEIMAR_1921_1923,
     ZIMBABWE_2007_2009,
     GFC_2008,
     CYPRUS_2013,
     ARGENTINA_2001_2002,
+    # AUDIT_18 extensions:
+    BITCOIN_FLASH_CRASHES,
+    ROMAN_DENARIUS_DEBASEMENT,
+    YAP_RAI_STONES,
+    KULA_RING_EXCHANGE,
 ]
 
 
@@ -608,11 +951,20 @@ def compare_case(case: HistoricalCase) -> CaseComparison:
         and o.shift in (DynamicShift.AMPLIFIED, DynamicShift.AMPLIFIED_STRONG)
         for o in case.observed_dynamics
     )
-    # Framework: predicts "high K[N][R]" when Minsky coefficient is
-    # elevated (>= 1.5) OR we are in NEAR_COLLAPSE regime.
+    # Framework predicts "K[N][R] amplified" when:
+    #   - state is NEAR_COLLAPSE, OR
+    #   - Minsky ratio is elevated (>= 1.5) AND coupling_magnitude
+    #     is non-trivial (>= 0.3).
+    #
+    # The magnitude filter prevents counter-examples like Yap rai
+    # stones and the Kula ring (reciprocity damping, Minsky ~ 1.68
+    # with magnitude ~ 0.13) from being mis-labeled as "amplified."
+    # High Minsky ratio under low magnitude means "asymmetry form
+    # preserved but damped," which is the README's claim #3 signature,
+    # not the claim #4 amplification signature.
     predicted_n_r_high = (
-        pred.minsky >= 1.5
-        or case.context_during.state == StateRegime.NEAR_COLLAPSE
+        case.context_during.state == StateRegime.NEAR_COLLAPSE
+        or (pred.minsky >= 1.5 and pred.coupling_magnitude >= 0.3)
     )
 
     sign_flip_observed = any(
