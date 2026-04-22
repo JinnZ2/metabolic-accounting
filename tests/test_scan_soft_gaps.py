@@ -79,42 +79,42 @@ def test_3_aggregate_matches_per_row_sums():
     print("PASS")
 
 
-def test_4_post_audit_19_soft_gap_map_stable():
-    """LOAD-BEARING: the specific soft-gap map as of AUDIT_19 § C is
+def test_4_post_audit_21_soft_gap_map_stable():
+    """LOAD-BEARING: the specific soft-gap map as of AUDIT_21 § B is
     the honest baseline. If a retrofit happens (good — attach a
     StudyScopeAudit), the counts move; if a score moves without a
     retrofit, something structural shifted.
 
-    Post-AUDIT_19 state:
-      - money has 2 attached scope_audits (Boskin + BoE 2014) and
-        2 remaining soft gaps (unit_invariant + observer_invariant
-        EMPIRICAL records with scope_caveat but no audit)
-      - all other Tier 1 audits have 0 attached scope_audits
-      - total soft gaps across tree: 14
-      - total scope_audits attached: 2
+    Post-AUDIT_21 state:
+      - money has 4 attached scope_audits and 0 remaining soft gaps:
+          AUDIT_19 Part C: Boskin CPI (calibration_exists), BoE 2014
+            (conservation_or_law)
+          AUDIT_21 Part B: Balassa-Samuelson PPP (unit_invariant),
+            FASB ASC 820 (observer_invariant)
+      - value and capital audits have 0 attached scope_audits yet
+        — 12 soft gaps remain across them
+      - total scope_audits attached tree-wide: 4
+      - total soft gaps remaining: 12
       - total provenance records: 63
     """
-    print("\n--- TEST 4: post-AUDIT_19 soft-gap map stable ---")
+    print("\n--- TEST 4: post-AUDIT_21 soft-gap map stable ---")
     rows = scan()
     agg = aggregate(rows)
 
-    # money's specific shape
     money_row = next(r for r in rows if r.audit_term == "money")
-    assert money_row.scope_audit_count == 2, \
+    assert money_row.scope_audit_count == 4, \
         f"FAIL: money scope_audit_count = {money_row.scope_audit_count}"
-    assert money_row.soft_gap_count == 2, \
+    assert money_row.soft_gap_count == 0, \
         f"FAIL: money soft_gap_count = {money_row.soft_gap_count}"
-    assert set(money_row.soft_gap_criteria) == \
-        {"unit_invariant", "observer_invariant"}
+    assert money_row.soft_gap_criteria == ()
 
-    # Tree-wide totals
-    assert agg["total_scope_audits_attached"] == 2
-    assert agg["total_soft_gaps"] == 14, \
-        f"FAIL: expected 14 tree-wide soft gaps, got {agg['total_soft_gaps']}"
+    assert agg["total_scope_audits_attached"] == 4
+    assert agg["total_soft_gaps"] == 12, \
+        f"FAIL: expected 12 tree-wide soft gaps, got {agg['total_soft_gaps']}"
     assert agg["total_provenances"] == 63
 
-    print(f"  money: 2 scope_audits attached, 2 remaining gaps")
-    print(f"  tree-wide: 2 attached / 14 remaining / 63 total provenances")
+    print(f"  money: 4 scope_audits attached, 0 remaining gaps")
+    print(f"  tree-wide: 4 attached / 12 remaining / 63 total provenances")
     print("PASS")
 
 
@@ -144,6 +144,6 @@ if __name__ == "__main__":
     test_1_scan_walks_nine_tier_one_audits()
     test_2_row_shape_and_internal_consistency()
     test_3_aggregate_matches_per_row_sums()
-    test_4_post_audit_19_soft_gap_map_stable()
+    test_4_post_audit_21_soft_gap_map_stable()
     test_5_audit_07_preservation()
     print("\nall scan_soft_gaps tests passed.")

@@ -4,7 +4,7 @@ Status of the metabolic-accounting framework at end of session.
 
 ## Verified (all tests run, all passing)
 
-Fifty test suites, every one runs and passes:
+Fifty-one test suites, every one runs and passes:
 
 ```
 # main accounting stack (18, pre-term_audit)
@@ -60,6 +60,7 @@ test_signal_asymmetry:       PASS   <-- AUDIT_14 Part C: distributional stub + 4
 test_informational_cost_audit: PASS   <-- AUDIT_16: why false certainty costs exponentially
 test_provenance_study_scope_integration: PASS   <-- AUDIT_17: Provenance optionally carries a StudyScopeAudit
 test_audit_19_integrations:  PASS   <-- AUDIT_19: scope↔cost wiring, PLACEHOLDER deferred_cost, 2 Tier 1 retrofits
+test_scan_soft_gaps:         PASS   <-- AUDIT_21: soft-gap scanner; 14 → 12 gaps after 2 more retrofits
 ```
 
 See `docs/AUDIT_06.md` through `docs/AUDIT_15.md` for the cross-checks
@@ -509,6 +510,23 @@ verdict: sustainable_yield 0.056, trajectory -0.0017, ttr 21.67,
     subsequent commits on this branch, extending `docs/AUDIT_14.md`.
 
 ## AUDIT_14 — Part B (E.2): investment_signal/historical_cases.py
+
+## AUDIT_21 — soft-gap scanner + 2 more scope-audit retrofits
+
+47. **`scripts/scan_soft_gaps.py`** shipped (closes AUDIT_17 § D.2).
+    Walks 9 Tier 1 audits and reports per-audit rows + aggregate
+    totals. Honest retrofit debt: not 72 (AUDIT_17 pessimistic
+    estimate) but **14** EMPIRICAL records where the author declared
+    a scope_caveat in prose without attaching a machine-readable
+    StudyScopeAudit. Each is per-citation work.
+48. **Two more scope_audit retrofits** attached to money.py:
+    `_BALASSA_PPP_SCOPE_AUDIT` on unit_invariant (grounded in
+    Balassa 1964 JPE + Samuelson 1964 RES) and
+    `_FASB_ASC_820_SCOPE_AUDIT` on observer_invariant (grounded in
+    FASB ASC 820 / IFRS 13 Level 1/2/3 hierarchy). **money.py is
+    now fully scope-audited** — 4 scope_audits attached, 0 remaining
+    soft gaps. Tree-wide aggregate: 4 attached / 12 remaining / 63
+    total provenances.
 
 ## AUDIT_20 — anchor extensions + ZIRP decomposition
 

@@ -218,26 +218,28 @@ def test_6_money_retrofitted_records_have_scope_audit():
 
 def test_7_money_coverage_shape_honest():
     """LOAD-BEARING: the post-retrofit coverage must correctly
-    reflect that 2 scope_audits are attached and the REMAINING
-    caveat-bearing EMPIRICAL records are still flagged as soft
-    gaps. The honest picture is 'two retrofits done, others
-    open' — not 'all fixed' and not 'nothing changed'."""
+    reflect that MONEY_AUDIT has 4 scope_audits attached (Boskin +
+    BoE from AUDIT_19 § C; Balassa-Samuelson + FASB ASC 820 from
+    AUDIT_21 § B) and 0 remaining soft gaps.
+
+    The 'honest retrofit state' invariant now says: money.py is
+    fully scope-audited; value/capital audits still carry soft
+    gaps that require per-citation work (see
+    scripts/scan_soft_gaps.py)."""
     print("\n--- TEST 7: coverage reflects honest retrofit state ---")
     cov = MONEY_AUDIT.provenance_coverage()
 
-    assert cov["scope_audit_count"] == 2
-    # The remaining caveat-bearing EMPIRICAL records are
-    # unit_invariant (BLS/Balassa-Samuelson) and observer_invariant
-    # (FASB Level-3) — both have scope_caveats that AUDIT_19 § C
-    # did NOT retrofit.
-    assert cov["soft_gap_count"] == 2, \
-        f"FAIL: expected exactly 2 remaining soft gaps, got {cov['soft_gap_count']}"
+    assert cov["scope_audit_count"] == 4, \
+        f"FAIL: expected 4 scope_audits (Boskin/BoE/Balassa/FASB), got {cov['scope_audit_count']}"
+    assert cov["soft_gap_count"] == 0, \
+        f"FAIL: money soft_gap_count should be 0 post-AUDIT_21, got {cov['soft_gap_count']}"
     # No AUDIT_07 regression: still 7/7 complete.
     assert cov["total"] == 7
     assert cov["complete"] == 7
     assert cov["incomplete"] == 0
     assert cov["none"] == 0
-    print(f"  7/7 complete; 2 scope_audits attached; 2 remaining soft gaps")
+    print(f"  money.py fully scope-audited: 7/7 complete; "
+          f"4 scope_audits attached; 0 remaining soft gaps")
     print("PASS")
 
 
