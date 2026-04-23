@@ -25,3 +25,13 @@ Priority items as they land across the audit trail:
 - **Priority 3 — earth-systems-physics coupling**:
   - Not yet started. Blocked on priorities 1 and 2 being stable per this document's own sequencing.
 
+
+---
+
+## Side-quests landed
+
+- **AUDIT_23 § A — Tier 1 morphism graph**: closes AUDIT_07 § C.2
+  (inheritance invariant as code). `term_audit/morphism_graph.py`
+  + `tests/test_morphism_graph.py`. 9 nodes / 20 edges; weakly
+  connected; inheritance invariant HOLDS over all 5 claim pairs.
+
