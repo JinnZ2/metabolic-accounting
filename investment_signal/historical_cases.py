@@ -1087,6 +1087,147 @@ CONGO_RUBBER_1885_1908 = HistoricalInvestmentCase(
 )
 
 
+# ---------------------------------------------------------------------------
+# Extended anchor case (AUDIT_22)
+# ---------------------------------------------------------------------------
+
+AMAZON_RUBBER_BOOM_1879_1912 = HistoricalInvestmentCase(
+    name="Amazon rubber boom — Putumayo extraction regime",
+    period="1879 (first Amazon boom) - 1912 (Casement Putumayo Report)",
+    location="Upper Amazon basin (Peru, Colombia, Brazil)",
+    context_pre=InvestmentContext(
+        money_context=_HEALTHY_FIAT,
+        attribution=InvestmentAttribution.PRODUCTIVE_CAPACITY,
+        derivative_distance=DerivativeDistance.TWO_LAYER,
+        time_binding=TimeBinding.SEASONAL,
+    ),
+    context_during=InvestmentContext(
+        # DURING context: Peruvian Amazon Company (PAC) / Casa
+        # Arana era. London-listed concessions on upper Amazon
+        # rubber lands, violent enforcement through the caucheros
+        # and local intermediaries, Huitoto and Bora peoples as
+        # the substrate. SYNTHETIC distance because the European
+        # bondholder sees a London-share price; under that is a
+        # Peruvian concession contract; under that is a brutal
+        # on-the-ground labor regime; the substrate is invisible
+        # multiple abstraction layers up the stack.
+        money_context=_HEALTHY_FIAT,
+        attribution=InvestmentAttribution.EXTRACTIVE_CLAIM,
+        derivative_distance=DerivativeDistance.SYNTHETIC,
+        time_binding=TimeBinding.SHORT_CYCLE,
+    ),
+    context_post=None,
+    characteristic_input=SubstrateVector.from_dict({
+        InvestmentSubstrate.MONEY: 1000.0,
+    }),
+    characteristic_expected=SubstrateVector.from_dict({
+        InvestmentSubstrate.MONEY: 3500.0,
+    }),
+    observed_failures=(
+        ObservedInvestmentFailure(
+            failure_tag="substrate_invisible_at_distance",
+            evidence=(
+                "London-listed Peruvian Amazon Company shareholders "
+                "had no direct view of enforcement. The substrate "
+                "(Huitoto, Bora, and other peoples being forced to "
+                "extract rubber under debt-peonage) became visible "
+                "only after Casement's 1912 Putumayo Report to "
+                "Parliament, and even then the share price responded "
+                "to reputational pressure, not to substrate damage "
+                "that had been ongoing for decades."
+            ),
+            provenance=empirical(
+                source_refs=[
+                    "Casement 1912, 'Putumayo Report' to the British "
+                    "Parliament (published in Parliamentary Papers "
+                    "1913)",
+                    "Hardenburg 1912, 'The Putumayo: The Devil's "
+                    "Paradise'",
+                    "Taussig 1987, 'Shamanism, Colonialism, and the "
+                    "Wild Man: A Study in Terror and Healing'",
+                ],
+                rationale=(
+                    "Casement and Hardenburg are the primary "
+                    "contemporary exposés; Taussig synthesizes and "
+                    "analyzes the terror regime's internal logic"
+                ),
+            ),
+        ),
+        ObservedInvestmentFailure(
+            failure_tag="financialized_reverse_causation",
+            evidence=(
+                "London bond yields and share-price pressure drove "
+                "quota increases on the rubber concessions. The "
+                "cauchero / station-chief hierarchy responded with "
+                "intensified violence to maintain throughput. "
+                "Financial demand caused physical extraction rate, "
+                "not the reverse."
+            ),
+            provenance=empirical(
+                source_refs=[
+                    "Hardenburg 1912",
+                    "Stanfield 1998, 'Red Rubber, Bleeding Trees: "
+                    "Violence, Slavery, and Empire in Northwest "
+                    "Amazonia, 1850-1933'",
+                ],
+                rationale=(
+                    "Stanfield 1998 documents the quota-to-violence "
+                    "transmission from the archival record"
+                ),
+            ),
+        ),
+        ObservedInvestmentFailure(
+            failure_tag="substrate_abstraction_destroys_nature",
+            evidence=(
+                "TIME and LABOR substrate of Amazonian peoples were "
+                "abstracted into rubber-pound-dollar. Mortality "
+                "estimates for the Putumayo region range ~30-50,000 "
+                "over the boom period, with broader Amazon estimates "
+                "substantially higher. Entire language groups "
+                "approached or crossed extinction thresholds."
+            ),
+            provenance=empirical(
+                source_refs=[
+                    "Casement 1912",
+                    "Taussig 1987",
+                    "Chirif & García Hierro 2007, 'Marcando Territorio: "
+                    "Progresos y Limitaciones de la Titulación de "
+                    "Territorios Indígenas en la Amazonía'",
+                ],
+                rationale=(
+                    "mortality and language-loss estimates are the "
+                    "extreme end of claim #21's prediction: TIME / "
+                    "ATTENTION / RELATIONAL_CAPITAL substrates cannot "
+                    "be derivatized without destroying their nature"
+                ),
+            ),
+        ),
+    ),
+    primary_refs=[
+        "Casement 1912 Putumayo Report",
+        "Hardenburg 1912",
+        "Taussig 1987",
+        "Stanfield 1998",
+    ],
+    historical_confidence=0.90,
+    notes=(
+        "Paired with CONGO_RUBBER_1885_1908 as the two contemporary "
+        "rubber-extraction anchors — both SYNTHETIC distance + "
+        "EXTRACTIVE_CLAIM regimes running on the same commodity "
+        "demand cycle (1890s-1910s global rubber boom driven by "
+        "Dunlop pneumatic tire + electrical insulation markets). "
+        "The Casement chain is notable: the same Roger Casement "
+        "who exposed the Congo atrocities in 1904 was sent to "
+        "report on Putumayo in 1910-1911. The two regimes "
+        "exhibit the same structural failure signature under "
+        "different colonial states — Leopold's personal kingdom "
+        "vs London-listed joint-stock extraction — confirming the "
+        "framework's classification is driven by context shape "
+        "(SYNTHETIC + EXTRACTIVE), not by any specific regime."
+    ),
+)
+
+
 ALL_CASES: List[HistoricalInvestmentCase] = [
     ENRON_2001,
     MBS_2008,
@@ -1106,6 +1247,8 @@ ALL_CASES: List[HistoricalInvestmentCase] = [
     RETIREMENT_401K_GENERATIONAL,
     # AUDIT_20 extension:
     CONGO_RUBBER_1885_1908,
+    # AUDIT_22 extension:
+    AMAZON_RUBBER_BOOM_1879_1912,
 ]
 
 

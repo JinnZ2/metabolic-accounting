@@ -35,6 +35,8 @@ from money_signal.historical_cases import (
     YAP_RAI_STONES, KULA_RING_EXCHANGE,
     # AUDIT_20 extensions:
     HAUDENOSAUNEE_WAMPUM, POTLATCH_SUPPRESSION,
+    # AUDIT_22 extensions:
+    ANDEAN_AYNI, TAMBU_TOLAI,
 )
 
 # AUDIT_18 + AUDIT_20 added anchor cases across different roles.
@@ -55,18 +57,21 @@ COUNTER_EXAMPLES = [
     YAP_RAI_STONES,
     KULA_RING_EXCHANGE,
     HAUDENOSAUNEE_WAMPUM,
+    # AUDIT_22: labor-reciprocity + dual-regime shell-money anchors
+    ANDEAN_AYNI,
+    TAMBU_TOLAI,
 ]
 from money_signal.dimensions import StateRegime
 from term_audit.provenance import Provenance, ProvenanceKind
 
 
 def test_1_all_anchor_cases():
-    """AUDIT_12 shipped 5; AUDIT_18 extended to 9; AUDIT_20
-    extended to 11 (+ Haudenosaunee wampum + potlatch suppression).
+    """AUDIT_12 → 5; AUDIT_18 → 9; AUDIT_20 → 11 (+Haudenosaunee,
+    +potlatch); AUDIT_22 → 13 (+Andean ayni, +tambu-Tolai).
     Load-bearing: the registered set must match exactly, with
     partitioning by role (near-collapse, stressed, counter-example)."""
-    print("\n--- TEST 1: eleven anchor cases registered + partitioned ---")
-    assert len(ALL_CASES) == 11
+    print("\n--- TEST 1: thirteen anchor cases registered + partitioned ---")
+    assert len(ALL_CASES) == 13
     expected = {
         "Weimar hyperinflation and Rentenmark stabilization",
         "Zimbabwe hyperinflation and dollarization",
@@ -79,6 +84,8 @@ def test_1_all_anchor_cases():
         "Kula ring — Melanesian reciprocity network",
         "Haudenosaunee wampum — diplomatic + ledger substrate",
         "Potlatch ceremony — legal suppression and post-repeal recovery",
+        "Andean ayni — labor-reciprocity ledger across generations",
+        "Tambu shell-money — Tolai community persistence under dual regime",
     }
     names = {c.name for c in ALL_CASES}
     assert names == expected, f"FAIL: expected {expected}, got {names}"
@@ -166,32 +173,29 @@ def test_5_compare_case_runs():
 
 
 def test_6_expected_match_distribution():
-    """LOAD-BEARING: AUDIT_18 tightened `predicted_n_r_high` to
-    require both elevated Minsky AND elevated coupling_magnitude,
-    which correctly classifies TRUST_LEDGER counter-examples.
-    AUDIT_20 added 2 more anchors (Haudenosaunee wampum,
-    potlatch suppression) that also match under the tightened
-    criterion.
+    """LOAD-BEARING: AUDIT_22 added 2 more counter-examples (Andean
+    ayni labor-reciprocity, Tambu Tolai shell-money). Both match
+    under the tightened predicted_n_r_high criterion.
 
-    Expected post-AUDIT_20 match: 10 of 11 anchors. Cyprus remains
+    Expected post-AUDIT_22 match: 12 of 13 anchors. Cyprus remains
     the single outlier — observer-asymmetry case (claim #5), not
     K[N][R] amplification (claim #4).
 
     If this count changes, either factor values moved, observed
-    dynamics were edited, or the match criteria drifted. All three
-    warrant explicit review."""
-    print("\n--- TEST 6: expected qualitative match distribution (10/11) ---")
+    dynamics were edited, or the match criteria drifted."""
+    print("\n--- TEST 6: expected qualitative match distribution (12/13) ---")
     results = {c.name: compare_case(c) for c in ALL_CASES}
     match_count = sum(1 for r in results.values() if r.qualitative_match)
-    assert match_count == 10, \
-        f"FAIL: expected 10/11 qualitative matches, got {match_count}/11"
+    assert match_count == 12, \
+        f"FAIL: expected 12/13 qualitative matches, got {match_count}/13"
 
     # Cyprus remains the documented outlier
     assert not results[CYPRUS_2013.name].qualitative_match, \
         "FAIL: Cyprus is the expected observer-asymmetry outlier"
 
     # Counter-examples must match
-    for case in (YAP_RAI_STONES, KULA_RING_EXCHANGE, HAUDENOSAUNEE_WAMPUM):
+    for case in (YAP_RAI_STONES, KULA_RING_EXCHANGE, HAUDENOSAUNEE_WAMPUM,
+                 ANDEAN_AYNI, TAMBU_TOLAI):
         assert results[case.name].qualitative_match, \
             f"FAIL: {case.name} counter-example must match"
 
@@ -202,9 +206,8 @@ def test_6_expected_match_distribution():
         assert results[case.name].qualitative_match, \
             f"FAIL: {case.name} expected to match but didn't"
 
-    print(f"  10/11 qualitative matches; Cyprus correctly flagged as outlier")
-    print(f"  3 counter-examples (Yap, Kula, Haudenosaunee) all classified correctly")
-    print(f"  Potlatch suppression (colonial-regime stress) matches")
+    print(f"  12/13 qualitative matches; Cyprus correctly flagged as outlier")
+    print(f"  5 counter-examples all classified correctly")
     print("PASS")
 
 

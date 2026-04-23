@@ -39,16 +39,17 @@ from investment_signal.historical_cases import (
     ZIRP_RETAIL_DIVERSIFIED, ZIRP_PRIVATE_EQUITY, ZIRP_CLO_STRUCTURED,
     # AUDIT_20 § A extension:
     CONGO_RUBBER_1885_1908,
+    # AUDIT_22 extension:
+    AMAZON_RUBBER_BOOM_1879_1912,
 )
 from term_audit.provenance import Provenance
 
 
 def test_1_all_anchor_cases():
-    """AUDIT_12 shipped 5; AUDIT_18 extended to 7; AUDIT_20 § B split
-    ZIRP into 3 sub-cases (retail / PE / CLO) and § A added Congo
-    rubber → 10 anchors total."""
-    print("\n--- TEST 1: ten anchor cases registered ---")
-    assert len(ALL_CASES) == 10
+    """AUDIT_12 → 5; AUDIT_18 → 7; AUDIT_20 → 10 (ZIRP split + Congo
+    rubber); AUDIT_22 → 11 (+ Amazon rubber boom)."""
+    print("\n--- TEST 1: eleven anchor cases registered ---")
+    assert len(ALL_CASES) == 11
     expected = {
         "Enron — synthetic mark-to-market collapse",
         "Mortgage-backed securities — multi-layer opacity",
@@ -60,6 +61,7 @@ def test_1_all_anchor_cases():
         "Colonial resource-extraction investment (Dutch East India Company era)",
         "US 401(k) system — generational realization-rate divergence",
         "Congo Free State rubber extraction — extreme derivative distance",
+        "Amazon rubber boom — Putumayo extraction regime",
     }
     names = {c.name for c in ALL_CASES}
     assert names == expected, f"FAIL: expected {expected}, got {names}"
@@ -116,32 +118,29 @@ def test_4_compare_case_runs_end_to_end():
     print("PASS")
 
 
-def test_5_all_ten_match_post_zirp_decomposition():
-    """LOAD-BEARING: post-AUDIT_20 § B decomposition, the former
-    ZIRP outlier is resolved. The three sub-cases each match their
-    internally consistent failure set (retail → liquidity illusion,
-    PE → reverse causation, CLO → multiple SYNTHETIC failures).
-    Combined with the prior 6 matching cases + Congo rubber,
-    framework predicted-covers-observed is now 10/10.
-
-    If this count drops, either:
-      - factor values moved (investment_signal code regression)
-      - observed failures were edited
-      - one of the three ZIRP sub-cases was mis-classified
-    All three warrant explicit review before accepting the change."""
-    print("\n--- TEST 5: expected 10/10 match post-decomposition ---")
+def test_5_all_match_post_audit_22():
+    """LOAD-BEARING: post-AUDIT_22, the investment_signal anchor
+    set is 11/11. Cyprus-style single outliers have remained
+    resolved; new additions (Amazon rubber) match their predicted
+    SYNTHETIC + EXTRACTIVE_CLAIM failure signature cleanly."""
+    print("\n--- TEST 5: expected 11/11 match post-AUDIT_22 ---")
     results = {c.name: compare_case(c) for c in ALL_CASES}
     match_count = sum(1 for r in results.values() if r.predicted_contains_observed)
-    assert match_count == 10, \
-        f"FAIL: expected 10/10, got {match_count}/10"
+    assert match_count == 11, \
+        f"FAIL: expected 11/11, got {match_count}/11"
 
-    # ZIRP sub-cases each match their own failure set
+    # ZIRP sub-cases each match
     assert results[ZIRP_RETAIL_DIVERSIFIED.name].predicted_contains_observed
     assert results[ZIRP_PRIVATE_EQUITY.name].predicted_contains_observed
     assert results[ZIRP_CLO_STRUCTURED.name].predicted_contains_observed
 
-    # AUDIT_20 § A extension (Congo rubber)
+    # Extraction cases pair-check (Congo + Amazon = same SYNTHETIC
+    # + EXTRACTIVE structural signature under different colonial
+    # regimes). Both must match for the framework's claim that
+    # structural classification is context-driven, not regime-
+    # specific.
     assert results[CONGO_RUBBER_1885_1908.name].predicted_contains_observed
+    assert results[AMAZON_RUBBER_BOOM_1879_1912.name].predicted_contains_observed
 
     for other in (ENRON_2001, MBS_2008, GIG_ECONOMY, COMMUNITY_LAND_TRUSTS,
                   COLONIAL_RESOURCE_EXTRACTION,
@@ -149,7 +148,7 @@ def test_5_all_ten_match_post_zirp_decomposition():
         assert results[other.name].predicted_contains_observed, \
             f"FAIL: {other.name} expected to match but didn't"
 
-    print(f"  10/10 match; ZIRP decomposition resolves the former outlier")
+    print(f"  11/11 match; Congo + Amazon exhibit same SYNTHETIC signature")
     print("PASS")
 
 
@@ -204,7 +203,7 @@ if __name__ == "__main__":
     test_2_all_failure_tags_valid()
     test_3_observed_failures_have_provenance()
     test_4_compare_case_runs_end_to_end()
-    test_5_all_ten_match_post_zirp_decomposition()
+    test_5_all_match_post_audit_22()
     test_6_mbs_near_collapse_propagates()
     test_7_gig_economy_financialized_at_derivative_distance()
     test_8_community_land_trusts_zero_observed_failures()

@@ -511,6 +511,29 @@ verdict: sustainable_yield 0.056, trajectory -0.0017, ttr 21.67,
 
 ## AUDIT_14 — Part B (E.2): investment_signal/historical_cases.py
 
+## AUDIT_22 — three more historical anchors (Todo.md priority 1)
+
+49. **money_signal extensions** (2 new): ANDEAN_AYNI (labor-
+    reciprocity ledger across generations — fourth counter-example,
+    first to anchor on LABOR substrate rather than shell/object
+    tokens; refs: Alberti & Mayer 1974, Mayer 2002, Harris 1985)
+    and TAMBU_TOLAI (PNG shell-money; notable dual-regime structure
+    coexisting with kina fiat; refs: Epstein 1969, Errington &
+    Gewertz 1987, Martin 2013). Match count **12/13** (Cyprus
+    remains the observer-asymmetry outlier).
+50. **investment_signal extension** (1 new): AMAZON_RUBBER_BOOM
+    _1879_1912 — paired with CONGO_RUBBER_1885_1908 via the same
+    1890s-1910s global rubber-demand cycle. Fires the same three
+    failure modes (substrate_invisible, financialized_reverse,
+    substrate_abstraction_destroys_nature) under a different
+    colonial regime (London-listed PAC / Casa Arana vs Leopold's
+    personal kingdom). Casement reported on both. Match count
+    **11/11**. The Congo+Amazon pair demonstrates framework
+    structural classification is context-driven, not regime-
+    specific — an anchor-level validation of claims #16/#17/#18/
+    #21. Refs: Casement 1912 Putumayo Report, Hardenburg 1912,
+    Taussig 1987, Stanfield 1998.
+
 ## AUDIT_21 — soft-gap scanner + 2 more scope-audit retrofits
 
 47. **`scripts/scan_soft_gaps.py`** shipped (closes AUDIT_17 § D.2).
