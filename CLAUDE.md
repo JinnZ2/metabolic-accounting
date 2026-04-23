@@ -126,6 +126,7 @@ Land on the right file without grepping blind. Each row lists the primary file a
 | Understand the dynamics that capture measurement systems | `term_audit/status_extraction.py` | `tests/test_status_extraction.py`, `term_audit/audits/disability.py` |
 | **Defend the framework against attacks** | `docs/PREEMPTING_ATTACKS.md` | `term_audit/falsification.py`, `term_audit/contradictions.py`, `term_audit/counter_hypotheses.py` |
 | Work the Tier 1 morphism graph (closes AUDIT_07 § C.2 — inheritance invariant as code) | `term_audit/morphism_graph.py` (9 nodes / 20 edges / weakly-connected) | `tests/test_morphism_graph.py`, `docs/AUDIT_23.md` § A |
+| Check every load-bearing count in one place (tripwire against silent STATUS.md drift) | `scripts/counts_consistency.py` (15 counts + declared baseline) | `tests/test_counts_consistency.py`, `docs/AUDIT_23.md` § E |
 | Understand how this repo relates to TAF / PhysicsGuard / Logic-Ferret | `docs/RELATED.md` | `docs/SCHEMAS.md` for the cross-framework data contract |
 
 ## Do not silently rewrite these

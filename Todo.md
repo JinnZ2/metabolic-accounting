@@ -34,4 +34,9 @@ Priority items as they land across the audit trail:
   (inheritance invariant as code). `term_audit/morphism_graph.py`
   + `tests/test_morphism_graph.py`. 9 nodes / 20 edges; weakly
   connected; inheritance invariant HOLDS over all 5 claim pairs.
+- **AUDIT_23 § B — counts-consistency table**: 15 load-bearing
+  counts declared in `scripts/counts_consistency.py`, tripwired by
+  `tests/test_counts_consistency.py`. Catches silent drift between
+  STATUS.md / audit-doc claims and codebase reality. 15/15 rows
+  match baseline.
 

@@ -176,7 +176,7 @@ The prose claim now has a matching machine-check. AUDIT_07 § C.2
 item: `[CLOSED]`.
 
 
-## Part D — Regression
+## Part D — Regression (after Part A)
 
 - Full suite: **52/52 PASS** (51 prior + new
   `test_morphism_graph.py`).
@@ -186,14 +186,92 @@ item: `[CLOSED]`.
   remaining / 63 total).
 
 
+## Part E — `scripts/counts_consistency.py`   `[CLOSED]`
+
+Pattern borrowed (again) from physics-playground: every load-
+bearing numeric claim in the codebase should be both (a)
+declared in one place and (b) computable from code. If the two
+disagree, either the code changed or the docs did — in either
+case, someone needs to act.
+
+### E.1 What it declares
+
+15 counts, each with a declared baseline + audit anchor +
+rationale. Grouped:
+
+- **Test / audit shape** (2): `test_files=53`, `tier1_audits=9`.
+- **Provenance discipline** (4): `provenance_total=63`,
+  `provenance_complete=63`, `scope_audits_attached=4`,
+  `soft_gaps_remaining=12`.
+- **Historical cases** (4): `money_cases=13`, `money_matches=12`,
+  `investment_cases=11`, `investment_matches=11`.
+- **Morphism graph** (5): `morphism_graph_nodes=9`,
+  `morphism_graph_edges=20`, `morphism_graph_linkage_edges=11`,
+  `morphism_graph_inheritance_edges=9`,
+  `morphism_graph_components=1`.
+
+### E.2 How it computes
+
+`compute_live_counts()` walks the codebase at call-time — no
+cached values. It imports the Tier 1 audits, the historical-case
+modules, and the morphism-graph builder, then counts provenance
+records, match rates, graph shape. Each count is the single
+source of truth.
+
+### E.3 Tripwire — `tests/test_counts_consistency.py` (5 cases)
+
+1. All 15 rows match declared (load-bearing).
+2. No drift anywhere (live != -1 sentinel — catches keys missing
+   from the live-computation side).
+3. Declared keys unique (copy-paste guard).
+4. Live count is int and >= 0 for every declared key.
+5. `main()` returns exit 0 at baseline (command-line contract).
+
+### E.4 Drift handling
+
+The script + test don't try to pick between "legitimate change"
+vs "regression" — both require explicit action. When a drift
+lands:
+
+- (a) **Legitimate change** — a new audit added a test / anchor
+  / scope_audit. Bump the `DECLARED` entry AND cite the AUDIT_XX
+  that made the change so the history is traceable.
+- (b) **Silent regression** — some code change accidentally
+  broke a count. Find it and fix the code, not the baseline.
+
+The case this catches is (c) silent drift: STATUS.md and audit
+docs quietly diverging from reality. Without this tripwire, that
+drift accumulates until STATUS.md reads like fiction.
+
+### E.5 Relationship to existing tripwires
+
+Existing tripwires assert individual counts in their own tests
+(`test_historical_cases::test_1_all_anchor_cases` asserts 13
+money cases, `test_morphism_graph::test_1_graph_shape` asserts
+9/20/11/9). The counts-consistency table is the **one place**
+all 15 numbers live together — when STATUS.md or a doc makes a
+claim, the table is where to check it, and the test guards that
+table.
+
+
+## Part F — Regression (after Part B)
+
+- Full suite: **53/53 PASS** (52 after Part A + new
+  `test_counts_consistency.py`).
+- `counts_consistency.py` output: 15/15 rows match declared
+  baseline.
+- No existing test weakened.
+
+
 ## Close-out
 
 - AUDIT_07 § C.2 `[CLOSED]` via `term_audit/morphism_graph.py` +
-  `tests/test_morphism_graph.py`.
-- stdlib-only discipline preserved (rolled own graph class rather
-  than importing NetworkX).
-- 9 nodes / 20 edges / weakly-connected / invariant holds —
-  these are now load-bearing numbers the regression catches on
+  `tests/test_morphism_graph.py` (Part A).
+- Counts-consistency discipline landed via
+  `scripts/counts_consistency.py` +
+  `tests/test_counts_consistency.py` (Part B). 15 load-bearing
+  counts declared + tripwired.
+- stdlib-only discipline preserved throughout.
+- 9 nodes / 20 edges / weakly-connected / invariant holds + 15
+  counts consistent — all numbers the regression catches on
   drift.
-- Part B (counts-consistency table) is the next piece; left to
-  AUDIT_23 § B.
