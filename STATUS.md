@@ -4,7 +4,7 @@ Status of the metabolic-accounting framework at end of session.
 
 ## Verified (all tests run, all passing)
 
-Forty-nine test suites, every one runs and passes:
+Fifty-one test suites, every one runs and passes:
 
 ```
 # main accounting stack (18, pre-term_audit)
@@ -59,6 +59,8 @@ test_study_scope_audit:      PASS   <-- AUDIT_15: scope-bounded measurement audi
 test_signal_asymmetry:       PASS   <-- AUDIT_14 Part C: distributional stub + 4 literature anchors
 test_informational_cost_audit: PASS   <-- AUDIT_16: why false certainty costs exponentially
 test_provenance_study_scope_integration: PASS   <-- AUDIT_17: Provenance optionally carries a StudyScopeAudit
+test_audit_19_integrations:  PASS   <-- AUDIT_19: scope↔cost wiring, PLACEHOLDER deferred_cost, 2 Tier 1 retrofits
+test_scan_soft_gaps:         PASS   <-- AUDIT_21: soft-gap scanner; 14 → 12 gaps after 2 more retrofits
 ```
 
 See `docs/AUDIT_06.md` through `docs/AUDIT_15.md` for the cross-checks
@@ -508,6 +510,102 @@ verdict: sustainable_yield 0.056, trajectory -0.0017, ttr 21.67,
     subsequent commits on this branch, extending `docs/AUDIT_14.md`.
 
 ## AUDIT_14 — Part B (E.2): investment_signal/historical_cases.py
+
+## AUDIT_22 — three more historical anchors (Todo.md priority 1)
+
+49. **money_signal extensions** (2 new): ANDEAN_AYNI (labor-
+    reciprocity ledger across generations — fourth counter-example,
+    first to anchor on LABOR substrate rather than shell/object
+    tokens; refs: Alberti & Mayer 1974, Mayer 2002, Harris 1985)
+    and TAMBU_TOLAI (PNG shell-money; notable dual-regime structure
+    coexisting with kina fiat; refs: Epstein 1969, Errington &
+    Gewertz 1987, Martin 2013). Match count **12/13** (Cyprus
+    remains the observer-asymmetry outlier).
+50. **investment_signal extension** (1 new): AMAZON_RUBBER_BOOM
+    _1879_1912 — paired with CONGO_RUBBER_1885_1908 via the same
+    1890s-1910s global rubber-demand cycle. Fires the same three
+    failure modes (substrate_invisible, financialized_reverse,
+    substrate_abstraction_destroys_nature) under a different
+    colonial regime (London-listed PAC / Casa Arana vs Leopold's
+    personal kingdom). Casement reported on both. Match count
+    **11/11**. The Congo+Amazon pair demonstrates framework
+    structural classification is context-driven, not regime-
+    specific — an anchor-level validation of claims #16/#17/#18/
+    #21. Refs: Casement 1912 Putumayo Report, Hardenburg 1912,
+    Taussig 1987, Stanfield 1998.
+
+## AUDIT_21 — soft-gap scanner + 2 more scope-audit retrofits
+
+47. **`scripts/scan_soft_gaps.py`** shipped (closes AUDIT_17 § D.2).
+    Walks 9 Tier 1 audits and reports per-audit rows + aggregate
+    totals. Honest retrofit debt: not 72 (AUDIT_17 pessimistic
+    estimate) but **14** EMPIRICAL records where the author declared
+    a scope_caveat in prose without attaching a machine-readable
+    StudyScopeAudit. Each is per-citation work.
+48. **Two more scope_audit retrofits** attached to money.py:
+    `_BALASSA_PPP_SCOPE_AUDIT` on unit_invariant (grounded in
+    Balassa 1964 JPE + Samuelson 1964 RES) and
+    `_FASB_ASC_820_SCOPE_AUDIT` on observer_invariant (grounded in
+    FASB ASC 820 / IFRS 13 Level 1/2/3 hierarchy). **money.py is
+    now fully scope-audited** — 4 scope_audits attached, 0 remaining
+    soft gaps. Tree-wide aggregate: 4 attached / 12 remaining / 63
+    total provenances.
+
+## AUDIT_20 — anchor extensions + ZIRP decomposition
+
+44. **money_signal extensions**: Haudenosaunee wampum
+    (RECIPROCITY_TOKEN + TRUST_LEDGER counter-example; diplomatic-ledger
+    dual function) and Potlatch ceremony suppression 1884-1951
+    (STRESSED regime induced by external legal prohibition, with
+    post-repeal RECOVERING demonstrating hysteresis claim #2 at
+    generational scale). Literature: Fenton 1998 + Muller 2008 +
+    Williams 1997 (wampum); Cole & Chaikin 1990 + Bracken 1997 +
+    U'mista Cultural Society (potlatch). Match count 10/11
+    (Cyprus remains the observer-asymmetry outlier).
+45. **investment_signal extension**: Congo Free State rubber
+    extraction 1885-1908 fires three failure modes simultaneously
+    (substrate_invisible_at_distance, financialized_reverse_causation,
+    substrate_abstraction_destroys_nature) — a ~5-15M-death
+    extraction regime the framework encodes without ad hoc
+    special-casing. Literature: Hochschild 1998, Casement 1904,
+    Morel 1906, Vansina 2010.
+46. **ZIRP decomposition** (AUDIT_18 § D.2 closed): ZIRP_2009_2021
+    split into three investor-type sub-cases — ZIRP_RETAIL_DIVERSIFIED
+    (TWO_LAYER, liquidity illusion), ZIRP_PRIVATE_EQUITY (DERIVATIVE,
+    financialized_reverse_causation via Lazonick/Borio buyback
+    dynamics), ZIRP_CLO_STRUCTURED (SYNTHETIC, multiple failures
+    via Griffin & Nickerson 2023 + BIS 2018). Each sub-case is
+    internally consistent: observed failures match the framework's
+    predictions for that specific context. **investment_signal
+    match count now 10/10** — the former single outlier resolves
+    by honest encoding rather than by weakening the match
+    criterion.
+
+## AUDIT_19 — scope↔cost integration + 2 Tier 1 scope-audit retrofits
+
+41. `StudyScopeAudit.audit_report` now includes
+    `cost_growth_if_applied_out_of_scope` cross-referencing the
+    `CostGrowth` vocabulary from informational_cost_audit. Mapping:
+    IN_SCOPE/EDGE_OF_SCOPE → LINEAR, OUT_OF_SCOPE → EXPONENTIAL,
+    SCOPE_UNDECLARED → "unknown". Closes AUDIT_16 § D.1.
+42. `Provenance.deferred_cost` optional field landed on PLACEHOLDER
+    records. `placeholder()` constructor accepts `deferred_cost` kwarg.
+    `Provenance.soft_gap()` now also fires on PLACEHOLDER +
+    deferred_cost=EXPONENTIAL (compounding debt signal). LINEAR / None
+    are honest defaults and do not fire. Closes AUDIT_16 § D.2.
+43. Two real StudyScopeAudits demonstrated on money.py:
+    `_BOSKIN_CPI_SCOPE_AUDIT` attached to `calibration_exists` score
+    (grounded in Boskin Commission 1996 Final Report + BLS CPI
+    Handbook) and `_BOE_2014_MONEY_CREATION_SCOPE_AUDIT` attached to
+    `conservation_or_law` (grounded in McLeay/Radia/Thomas 2014 BoE
+    Q1 Bulletin). Each populates all 6 layers with facts drawn from
+    the published methodology — nothing fabricated. Remaining 72
+    Tier 1 EMPIRICAL records honestly left `[OPEN]` rather than
+    fabricated in bulk (AUDIT_19 § C.2). Coverage picture on
+    money.py post-retrofit: 7/7 complete, 2 scope_audits attached,
+    2 remaining soft gaps (the EMPIRICAL records with scope_caveats
+    that AUDIT_19 did not retrofit). AUDIT_07's 74/74 coverage
+    preserved. Demonstrates AUDIT_17 § D.1.
 
 ## AUDIT_18 — extended historical cases (Todo.md priority 1)
 

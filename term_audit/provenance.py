@@ -113,6 +113,17 @@ class Provenance:
     # field that would break the Tier 1 retrofit's 74/74 coverage.
     scope_audit: Optional[Any] = None
 
+    # AUDIT_19 § B integration: optional CostGrowth tag for
+    # PLACEHOLDER provenances. Names what kind of informational-
+    # cost growth the placeholder defers. Honest placeholders are
+    # LINEAR in cost (steady documentation debt). Dishonest
+    # placeholders are EXPONENTIAL (each period the placeholder
+    # stays un-retired, downstream claims built on it require
+    # more epicycles). Cross-references the CostGrowth vocabulary
+    # in term_audit/informational_cost_audit.py. String type to
+    # avoid a circular import; validated in missing_fields().
+    deferred_cost: Optional[str] = None
+
     def missing_fields(self) -> List[str]:
         """Return names of fields required-but-missing for this kind.
 
@@ -154,13 +165,19 @@ class Provenance:
         """Report a soft coverage gap that does NOT invalidate
         completeness but flags a recommended attachment.
 
-        Current soft gap: an EMPIRICAL provenance that declares a
-        `scope_caveat` (i.e., the author has explicitly noted that
-        the study measured X but the framework is applying it to Y)
-        but has no `scope_audit` attached. The caveat says "we know
-        the scope is being stretched"; without a scope_audit, the
-        framework has no machine-readable record of WHERE it holds
-        vs where it fails.
+        Two soft gaps currently fire:
+
+        1. EMPIRICAL with `scope_caveat` but no `scope_audit`
+           (AUDIT_17 § B.1): the author has acknowledged in prose
+           that the study's scope is being stretched, but the
+           framework has no machine-readable boundary record.
+
+        2. PLACEHOLDER with `deferred_cost == "exponential"`
+           (AUDIT_19 § B): the placeholder is documented as
+           accumulating super-linear information debt. Still
+           honest (the `deferred_cost` field is filled), but the
+           caller is naming a debt that should retire sooner rather
+           than later.
 
         Returns the soft-gap description string, or None.
         """
@@ -172,6 +189,14 @@ class Provenance:
                 "no scope_audit attached — the author acknowledged the "
                 "scope stretch in prose but the framework has no "
                 "machine-readable scope-boundary record"
+            )
+        if (self.kind == ProvenanceKind.PLACEHOLDER
+                and self.deferred_cost == "exponential"):
+            return (
+                "PLACEHOLDER provenance declares deferred_cost = "
+                "exponential — the information debt is compounding "
+                "faster than linear documentation debt; retirement "
+                "should be prioritized"
             )
         return None
 
@@ -257,12 +282,21 @@ def placeholder(
     rationale: str,
     retirement_path: str,
     knowledge_dna: str = "",
+    deferred_cost: Optional[str] = None,
 ) -> Provenance:
     """Constructor for placeholder provenance.
 
     The retirement_path is not optional. A placeholder without a
     retirement path is indistinguishable from a silently-accepted
     guess.
+
+    AUDIT_19 § B: optional `deferred_cost` accepts a CostGrowth tag
+    from term_audit/informational_cost_audit.py (FLAT / LINEAR /
+    EXPONENTIAL / "unknown"). When set, it names the growth
+    trajectory of the information debt the placeholder carries.
+    LINEAR is the honest default (steady documentation debt that
+    pays off on retirement). EXPONENTIAL flags a placeholder that
+    is already accumulating downstream epicycle cost.
     """
     if not retirement_path.strip():
         raise ValueError("placeholder requires retirement_path")
@@ -271,6 +305,7 @@ def placeholder(
         rationale=rationale,
         retirement_path=retirement_path,
         knowledge_dna=knowledge_dna,
+        deferred_cost=deferred_cost,
     )
 
 

@@ -320,13 +320,47 @@ class StudyScopeAudit:
             report["scope_status_for_deployment"] = status.value
             report["verdict"] = self._verdict_from_status(status)
         else:
-            report["scope_status_for_deployment"] = ScopeStatus.SCOPE_UNDECLARED.value
+            status = ScopeStatus.SCOPE_UNDECLARED
+            report["scope_status_for_deployment"] = status.value
             report["verdict"] = (
                 "scope-undeclared — do NOT treat this claim as law. "
                 "Declare deployment context before applying."
             )
 
+        # AUDIT_19 § A: cross-reference the informational_cost_audit
+        # CostGrowth vocabulary. Lazy-imported to keep
+        # study_scope_audit self-contained when used in isolation.
+        report["cost_growth_if_applied_out_of_scope"] = (
+            self._cost_growth_for_status(status)
+        )
+
         return report
+
+    def _cost_growth_for_status(self, status: "ScopeStatus") -> str:
+        """Return a CostGrowth tag (string) from
+        informational_cost_audit describing what happens if a caller
+        applies the claim to a deployment beyond its current scope
+        status.
+
+        IN_SCOPE:          linear — each new observation integrates cleanly
+        EDGE_OF_SCOPE:     linear-with-caution — integrates but requires
+                           independent verification
+        OUT_OF_SCOPE:      exponential — each anomaly forces epicycles,
+                           denial, or institutional defense
+        SCOPE_UNDECLARED:  unknown — the caller hasn't provided the
+                           context needed to characterize the cost
+
+        This is the bridge AUDIT_16 § D.1 described: the scope audit
+        tells you WHERE a claim holds; the cost tag tells you what
+        applying it outside that scope costs informationally.
+        """
+        from term_audit.informational_cost_audit import CostGrowth
+        return {
+            ScopeStatus.IN_SCOPE: CostGrowth.LINEAR,
+            ScopeStatus.EDGE_OF_SCOPE: CostGrowth.LINEAR,
+            ScopeStatus.OUT_OF_SCOPE: CostGrowth.EXPONENTIAL,
+            ScopeStatus.SCOPE_UNDECLARED: "unknown",
+        }[status]
 
     def _verdict_from_status(self, status: ScopeStatus) -> str:
         return {

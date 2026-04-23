@@ -33,30 +33,45 @@ from money_signal.historical_cases import (
     CYPRUS_2013, ARGENTINA_2001_2002,
     BITCOIN_FLASH_CRASHES, ROMAN_DENARIUS_DEBASEMENT,
     YAP_RAI_STONES, KULA_RING_EXCHANGE,
+    # AUDIT_20 extensions:
+    HAUDENOSAUNEE_WAMPUM, POTLATCH_SUPPRESSION,
+    # AUDIT_22 extensions:
+    ANDEAN_AYNI, TAMBU_TOLAI,
 )
 
-# AUDIT_18 added 4 anchor cases (Bitcoin, Roman denarius, Yap,
-# Kula). Yap and Kula are counter-examples — DURING state is
-# HEALTHY, not NEAR_COLLAPSE — so the "every DURING is
-# NEAR_COLLAPSE" claim no longer holds across the full set. Tests
-# below partition the anchors by role.
+# AUDIT_18 + AUDIT_20 added anchor cases across different roles.
+# Counter-examples have HEALTHY or STRESSED DURING context, not
+# NEAR_COLLAPSE — so the "every DURING is NEAR_COLLAPSE" claim no
+# longer holds across the full set. Tests below partition the
+# anchors by role.
 NEAR_COLLAPSE_CASES = [
     WEIMAR_1921_1923, ZIMBABWE_2007_2009, GFC_2008,
     CYPRUS_2013, ARGENTINA_2001_2002,
     BITCOIN_FLASH_CRASHES,
 ]
-STRESSED_CASES = [ROMAN_DENARIUS_DEBASEMENT]
-COUNTER_EXAMPLES = [YAP_RAI_STONES, KULA_RING_EXCHANGE]
+STRESSED_CASES = [
+    ROMAN_DENARIUS_DEBASEMENT,
+    POTLATCH_SUPPRESSION,   # colonial suppression regime, not monetary collapse
+]
+COUNTER_EXAMPLES = [
+    YAP_RAI_STONES,
+    KULA_RING_EXCHANGE,
+    HAUDENOSAUNEE_WAMPUM,
+    # AUDIT_22: labor-reciprocity + dual-regime shell-money anchors
+    ANDEAN_AYNI,
+    TAMBU_TOLAI,
+]
 from money_signal.dimensions import StateRegime
 from term_audit.provenance import Provenance, ProvenanceKind
 
 
 def test_1_all_anchor_cases():
-    """AUDIT_12 shipped 5 anchor cases; AUDIT_18 extended to 9.
+    """AUDIT_12 → 5; AUDIT_18 → 9; AUDIT_20 → 11 (+Haudenosaunee,
+    +potlatch); AUDIT_22 → 13 (+Andean ayni, +tambu-Tolai).
     Load-bearing: the registered set must match exactly, with
     partitioning by role (near-collapse, stressed, counter-example)."""
-    print("\n--- TEST 1: nine anchor cases registered + partitioned ---")
-    assert len(ALL_CASES) == 9
+    print("\n--- TEST 1: thirteen anchor cases registered + partitioned ---")
+    assert len(ALL_CASES) == 13
     expected = {
         "Weimar hyperinflation and Rentenmark stabilization",
         "Zimbabwe hyperinflation and dollarization",
@@ -67,6 +82,10 @@ def test_1_all_anchor_cases():
         "Roman denarius debasement — multi-generational metal slide",
         "Yap rai stones — trust-ledger substrate, multi-generational",
         "Kula ring — Melanesian reciprocity network",
+        "Haudenosaunee wampum — diplomatic + ledger substrate",
+        "Potlatch ceremony — legal suppression and post-repeal recovery",
+        "Andean ayni — labor-reciprocity ledger across generations",
+        "Tambu shell-money — Tolai community persistence under dual regime",
     }
     names = {c.name for c in ALL_CASES}
     assert names == expected, f"FAIL: expected {expected}, got {names}"
@@ -154,44 +173,41 @@ def test_5_compare_case_runs():
 
 
 def test_6_expected_match_distribution():
-    """LOAD-BEARING: AUDIT_18 tightened the `predicted_n_r_high`
-    criterion to require both elevated Minsky AND elevated
-    coupling_magnitude (not just the ratio). This correctly
-    classifies Yap/Kula as non-amplification counter-examples.
+    """LOAD-BEARING: AUDIT_22 added 2 more counter-examples (Andean
+    ayni labor-reciprocity, Tambu Tolai shell-money). Both match
+    under the tightened predicted_n_r_high criterion.
 
-    Expected post-AUDIT_18 match: 8 of 9 anchors. Cyprus remains
-    the single outlier — it is primarily an observer-asymmetry
-    case (claim #5), not a K[N][R] amplification case.
+    Expected post-AUDIT_22 match: 12 of 13 anchors. Cyprus remains
+    the single outlier — observer-asymmetry case (claim #5), not
+    K[N][R] amplification (claim #4).
 
     If this count changes, either factor values moved, observed
-    dynamics were edited, or the match criteria drifted. All three
-    warrant explicit review."""
-    print("\n--- TEST 6: expected qualitative match distribution (8/9) ---")
+    dynamics were edited, or the match criteria drifted."""
+    print("\n--- TEST 6: expected qualitative match distribution (12/13) ---")
     results = {c.name: compare_case(c) for c in ALL_CASES}
     match_count = sum(1 for r in results.values() if r.qualitative_match)
-    assert match_count == 8, \
-        f"FAIL: expected 8/9 qualitative matches, got {match_count}/9"
+    assert match_count == 12, \
+        f"FAIL: expected 12/13 qualitative matches, got {match_count}/13"
 
-    # Cyprus is the documented outlier
+    # Cyprus remains the documented outlier
     assert not results[CYPRUS_2013.name].qualitative_match, \
         "FAIL: Cyprus is the expected observer-asymmetry outlier"
 
-    # The counter-examples must match (framework predicts LOW magnitude
-    # → no amplification, observed no amplification → match).
-    assert results[YAP_RAI_STONES.name].qualitative_match, \
-        "FAIL: Yap counter-example must match under the tightened criterion"
-    assert results[KULA_RING_EXCHANGE.name].qualitative_match, \
-        "FAIL: Kula counter-example must match under the tightened criterion"
+    # Counter-examples must match
+    for case in (YAP_RAI_STONES, KULA_RING_EXCHANGE, HAUDENOSAUNEE_WAMPUM,
+                 ANDEAN_AYNI, TAMBU_TOLAI):
+        assert results[case.name].qualitative_match, \
+            f"FAIL: {case.name} counter-example must match"
 
-    # The near-collapse + Roman stressed cases must all match.
+    # Near-collapse + stressed cases must match
     for case in (WEIMAR_1921_1923, ZIMBABWE_2007_2009, GFC_2008,
                  ARGENTINA_2001_2002, BITCOIN_FLASH_CRASHES,
-                 ROMAN_DENARIUS_DEBASEMENT):
+                 ROMAN_DENARIUS_DEBASEMENT, POTLATCH_SUPPRESSION):
         assert results[case.name].qualitative_match, \
             f"FAIL: {case.name} expected to match but didn't"
 
-    print(f"  8/9 qualitative matches; Cyprus correctly flagged as outlier")
-    print(f"  counter-examples (Yap, Kula) classified correctly under tightened criterion")
+    print(f"  12/13 qualitative matches; Cyprus correctly flagged as outlier")
+    print(f"  5 counter-examples all classified correctly")
     print("PASS")
 
 

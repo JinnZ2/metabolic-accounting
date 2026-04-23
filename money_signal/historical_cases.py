@@ -858,6 +858,420 @@ KULA_RING_EXCHANGE = HistoricalCase(
 )
 
 
+# ---------------------------------------------------------------------------
+# Extended anchor cases (AUDIT_20 — additional reciprocity counter-examples)
+# ---------------------------------------------------------------------------
+
+HAUDENOSAUNEE_WAMPUM = HistoricalCase(
+    name="Haudenosaunee wampum — diplomatic + ledger substrate",
+    period="~1450 CE (Great Law) - present",
+    location="Haudenosaunee Confederacy (Six Nations)",
+    context_pre=DimensionalContext(
+        temporal=TemporalScope.GENERATIONAL,
+        cultural=CulturalScope.HIGH_RECIPROCITY,
+        attribution=AttributedValue.RECIPROCITY_TOKEN,
+        observer=ObserverPosition.SUBSTRATE_PRODUCER,
+        substrate=Substrate.TRUST_LEDGER,
+        state=StateRegime.HEALTHY,
+    ),
+    context_during=DimensionalContext(
+        temporal=TemporalScope.GENERATIONAL,
+        cultural=CulturalScope.HIGH_RECIPROCITY,
+        attribution=AttributedValue.RECIPROCITY_TOKEN,
+        observer=ObserverPosition.SUBSTRATE_PRODUCER,
+        substrate=Substrate.TRUST_LEDGER,
+        state=StateRegime.HEALTHY,
+    ),
+    context_post=None,
+    observed_dynamics=[
+        ObservedDynamic(
+            term_i="R", term_j="R",
+            shift=DynamicShift.UNCHANGED,
+            evidence=(
+                "wampum belts served simultaneously as treaty records, "
+                "condolence protocol instruments, and mnemonic "
+                "structure for clan governance. Value was in the "
+                "recorded relationship, not the shell beads."
+            ),
+            provenance=empirical(
+                source_refs=[
+                    "Fenton 1998, 'The Great Law and the Longhouse: A "
+                    "Political History of the Iroquois Confederacy'",
+                    "Muller 2008, 'Recovering Wampum as a Living "
+                    "Tradition', Ethnohistory 55(1)",
+                    "Williams 1997, 'Linking Arms Together: American "
+                    "Indian Treaty Visions of Law and Peace, 1600-1800'",
+                ],
+                rationale=(
+                    "Fenton's political history is the canonical "
+                    "English-language source; Muller and Williams "
+                    "track the diplomatic-ledger function through "
+                    "colonial-treaty contact"
+                ),
+                scope_caveat=(
+                    "source literature is primarily English-language "
+                    "secondary scholarship; Haudenosaunee primary "
+                    "sources (oral tradition, Condolence Council "
+                    "records) carry information not fully captured "
+                    "in the cited works"
+                ),
+            ),
+        ),
+        ObservedDynamic(
+            term_i="N", term_j="N",
+            shift=DynamicShift.UNCHANGED,
+            evidence=(
+                "belts were regularly re-read at Confederacy meetings "
+                "to refresh network acceptance of treaty terms; the "
+                "reading protocol IS the maintenance mechanism"
+            ),
+            provenance=placeholder(
+                rationale=(
+                    "the maintenance protocol is documented "
+                    "qualitatively; K-structure quantification has "
+                    "not been extracted"
+                ),
+                retirement_path=(
+                    "ethnohistorical analysis of Condolence Council "
+                    "protocol frequency vs. treaty stability in the "
+                    "1600-1800 archival record"
+                ),
+            ),
+        ),
+    ],
+    primary_refs=[
+        "Fenton 1998",
+        "Muller 2008",
+        "Williams 1997",
+    ],
+    historical_confidence=0.75,
+    notes=(
+        "COUNTER-EXAMPLE. A TRUST_LEDGER + RECIPROCITY_TOKEN + "
+        "HIGH_RECIPROCITY anchor alongside Yap rai and Kula ring. "
+        "The wampum case is distinctive for carrying an explicit "
+        "political-governance function on the same substrate that "
+        "carries the economic-exchange function — the two are not "
+        "separated. This is a feature of the attribution, not a "
+        "failure mode: RECIPROCITY_TOKEN substrates can be "
+        "multi-functional in a way STATE_ENFORCED ones are not."
+    ),
+)
+
+
+POTLATCH_SUPPRESSION = HistoricalCase(
+    name="Potlatch ceremony — legal suppression and post-repeal recovery",
+    period="1884 (Canada) / 1885 (US Indian Affairs) - 1951 repeal",
+    location="Pacific Northwest Coast (Kwakwaka'wakw, Haida, Tlingit et al.)",
+    context_pre=DimensionalContext(
+        temporal=TemporalScope.GENERATIONAL,
+        cultural=CulturalScope.HIGH_RECIPROCITY,
+        attribution=AttributedValue.RECIPROCITY_TOKEN,
+        observer=ObserverPosition.SUBSTRATE_PRODUCER,
+        substrate=Substrate.TRUST_LEDGER,
+        state=StateRegime.HEALTHY,
+    ),
+    context_during=DimensionalContext(
+        # DURING context = the suppression period. Colonial
+        # prohibition acts as an external regime that attempts
+        # to invalidate the substrate ledger entirely — no
+        # near-collapse in the monetary-dynamics sense, but the
+        # enforcement regime was near-collapse for the
+        # substrate-producer observer.
+        temporal=TemporalScope.GENERATIONAL,
+        cultural=CulturalScope.HIGH_RECIPROCITY,
+        attribution=AttributedValue.RECIPROCITY_TOKEN,
+        observer=ObserverPosition.SUBSTRATE_PRODUCER,
+        substrate=Substrate.TRUST_LEDGER,
+        state=StateRegime.STRESSED,
+    ),
+    context_post=DimensionalContext(
+        temporal=TemporalScope.GENERATIONAL,
+        cultural=CulturalScope.HIGH_RECIPROCITY,
+        attribution=AttributedValue.RECIPROCITY_TOKEN,
+        observer=ObserverPosition.SUBSTRATE_PRODUCER,
+        substrate=Substrate.TRUST_LEDGER,
+        state=StateRegime.RECOVERING,
+    ),
+    observed_dynamics=[
+        ObservedDynamic(
+            term_i="R", term_j="R",
+            shift=DynamicShift.DAMPED_STRONG,
+            evidence=(
+                "overt ceremonial potlatch was criminalized; the "
+                "ledger-refreshment function moved underground or "
+                "partial (smaller-scale gifts, disguised rituals); "
+                "confiscated regalia was catalogued into museum "
+                "collections without ledger-context metadata"
+            ),
+            provenance=empirical(
+                source_refs=[
+                    "Cole & Chaikin 1990, 'An Iron Hand Upon the "
+                    "People: The Law Against the Potlatch on the "
+                    "Northwest Coast'",
+                    "Bracken 1997, 'The Potlatch Papers: A Colonial "
+                    "Case History'",
+                    "U'mista Cultural Society 1975-present, "
+                    "Repatriation Archive Project",
+                ],
+                rationale=(
+                    "Cole & Chaikin is the canonical legal and "
+                    "administrative history; Bracken centers the "
+                    "colonial archive itself; U'mista provides the "
+                    "primary-source repatriation record"
+                ),
+            ),
+        ),
+        ObservedDynamic(
+            term_i="R", term_j="N",
+            shift=DynamicShift.DAMPED_STRONG,
+            evidence=(
+                "post-1951 repeal, recovery of the ceremony proceeded "
+                "unevenly; multi-generational gap in active practice "
+                "is visible in elder-led revival efforts since the "
+                "1970s. README hysteresis claim #2 is directly "
+                "visible — the recovering regime does not restore "
+                "the pre-suppression coupling."
+            ),
+            provenance=empirical(
+                source_refs=[
+                    "Harkin 1997, 'The Heiltsuks: Dialogues of Culture "
+                    "and History on the Northwest Coast'",
+                    "U'mista Cultural Society reports on ceremonial "
+                    "revival, 1975-present",
+                ],
+                rationale=(
+                    "direct ethnohistorical observation of hysteresis "
+                    "between pre-suppression and post-repeal regimes"
+                ),
+            ),
+        ),
+    ],
+    primary_refs=[
+        "Cole & Chaikin 1990",
+        "Bracken 1997",
+        "U'mista Cultural Society",
+    ],
+    historical_confidence=0.85,
+    notes=(
+        "Third counter-example, but NOT a clean steady-state case "
+        "like Yap or Kula — this one documents what happens when an "
+        "external regime criminalizes the substrate ledger. Tests "
+        "README claim #2 (hysteresis: recovering regime has damped "
+        "coupling vs pre-suppression) at a political-regime-induced "
+        "scale rather than a monetary-dynamics scale. The suppression "
+        "period is encoded as STRESSED to distinguish from "
+        "NEAR_COLLAPSE monetary events; the state of the substrate "
+        "ledger itself approached collapse for substrate-producer "
+        "observers, and that experience remains in living memory."
+    ),
+)
+
+
+# ---------------------------------------------------------------------------
+# Extended anchor cases (AUDIT_22 — additional reciprocity + shell-money)
+# ---------------------------------------------------------------------------
+
+ANDEAN_AYNI = HistoricalCase(
+    name="Andean ayni — labor-reciprocity ledger across generations",
+    period="pre-Inca antecedents - present",
+    location="Andean highlands (Peru, Bolivia, Ecuador)",
+    context_pre=DimensionalContext(
+        temporal=TemporalScope.GENERATIONAL,
+        cultural=CulturalScope.HIGH_RECIPROCITY,
+        attribution=AttributedValue.RECIPROCITY_TOKEN,
+        observer=ObserverPosition.SUBSTRATE_PRODUCER,
+        substrate=Substrate.TRUST_LEDGER,
+        state=StateRegime.HEALTHY,
+    ),
+    context_during=DimensionalContext(
+        temporal=TemporalScope.GENERATIONAL,
+        cultural=CulturalScope.HIGH_RECIPROCITY,
+        attribution=AttributedValue.RECIPROCITY_TOKEN,
+        observer=ObserverPosition.SUBSTRATE_PRODUCER,
+        substrate=Substrate.TRUST_LEDGER,
+        state=StateRegime.HEALTHY,
+    ),
+    context_post=None,
+    observed_dynamics=[
+        ObservedDynamic(
+            term_i="R", term_j="R",
+            shift=DynamicShift.UNCHANGED,
+            evidence=(
+                "ayni labor debt tracks symmetric reciprocal work "
+                "obligations at household and community levels; "
+                "obligations persist across generations, with the "
+                "ledger held in collective memory and confirmed at "
+                "agricultural-cycle events (planting, harvest, "
+                "house-building)"
+            ),
+            provenance=empirical(
+                source_refs=[
+                    "Alberti & Mayer 1974, 'Reciprocidad e intercambio "
+                    "en los Andes peruanos', Instituto de Estudios "
+                    "Peruanos",
+                    "Mayer 2002, 'The Articulated Peasant: Household "
+                    "Economies in the Andes', Westview Press",
+                    "Harris 1985, 'Ecological Duality and the Role of "
+                    "the Center: Northern Potosi', in Masuda ed., "
+                    "Andean Ecology and Civilization",
+                ],
+                rationale=(
+                    "Alberti & Mayer established the canonical "
+                    "analytical framing; Mayer 2002 synthesizes 30 "
+                    "years of field data"
+                ),
+                scope_caveat=(
+                    "Spanish-language primary literature carries "
+                    "detail not fully captured in English secondary "
+                    "sources; framework quantitative claims about "
+                    "ayni should cite the Spanish-language corpus"
+                ),
+            ),
+        ),
+        ObservedDynamic(
+            term_i="N", term_j="N",
+            shift=DynamicShift.UNCHANGED,
+            evidence=(
+                "minka communal-labor mobilization (larger-scale than "
+                "ayni) and ayni pairwise-labor reciprocity coexist; "
+                "acceptance network expands and contracts with "
+                "seasonal work cycles"
+            ),
+            provenance=placeholder(
+                rationale=(
+                    "pattern documented qualitatively; quantification "
+                    "of the acceptance-network expansion/contraction "
+                    "cycle not extracted here"
+                ),
+                retirement_path=(
+                    "cross-reference IEP (Instituto de Estudios "
+                    "Peruanos) household-labor panel data with "
+                    "seasonal agricultural cycle records"
+                ),
+            ),
+        ),
+    ],
+    primary_refs=[
+        "Alberti & Mayer 1974",
+        "Mayer 2002",
+        "Harris 1985",
+    ],
+    historical_confidence=0.80,
+    notes=(
+        "COUNTER-EXAMPLE (fourth in the set, paired with Yap rai, "
+        "Kula ring, Haudenosaunee wampum). Distinctive for tracking "
+        "labor-reciprocity rather than shell/object-reciprocity. "
+        "Ayni demonstrates that the RECIPROCITY_TOKEN + TRUST_LEDGER "
+        "+ HIGH_RECIPROCITY combination works for LABOR substrate "
+        "directly, not only for material tokens. Tests framework "
+        "claim #3 (reciprocity damping) on a distinct substrate "
+        "type from the object-based counter-examples."
+    ),
+)
+
+
+TAMBU_TOLAI = HistoricalCase(
+    name="Tambu shell-money — Tolai community persistence under dual regime",
+    period="pre-contact - present (documented intensively 1960s-2000s)",
+    location="Tolai communities, New Britain (Papua New Guinea)",
+    context_pre=DimensionalContext(
+        temporal=TemporalScope.GENERATIONAL,
+        cultural=CulturalScope.HIGH_RECIPROCITY,
+        attribution=AttributedValue.RECIPROCITY_TOKEN,
+        observer=ObserverPosition.SUBSTRATE_PRODUCER,
+        substrate=Substrate.TRUST_LEDGER,
+        state=StateRegime.HEALTHY,
+    ),
+    context_during=DimensionalContext(
+        # Dual-currency regime: tambu coexists with PNG kina
+        # (official currency) in Tolai communities. The tambu
+        # substrate is TRUST_LEDGER, kina is the DIGITAL fiat layer.
+        temporal=TemporalScope.GENERATIONAL,
+        cultural=CulturalScope.HIGH_RECIPROCITY,
+        attribution=AttributedValue.RECIPROCITY_TOKEN,
+        observer=ObserverPosition.SUBSTRATE_PRODUCER,
+        substrate=Substrate.TRUST_LEDGER,
+        state=StateRegime.HEALTHY,
+    ),
+    context_post=None,
+    observed_dynamics=[
+        ObservedDynamic(
+            term_i="R", term_j="R",
+            shift=DynamicShift.UNCHANGED,
+            evidence=(
+                "tambu strings (loloi) are prepared for major life "
+                "events — marriages, deaths, matambu (distribution "
+                "ceremonies) — and accumulate across decades; the "
+                "reversal reliability is anchored to community "
+                "witness, not to the physical shells themselves"
+            ),
+            provenance=empirical(
+                source_refs=[
+                    "Epstein 1969, 'Matupit: Land, Politics, and "
+                    "Change among the Tolai of New Britain'",
+                    "Errington & Gewertz 1987, 'Cultural Alternatives "
+                    "and a Feminist Anthropology'",
+                    "Martin 2013, 'The Death of the Big Men and the "
+                    "Rise of the Big Shots: Custom and Conflict in "
+                    "East New Britain', Berghahn",
+                ],
+                rationale=(
+                    "Epstein 1969 is the foundational long-term "
+                    "study; Martin 2013 updates through the 2000s "
+                    "dual-regime era"
+                ),
+                scope_caveat=(
+                    "Tolai case specifically; other PNG shell-money "
+                    "systems (kina in other groups, bakia, abudenit) "
+                    "have overlapping but distinct dynamics"
+                ),
+            ),
+        ),
+        ObservedDynamic(
+            term_i="N", term_j="R",
+            shift=DynamicShift.DAMPED,
+            evidence=(
+                "dual-regime stability: tambu acceptance persists "
+                "within Tolai ceremonial contexts while kina "
+                "(national fiat) handles inter-group trade. Each "
+                "substrate damps the other's coupling dynamics in "
+                "its own domain — the two-substrate arrangement "
+                "itself is a stability mechanism"
+            ),
+            provenance=placeholder(
+                rationale=(
+                    "dual-currency stability is documented "
+                    "qualitatively; formal K-coupling decomposition "
+                    "between tambu-domain and kina-domain transactions "
+                    "not extracted here"
+                ),
+                retirement_path=(
+                    "Bank of PNG regional monetary reports + "
+                    "anthropological field studies on tambu/kina "
+                    "conversion rates during the 2008-2012 "
+                    "commodity-boom period"
+                ),
+            ),
+        ),
+    ],
+    primary_refs=[
+        "Epstein 1969",
+        "Errington & Gewertz 1987",
+        "Martin 2013",
+    ],
+    historical_confidence=0.75,
+    notes=(
+        "COUNTER-EXAMPLE with a twist: tambu coexists WITH modern "
+        "fiat (PNG kina) rather than standing alone. The dual-regime "
+        "context is structurally informative — it demonstrates that "
+        "TRUST_LEDGER substrates do not require monopoly to persist; "
+        "they can occupy a coordination niche alongside a different-"
+        "substrate instrument. Relevant to README observations about "
+        "reciprocity systems in contact with fiat economies."
+    ),
+)
+
+
 ALL_CASES: List[HistoricalCase] = [
     WEIMAR_1921_1923,
     ZIMBABWE_2007_2009,
@@ -869,6 +1283,12 @@ ALL_CASES: List[HistoricalCase] = [
     ROMAN_DENARIUS_DEBASEMENT,
     YAP_RAI_STONES,
     KULA_RING_EXCHANGE,
+    # AUDIT_20 extensions:
+    HAUDENOSAUNEE_WAMPUM,
+    POTLATCH_SUPPRESSION,
+    # AUDIT_22 extensions:
+    ANDEAN_AYNI,
+    TAMBU_TOLAI,
 ]
 
 

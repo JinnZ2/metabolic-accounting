@@ -25,6 +25,601 @@ from term_audit.schema import (
 from term_audit.provenance import (
     empirical, theoretical, design_choice, placeholder, stipulative,
 )
+from term_audit.study_scope_audit import (
+    StudyScopeAudit, InstrumentAudit, ProtocolAudit, DomainCouplingAudit,
+    RegimeAudit, CausalModelAudit, ScopeBoundary,
+    Coupling, Regime,
+)
+
+
+# ---------------------------------------------------------------------------
+# AUDIT_19 § C: StudyScopeAudit retrofits for two Tier 1 citations.
+#
+# These are REAL scope audits grounded in public methodology
+# documents (Boskin Commission 1996 final report; McLeay/Radia/Thomas
+# 2014 BoE Quarterly Bulletin). They are NOT templates for the
+# remaining 72 EMPIRICAL records on this TermAudit tree — those
+# require per-citation research that AUDIT_19 explicitly declines
+# to fabricate. These two demonstrate the pattern.
+# ---------------------------------------------------------------------------
+
+_BALASSA_PPP_SCOPE_AUDIT = StudyScopeAudit(
+    claim=(
+        "purchasing power parity is systematically violated across "
+        "countries with different productivity levels in traded vs "
+        "non-traded sectors"
+    ),
+    citation=(
+        "Balassa 1964, 'The Purchasing Power Parity Doctrine: A "
+        "Reappraisal', JPE 72(6); Samuelson 1964, 'Theoretical Notes "
+        "on Trade Problems', RES 46(2)"
+    ),
+    instrument=InstrumentAudit(
+        instrument_name=(
+            "cross-country price-level comparison via market exchange "
+            "rates and productivity indices"
+        ),
+        physical_quantity_measured=(
+            "deviation of actual exchange rate from price-parity "
+            "exchange rate, cross-sectional across countries"
+        ),
+        measurement_range=(0.0, 5.0),   # PPP deviation ratios
+        resolution=0.01,
+        noise_floor=0.05,
+        sampling_rate_hz=None,
+        spatial_resolution="national-level aggregates",
+        calibration_source="ICP/Eurostat purchasing-power surveys",
+        calibration_traceability=(
+            "consistent cross-country basket comparison is the weak "
+            "link — each national statistical office reports prices "
+            "for broadly similar baskets but non-identical"
+        ),
+        drift_rate=(
+            "non-traded-sector prices drift systematically with "
+            "productivity growth; basket re-anchoring every ~10 years"
+        ),
+    ),
+    protocol=ProtocolAudit(
+        sample_preparation=(
+            "national-level price and productivity aggregates across a "
+            "cross-section of countries"
+        ),
+        environmental_controls={
+            "traded_vs_nontraded_decomposition": True,
+            "productivity_growth_differential": True,
+        },
+        excluded_conditions=[
+            "short-run exchange-rate volatility (financial-market "
+            "driven)",
+            "capital-control regimes where market rates do not clear",
+            "fixed-exchange regimes where parity cannot adjust",
+            "countries with informal economies that dominate actual "
+            "transactions",
+        ],
+        control_group_definition=(
+            "comparison of traded-goods price ratio vs nontraded-goods "
+            "price ratio across the same country pair"
+        ),
+        measurement_duration=(
+            "annual cross-sectional snapshots; long-run convergence "
+            "claims rely on multi-decade series"
+        ),
+        replication_count=1,  # Balassa-Samuelson independently derived
+        blinding=False,
+        pre_registration=False,
+    ),
+    coupling=DomainCouplingAudit(
+        physical_domain="international monetary economics",
+        instrument_coupling=Coupling.TIGHT,
+        protocol_coupling=Coupling.TIGHT,
+        substrate_coupling=Coupling.MODERATE,
+        regime_coupling=Coupling.TIGHT,
+    ),
+    regime=RegimeAudit(
+        assumed_baseline=(
+            "post-Bretton-Woods floating-exchange regime with "
+            "significant price-level dispersion across countries"
+        ),
+        baseline_validity_window="1971-present",
+        regime_state=Regime.DRIFTING,
+        regime_drift_indicators=[
+            "emerging-market capital-control revival since 2010s",
+            "services share of consumption rising, changing traded vs "
+            "nontraded ratio",
+            "crypto/stablecoin currency substitution in stressed "
+            "regimes changes the exchange-rate referent",
+        ],
+        extrapolation_horizon=(
+            "cross-sectional at a given moment; long-run convergence "
+            "claims are a separate, weaker extrapolation"
+        ),
+    ),
+    causal_model=CausalModelAudit(
+        causal_frame=(
+            "mechanistic — the Balassa-Samuelson mechanism identifies "
+            "productivity-growth differential in traded vs non-traded "
+            "sectors as the causal driver of price-level differences"
+        ),
+        confounders_identified=[
+            "demand-side (Engel's law / preference differences)",
+            "trade policy (tariffs, non-tariff barriers)",
+            "capital flows (portfolio / FDI)",
+        ],
+        confounders_controlled=[
+            "traded vs nontraded partitioning is explicit",
+        ],
+        confounders_unmeasured=[
+            "quality differentials across the same nominal good",
+            "informal-economy price levels",
+            "currency-substitution dynamics under high inflation",
+        ],
+        unknown_unknowns_acknowledged=True,
+        alternative_frames_considered=[
+            "simple arbitrage / law of one price (explicitly rejected "
+            "as insufficient)",
+            "monetary approach to exchange rates",
+        ],
+    ),
+    scope=ScopeBoundary(
+        in_scope_conditions=[
+            "cross-country price-level comparison at annual frequency",
+            "post-Bretton-Woods floating-exchange regimes",
+            "comparison of countries with productivity-growth "
+            "differentials",
+        ],
+        edge_conditions=[
+            "fixed or managed exchange regimes",
+            "emerging markets with partial capital controls",
+        ],
+        out_of_scope_conditions=[
+            "single-country labor-equivalence claims",
+            "single-country contract-form equivalence claims "
+            "(labor vs derivative vs tax)",
+            "individual-level purchasing-power claims",
+            "short-run exchange-rate prediction",
+        ],
+        undeclared_scope=[
+            "crypto / stablecoin currency-substitution regimes",
+            "informal-economy pricing",
+        ],
+        extrapolation_claims=[
+            "downstream users often invoke Balassa-Samuelson to argue "
+            "about real purchasing power within a country across "
+            "income strata — that is out of the paper's declared "
+            "scope",
+        ],
+    ),
+)
+
+
+_FASB_ASC_820_SCOPE_AUDIT = StudyScopeAudit(
+    claim=(
+        "financial assets and liabilities can be fair-valued on a "
+        "three-level observability hierarchy (Level 1 quoted / Level "
+        "2 similar-instrument / Level 3 unobservable inputs)"
+    ),
+    citation=(
+        "FASB ASC 820, 'Fair Value Measurement' (formerly SFAS 157); "
+        "IFRS 13, 'Fair Value Measurement'"
+    ),
+    instrument=InstrumentAudit(
+        instrument_name=(
+            "audited financial-statement fair-value measurement under "
+            "GAAP / IFRS hierarchy"
+        ),
+        physical_quantity_measured=(
+            "point-in-time fair-value estimate for a financial "
+            "instrument, tagged with its observability level"
+        ),
+        measurement_range=(0.0, 1e14),  # $ amounts, not physically bounded
+        resolution=1.0,                  # reported to the dollar
+        noise_floor=1.0,
+        sampling_rate_hz=None,          # quarterly/annual reporting
+        spatial_resolution=(
+            "per-reporting-entity; aggregate figures published at "
+            "entity-balance-sheet level"
+        ),
+        calibration_source=(
+            "Level 1: active-market quoted prices; Level 2: observable "
+            "inputs for similar assets; Level 3: internal models"
+        ),
+        calibration_traceability=(
+            "Level 1 traceable to exchange data; Level 3 traceable "
+            "only to the reporting entity's own model"
+        ),
+        drift_rate=(
+            "Level 3 valuations drift with model assumptions; ASC 820 "
+            "requires disclosure of assumption sensitivities"
+        ),
+    ),
+    protocol=ProtocolAudit(
+        sample_preparation=(
+            "reporting entity classifies each instrument into Level 1 "
+            "/ 2 / 3 based on input observability at measurement date"
+        ),
+        environmental_controls={
+            "market_active_at_measurement_date": "Level 1 prerequisite",
+            "similar_instrument_observable": "Level 2 prerequisite",
+        },
+        excluded_conditions=[
+            "instruments outside the reporting entity's perimeter",
+            "non-financial assets valued at historical cost",
+            "transactions between related parties at non-arm's-length",
+        ],
+        control_group_definition="n/a (per-instrument valuation)",
+        measurement_duration=(
+            "point-in-time at reporting date; sensitivity disclosure "
+            "for Level 3 spans typical assumption ranges"
+        ),
+        replication_count=1,  # single-entity valuation
+        blinding=False,
+        pre_registration=False,
+    ),
+    coupling=DomainCouplingAudit(
+        physical_domain="financial accounting / audit",
+        instrument_coupling=Coupling.TIGHT,
+        protocol_coupling=Coupling.TIGHT,
+        substrate_coupling=Coupling.MODERATE,
+        regime_coupling=Coupling.TIGHT,
+    ),
+    regime=RegimeAudit(
+        assumed_baseline=(
+            "active secondary markets for Level 1 instruments; "
+            "functioning reference-pricing for Level 2; "
+            "good-faith internal modeling for Level 3"
+        ),
+        baseline_validity_window=(
+            "post-2008 enforcement (ASC 820 effective 2008); evolving "
+            "under IFRS 13 since 2013"
+        ),
+        regime_state=Regime.DRIFTING,
+        regime_drift_indicators=[
+            "growing share of private-market Level 3 assets",
+            "market liquidity crises collapse Level 1 assets into "
+            "Level 2 / Level 3 during stress",
+            "crypto instruments often lack any level assignment",
+        ],
+        extrapolation_horizon=(
+            "point-in-time; extrapolation to stressed conditions is "
+            "exactly where the methodology fails"
+        ),
+    ),
+    causal_model=CausalModelAudit(
+        causal_frame=(
+            "procedural — the hierarchy is not a causal model, it is "
+            "a reporting protocol whose fidelity depends on market "
+            "structure"
+        ),
+        confounders_identified=[
+            "liquidity illusion (Level 1 during normal markets, "
+            "Level 3-like in stress)",
+            "management incentive to mis-classify",
+            "auditor independence and expertise limits",
+        ],
+        confounders_controlled=[
+            "FASB/IASB definitions are explicit; audit oversight is "
+            "mandatory for public filers",
+        ],
+        confounders_unmeasured=[
+            "inter-observer variance on Level 3 valuations across "
+            "independent valuation firms",
+            "crisis-period classification consistency",
+        ],
+        unknown_unknowns_acknowledged=False,
+        alternative_frames_considered=[
+            "mark-to-market uniform across levels (explicitly "
+            "rejected as impractical for illiquid assets)",
+            "historical cost (rejected as non-responsive to "
+            "real-time risk)",
+        ],
+    ),
+    scope=ScopeBoundary(
+        in_scope_conditions=[
+            "instruments of a single reporting entity at a single "
+            "reporting date",
+            "active secondary markets (for Level 1)",
+            "orderly bilateral transactions (for Level 2)",
+        ],
+        edge_conditions=[
+            "Level 3 instruments requiring internal models",
+            "stressed-market periods where Level 1 classification "
+            "becomes questionable",
+        ],
+        out_of_scope_conditions=[
+            "cross-entity observer-invariance of fair value",
+            "systemic-risk measurement (the aggregate of Level 3 "
+            "valuations across the banking system is not validated "
+            "by this methodology)",
+            "retrospective re-valuation under regime change",
+        ],
+        undeclared_scope=[
+            "crypto / stablecoin fair value (incomplete guidance "
+            "as of AUDIT_21)",
+            "tokenized real-world assets",
+        ],
+        extrapolation_claims=[
+            "downstream users often invoke ASC 820 levels as a proxy "
+            "for 'risk' or 'illiquidity' — that is a stronger claim "
+            "than the methodology supports",
+        ],
+    ),
+)
+
+
+_BOSKIN_CPI_SCOPE_AUDIT = StudyScopeAudit(
+    claim=(
+        "CPI approximates cost-of-living changes for US urban consumers"
+    ),
+    citation=(
+        "Boskin et al. 1996, 'Toward a More Accurate Measure of the "
+        "Cost of Living', Final Report to the Senate Finance Committee"
+    ),
+    instrument=InstrumentAudit(
+        instrument_name="BLS CPI survey + Consumer Expenditure Survey",
+        physical_quantity_measured=(
+            "monthly weighted price-change index over a basket of "
+            "consumer goods and services"
+        ),
+        measurement_range=(0.0, 10000.0),  # index values, not bounded physically
+        resolution=0.1,                     # index point
+        noise_floor=0.1,
+        sampling_rate_hz=None,              # monthly survey
+        spatial_resolution="US urban areas only; rural excluded",
+        calibration_source="1982-84 base period re-weighted periodically",
+        calibration_traceability="BLS re-weighting against CEX biennially",
+        drift_rate=(
+            "substitution bias ~0.4%/yr; quality/new-product bias "
+            "~0.6%/yr per Boskin Commission estimates"
+        ),
+    ),
+    protocol=ProtocolAudit(
+        sample_preparation=(
+            "83 strata × 38 pricing areas; price quotes collected from "
+            "~23,000 retail establishments monthly"
+        ),
+        environmental_controls={
+            "urban_population": True,
+            "fixed_basket_weights": "until biennial re-weight",
+        },
+        excluded_conditions=[
+            "rural consumer baskets",
+            "imputed owner-occupied housing inflation (treated via "
+            "rental equivalence, not direct)",
+            "quality improvements at pace exceeding hedonic adjustment",
+            "new-product categories prior to survey inclusion (lag of "
+            "years)",
+        ],
+        control_group_definition="n/a (observational index, not RCT)",
+        measurement_duration="monthly publication, continuous since 1913",
+        replication_count=1,  # single official series, no independent replication
+        blinding=False,
+        pre_registration=False,  # methodology public but revised periodically
+    ),
+    coupling=DomainCouplingAudit(
+        physical_domain="consumer price measurement",
+        instrument_coupling=Coupling.TIGHT,   # CPI IS the BLS instrument
+        protocol_coupling=Coupling.TIGHT,     # survey design determines the output
+        substrate_coupling=Coupling.MODERATE, # basket shifts with consumption
+        regime_coupling=Coupling.TIGHT,       # 1960s vs 2020s consumption patterns differ
+    ),
+    regime=RegimeAudit(
+        assumed_baseline=(
+            "stable consumption composition; representative urban "
+            "household; fixed-basket methodology"
+        ),
+        baseline_validity_window="1913-present, re-weighted periodically",
+        regime_state=Regime.DRIFTING,
+        regime_drift_indicators=[
+            "rise of services share of consumption",
+            "digital goods with near-zero marginal cost",
+            "housing-as-investment vs housing-as-consumption divergence",
+            "quality adjustment outpacing hedonic methodology",
+        ],
+        extrapolation_horizon=(
+            "intended as current-period indicator; long-horizon "
+            "extrapolation not a claim of the index"
+        ),
+    ),
+    causal_model=CausalModelAudit(
+        causal_frame=(
+            "statistical — CPI is not a causal model, it is an "
+            "aggregation rule over sampled prices"
+        ),
+        confounders_identified=[
+            "substitution bias",
+            "quality bias",
+            "new-product bias",
+            "outlet/retailer substitution",
+        ],
+        confounders_controlled=[
+            "substitution bias (partially, via geometric mean formula "
+            "at lower levels since 1999)",
+        ],
+        confounders_unmeasured=[
+            "housing bubble effects on owner-equivalent rent",
+            "financialization of consumer goods categories",
+            "observer asymmetry across income strata (deep vs thin "
+            "holder per money_signal vocabulary)",
+        ],
+        unknown_unknowns_acknowledged=True,  # Boskin explicitly flags
+        alternative_frames_considered=[
+            "true cost-of-living index (theoretical ideal)",
+            "PCE deflator (Fed's preferred alternative)",
+            "chained CPI (adopted 2002)",
+        ],
+    ),
+    scope=ScopeBoundary(
+        in_scope_conditions=[
+            "US urban consumer price movements, current period",
+            "aggregated measurement across the basket",
+        ],
+        edge_conditions=[
+            "regional sub-index comparison",
+            "sub-population cost-of-living comparison",
+        ],
+        out_of_scope_conditions=[
+            "cross-regime dollar-denominated comparison over long "
+            "horizons",
+            "individual-level purchasing power",
+            "rural or non-urban consumer experience",
+            "cost-of-living for income strata outside the survey's "
+            "representative household",
+        ],
+        undeclared_scope=[
+            "international purchasing-power comparisons",
+            "observer-position heterogeneity (different strata "
+            "experience different effective inflation)",
+        ],
+        extrapolation_claims=[
+            "multi-decade real-value comparisons frequently made by "
+            "downstream users, not by BLS itself",
+        ],
+    ),
+)
+
+
+_BOE_2014_MONEY_CREATION_SCOPE_AUDIT = StudyScopeAudit(
+    claim=(
+        "Commercial banks create money in the modern economy through "
+        "credit issuance; central bank reserves are a consequence of "
+        "that process, not a cause of it"
+    ),
+    citation=(
+        "McLeay, Radia & Thomas 2014, 'Money Creation in the Modern "
+        "Economy', Bank of England Quarterly Bulletin 2014 Q1"
+    ),
+    instrument=InstrumentAudit(
+        instrument_name=(
+            "BoE monetary-aggregate accounting + banking-sector "
+            "balance-sheet analysis"
+        ),
+        physical_quantity_measured=(
+            "broad monetary aggregates (M2, M4), reserves, bank "
+            "credit flows at aggregate UK level"
+        ),
+        measurement_range=(0.0, 1e13),  # £ aggregates, not physically bounded
+        resolution=1e6,                  # £1m in reported aggregates
+        noise_floor=1e6,
+        sampling_rate_hz=None,          # monthly/quarterly publication
+        spatial_resolution=(
+            "UK banking system aggregate; not cross-jurisdictional"
+        ),
+        calibration_source=(
+            "BoE reporting standards applied to regulated UK banks"
+        ),
+        calibration_traceability=(
+            "statistical returns from commercial banks under BoE "
+            "regulatory authority"
+        ),
+        drift_rate=(
+            "methodology generally stable; re-classification of "
+            "non-bank financial institutions occasionally moves "
+            "aggregates"
+        ),
+    ),
+    protocol=ProtocolAudit(
+        sample_preparation=(
+            "aggregate UK commercial-banking statistical returns"
+        ),
+        environmental_controls={
+            "regulatory_regime": "BoE reporting standards",
+            "currency": "GBP, post-1971",
+        },
+        excluded_conditions=[
+            "shadow-banking credit creation outside the regulated "
+            "reporting perimeter (partial)",
+            "cross-border bank credit interactions",
+            "fintech / stablecoin issuance outside regulated banks",
+        ],
+        control_group_definition=(
+            "comparison with textbook multiplier model and with "
+            "pre-QE baseline regime"
+        ),
+        measurement_duration="continuous monthly/quarterly reporting",
+        replication_count=1,  # one central-bank source; not independently replicated
+        blinding=False,
+        pre_registration=False,
+    ),
+    coupling=DomainCouplingAudit(
+        physical_domain="monetary economics / banking-sector accounting",
+        instrument_coupling=Coupling.TIGHT,   # aggregates ARE the instrument
+        protocol_coupling=Coupling.TIGHT,     # BoE definitions shape the output
+        substrate_coupling=Coupling.MODERATE, # claim about credit creation generalizes
+        regime_coupling=Coupling.MODERATE,    # post-gold-standard fiat regime
+    ),
+    regime=RegimeAudit(
+        assumed_baseline=(
+            "modern fiat regime; regulated commercial banks with "
+            "reserve requirements; central bank as rate-setter"
+        ),
+        baseline_validity_window="post-Bretton-Woods (1971-present)",
+        regime_state=Regime.DRIFTING,
+        regime_drift_indicators=[
+            "growth of shadow banking outside the direct measurement "
+            "perimeter",
+            "stablecoin and crypto credit creation outside regulated "
+            "reporting",
+            "CBDC proposals would restructure the instrument itself",
+        ],
+        extrapolation_horizon=(
+            "current-period structural claim; regime-change scenarios "
+            "(CBDC, full-reserve banking) explicitly out of scope"
+        ),
+    ),
+    causal_model=CausalModelAudit(
+        causal_frame=(
+            "mechanistic — identifies the accounting mechanism by "
+            "which commercial-bank loans create deposits, replacing "
+            "the textbook 'multiplier' causal frame"
+        ),
+        confounders_identified=[
+            "household deposit demand",
+            "regulatory capital constraints",
+            "central-bank interest-rate policy",
+            "quantitative-easing reserve injections",
+        ],
+        confounders_controlled=[
+            "accounting-level reserve/deposit distinction is explicit",
+        ],
+        confounders_unmeasured=[
+            "non-bank credit channels at full scope",
+            "cross-border credit interactions",
+            "behavioral-finance feedback on credit demand",
+        ],
+        unknown_unknowns_acknowledged=True,
+        alternative_frames_considered=[
+            "textbook money multiplier (explicitly rejected)",
+            "full-reserve / positive-money proposals (noted)",
+        ],
+    ),
+    scope=ScopeBoundary(
+        in_scope_conditions=[
+            "modern regulated-bank fiat regimes with a central bank",
+            "current-period aggregate-level claim about causation",
+        ],
+        edge_conditions=[
+            "emerging-market banking systems with weaker regulatory "
+            "reporting",
+            "economies with large dollarization or foreign-currency "
+            "deposits",
+        ],
+        out_of_scope_conditions=[
+            "gold-standard or commodity-backed regimes",
+            "CBDC-only regimes (hypothetical)",
+            "full-reserve banking regimes",
+            "individual firm-level or household-level predictions",
+        ],
+        undeclared_scope=[
+            "shadow-banking credit creation beyond the measurement "
+            "perimeter",
+            "crypto/stablecoin credit dynamics",
+        ],
+        extrapolation_claims=[
+            "broader claims about how monetary policy transmits to the "
+            "real economy often cite this paper but extend its scope",
+        ],
+    ),
+)
 
 
 MONEY_AUDIT = TermAudit(
@@ -148,6 +743,9 @@ MONEY_AUDIT = TermAudit(
                     "$1 tax, and $1 consumer purchase are exchangeable at "
                     "parity with bounded tolerance"
                 ),
+                # AUDIT_21 Part B: real StudyScopeAudit for the
+                # Balassa-Samuelson methodology.
+                scope_audit=_BALASSA_PPP_SCOPE_AUDIT,
             ),
         ),
         SignalScore(
@@ -221,6 +819,9 @@ MONEY_AUDIT = TermAudit(
                     "fixed physical or informational referent that is "
                     "stable across regime changes"
                 ),
+                # AUDIT_19 § C: real StudyScopeAudit attached, clearing
+                # the soft_gap that the scope_caveat otherwise creates.
+                scope_audit=_BOSKIN_CPI_SCOPE_AUDIT,
             ),
         ),
         SignalScore(
@@ -260,6 +861,9 @@ MONEY_AUDIT = TermAudit(
                     "to the same Level-3 asset agree within 5% on >80% "
                     "of cases"
                 ),
+                # AUDIT_21 Part B: real StudyScopeAudit for the FASB
+                # ASC 820 / IFRS 13 Level 1/2/3 methodology.
+                scope_audit=_FASB_ASC_820_SCOPE_AUDIT,
             ),
         ),
         SignalScore(
@@ -301,6 +905,8 @@ MONEY_AUDIT = TermAudit(
                     "property of the institutional arrangements that is "
                     "not itself set by those institutions"
                 ),
+                # AUDIT_19 § C: real StudyScopeAudit attached.
+                scope_audit=_BOE_2014_MONEY_CREATION_SCOPE_AUDIT,
             ),
         ),
         SignalScore(
