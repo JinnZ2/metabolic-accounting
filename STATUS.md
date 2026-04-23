@@ -4,7 +4,7 @@ Status of the metabolic-accounting framework at end of session.
 
 ## Verified (all tests run, all passing)
 
-Fifty-three test suites, every one runs and passes:
+Fifty-four test suites, every one runs and passes:
 
 ```
 # main accounting stack (18, pre-term_audit)
@@ -63,6 +63,7 @@ test_audit_19_integrations:  PASS   <-- AUDIT_19: scope↔cost wiring, PLACEHOLD
 test_scan_soft_gaps:         PASS   <-- AUDIT_21: soft-gap scanner; 14 → 12 gaps after 2 more retrofits
 test_morphism_graph:         PASS   <-- AUDIT_23 § A: Tier 1 graph, 9 nodes / 20 edges, weakly-connected, inheritance invariant HOLDS
 test_counts_consistency:     PASS   <-- AUDIT_23 § B: 15 load-bearing counts declared + tripwired against silent drift
+test_name_set_consistency:   PASS   <-- AUDIT_24: bidirectional name-set checks across 3 pairs (structural complement to scalar counts)
 ```
 
 See `docs/AUDIT_06.md` through `docs/AUDIT_23.md` for the cross-checks

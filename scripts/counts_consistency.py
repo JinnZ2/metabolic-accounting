@@ -46,9 +46,9 @@ from typing import Callable, Dict, List
 
 DECLARED = [
     # (key, declared, anchor, rationale)
-    ("test_files", 53, "AUDIT_23 § B",
-     "53 test_*.py files in tests/ after morphism_graph + "
-     "counts_consistency tests added"),
+    ("test_files", 54, "AUDIT_24",
+     "54 test_*.py files in tests/ after morphism_graph + "
+     "counts_consistency + name_set_consistency tests added"),
 
     ("tier1_audits", 9, "AUDIT_07 + AUDIT_21",
      "9 Tier 1 TermAudits: money + 4 value (collapsed/A/B/C) + "

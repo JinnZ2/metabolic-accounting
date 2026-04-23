@@ -39,4 +39,11 @@ Priority items as they land across the audit trail:
   `tests/test_counts_consistency.py`. Catches silent drift between
   STATUS.md / audit-doc claims and codebase reality. 15/15 rows
   match baseline.
+- **AUDIT_24 — name-set consistency (bidirectional)**: pattern
+  borrowed from Geometric-to-Binary-Computational-Bridge's
+  `validate_bridge_contract.py`. `scripts/name_set_consistency.py`
+  + `tests/test_name_set_consistency.py`. 3 declared pairs: Tier 1
+  audits ↔ morphism graph nodes; counts DECLARED ↔ live keys;
+  graph nodes ↔ audit-backed nodes. Complements AUDIT_23 § E
+  (scalar) with structural set-equality. 3/3 pairs agree.
 
