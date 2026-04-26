@@ -223,6 +223,13 @@ measurement context:
 4. `term_audit/schema.py` — the scoring axes.
 5. `term_audit/scoping.py` — the dimensions to declare.
 6. Any existing audit of the term under `term_audit/audits/`.
+7. `docs/EXTERNAL_OPERATIONALIZATIONS.md` — for the Tier 1 / Tier 2
+   terms with audits committed, this maps the audit's failure modes
+   onto candidate falsifiable measurement equations shipped by the
+   companion repo `Mathematic-economics @ equations-v1`. Always
+   read the signal-quality discount caveat first; money-denominated
+   equations cannot be read straight without re-introducing the
+   currency bias.
 
 If the term is not yet audited and the user is asking for a
 numerical claim using it, the honest move is to stop and ask

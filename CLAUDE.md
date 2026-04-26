@@ -75,8 +75,9 @@ Without `site`/`step_result`, `compute_flow` still works (backward-compatible pa
 - `STATUS.md` — current session state: tests passing, bugs fixed, hidden variables still open, what the framework does NOT do. **Update this** when you change verified behavior.
 - `docs/EQUATIONS.md` — every equation in the scaffold, tagged `[CORE] / [PLACEHOLDER] / [HEURISTIC] / [FRAGILE]`. Read before changing any formula; `[PLACEHOLDER]` and `[FRAGILE]` are explicitly waiting to be replaced.
 - `docs/AUDIT_01..04.md` — audit reports. `AUDIT_04.md` covers the tier-vector Bug 1/4 fixes and scopes the still-open Bugs 2 (regulatory crosswalk has no social/labor frameworks) and 3 (mitigation has no community-specific leverage patterns). New audits append (`AUDIT_05.md`, etc.); do not overwrite prior ones.
-- `docs/RELATED.md` — relationship to the three companion repos (TAF as organism-agnostic parent, PhysicsGuard as claim verifier, Logic-Ferret as narrative auditor). No runtime dependencies between repos; links are structural (shared invariants) not code-level.
-- `docs/SCHEMAS.md` — data types this repo exposes for cross-framework consumption (`ExergyFlow`, `GlucoseFlow`, `BasinState`, `Tier`/`TierAssignment`, `Verdict`) with units and invariants. Companion tools read this to construct matching local types without importing from this repo.
+- `docs/RELATED.md` — relationship to the four companion repos (TAF as organism-agnostic parent, PhysicsGuard as claim verifier, Logic-Ferret as narrative auditor, **Mathematic-economics as downstream consumer of `money_signal/`** — added in AUDIT_25). No runtime dependencies between repos; links are structural (shared invariants and citation contracts) not code-level.
+- `docs/EXTERNAL_OPERATIONALIZATIONS.md` — citation contract mapping committed Tier 1 / Tier 2 term audits to falsifiable measurement equations shipped by `Mathematic-economics @ equations-v1` (VE/VL, SID, MSI, BSC, MM, HHI, ER, LWR, etc.). Money-denominated equations must pass through `money_signal/accounting_bridge.signal_quality()` before being read as measurements; the doc opens with that caveat. Added in AUDIT_25.
+- `docs/SCHEMAS.md` — data types this repo exposes for cross-framework consumption (`ExergyFlow`, `GlucoseFlow`, `BasinState`, `Tier`/`TierAssignment`, `Verdict`) with units and invariants. Companion tools read this to construct matching local types without importing from this repo. AUDIT_25 added the **Stable surface tags** section declaring `money_signal-v1` as the pinning point for downstream consumers.
 - `docs/LITERATURE.md` — citations backing the thermodynamic framing.
 
 ## Navigation — where to start by intent
@@ -128,7 +129,9 @@ Land on the right file without grepping blind. Each row lists the primary file a
 | Work the Tier 1 morphism graph (closes AUDIT_07 § C.2 — inheritance invariant as code) | `term_audit/morphism_graph.py` (9 nodes / 20 edges / weakly-connected) | `tests/test_morphism_graph.py`, `docs/AUDIT_23.md` § A |
 | Check every load-bearing count in one place (tripwire against silent STATUS.md drift) | `scripts/counts_consistency.py` (15 counts + declared baseline) | `tests/test_counts_consistency.py`, `docs/AUDIT_23.md` § E |
 | Check structural name-set consistency across registries (bidirectional; complements counts_consistency) | `scripts/name_set_consistency.py` (3 declared pairs) | `tests/test_name_set_consistency.py`, `docs/AUDIT_24.md` |
-| Understand how this repo relates to TAF / PhysicsGuard / Logic-Ferret | `docs/RELATED.md` | `docs/SCHEMAS.md` for the cross-framework data contract |
+| Understand how this repo relates to TAF / PhysicsGuard / Logic-Ferret / Mathematic-economics | `docs/RELATED.md` | `docs/SCHEMAS.md` for the cross-framework data contract; `docs/EXTERNAL_OPERATIONALIZATIONS.md` for the math-econ citation map |
+| Cite a falsifiable measurement equation for an audited Tier 1 / Tier 2 term (VE/VL, MSI, MM, BSC, HHI, ER, LWR, ISR, etc.) | `docs/EXTERNAL_OPERATIONALIZATIONS.md` | `Mathematic-economics @ equations-v1`, with the `money_signal/accounting_bridge.signal_quality()` discount caveat |
+| Score a "this system is X" claim against X's own first-principles compliance criteria (Smith-0/8 pattern) | `term_audit/falsification.py::ComplianceScorecard` | `tests/test_compliance_scorecard.py`, `docs/AUDIT_25.md` |
 
 ## Do not silently rewrite these
 

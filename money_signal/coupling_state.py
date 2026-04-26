@@ -46,6 +46,23 @@ Core physical intuition:
   because the system is operating with safety margins that were
   absent in healthy regime.
 
+External calibration anchor (informational, not imported):
+
+  OSDI -- the Overall Socialist Dependence Index from
+  Mathematic-economics @ equations-v1 -- composes SID, MSI, ISR,
+  BSC, MM into a [0, 1] structural-context scalar describing how
+  much of the institutional substrate is collectively-funded vs
+  privately-funded. It is NOT a state regime, but it constrains
+  which regime is possible: a system with OSDI ~0.77 (the
+  current US baseline math-econ reports) cannot enter HEALTHY
+  with the same coupling matrix as a system with OSDI ~0.3, even
+  if the named state matches. A future calibration of this module
+  may consume an external OSDI score per regime; today the
+  HEALTHY/STRESSED/NEAR_COLLAPSE/RECOVERING enum is the only
+  context input. See docs/EXTERNAL_OPERATIONALIZATIONS.md for the
+  citation and the signal-quality discount caveat that applies to
+  every money-denominated math-econ equation.
+
 CC0. Stdlib-only.
 """
 

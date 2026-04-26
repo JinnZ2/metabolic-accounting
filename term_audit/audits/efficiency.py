@@ -16,6 +16,13 @@ extraction operations, while systems with high actual efficiency are
 labeled inefficient because their coupling structure is invisible to
 linear metrics.
 
+External operationalizations: docs/EXTERNAL_OPERATIONALIZATIONS.md
+maps the coupling-density vector onto math-econ's HHI (concentration
+as anti-coupling proxy) and ISR (Infrastructure Subsidy Ratio,
+externalized substrate cost) — both scalar projections of the
+vector-space metric this audit calls for (pinned at
+Mathematic-economics @ equations-v1).
+
 CC0. Stdlib only.
 """
 

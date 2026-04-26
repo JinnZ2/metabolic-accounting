@@ -19,6 +19,12 @@ and negative substrate-value simultaneously. Collapsing them into one
 token is the measurement failure that underwrites most of Tier 1
 (money, capital, investment, wealth, GDP, economic growth).
 
+External operationalizations: docs/EXTERNAL_OPERATIONALIZATIONS.md
+maps the load-bearing NEGATIVE V_B → V_C linkage to math-econ's ER
+(Labor Value Extraction Rate) and LWR (Labor Wealth Ratio) at
+population scale (pinned at Mathematic-economics @ equations-v1).
+Both are scalar projections of the linkage, not the full vector.
+
 CC0. Stdlib only.
 """
 

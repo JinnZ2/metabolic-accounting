@@ -23,7 +23,7 @@ CC0. Stdlib only.
 """
 
 from dataclasses import dataclass, field
-from typing import List, Dict, Optional
+from typing import Dict, List, Optional
 
 
 # ---------------------------------------------------------------------------
@@ -146,3 +146,123 @@ class PredictionRegistry:
             out[p.last_run_result] += 1
         out["total"] = len(self.predictions)
         return out
+
+
+# ---------------------------------------------------------------------------
+# ComplianceScorecard
+# ---------------------------------------------------------------------------
+#
+# A specific falsification artifact: when someone claims that the current
+# system is X (capitalism, democracy, free market, meritocracy, etc.), an
+# X-compliance scorecard makes the claim falsifiable by spelling out what
+# X's own first-principles theorists predicted would be observable, and
+# scoring observed-vs-expected on each.
+#
+# The pattern is mirrored from the `Mathematic-economics` companion repo,
+# which uses an 8-criterion Adam-Smith capitalism scorecard against the
+# current US system and reports 0/8 criteria met. That is exactly the
+# preempt-#1 / preempt-#6 shape this module is for: the claim now stands
+# or falls on documented criteria, not on rhetorical association.
+#
+# This module ships the data structure only. Concrete scorecards live with
+# the audit that needs them (e.g. a future GDP-as-economic-growth audit
+# would carry a Smith-compliance scorecard alongside its TermAudit), or
+# they can be constructed on demand by a downstream consumer. See
+# docs/EXTERNAL_OPERATIONALIZATIONS.md for the Tier 1 / Tier 2 mapping.
+
+CRITERION_RESULT_VALUES = {"met", "not_met", "ambiguous", "untested"}
+
+
+@dataclass
+class ComplianceCriterion:
+    """One predicted-vs-observed pair from a named theory's compliance set.
+
+    `expected_indicator` is what the theory's own framework predicts
+    should be observable when the claim ("this system is X") holds.
+    `observed_indicator` is what is actually measured in the system the
+    claim is being applied to. Both are prose; the boolean judgment is
+    made by `evaluate()` against `threshold_description`, or set
+    explicitly via `result`.
+
+    A criterion with `result == "untested"` is a documentation row; it
+    flags an axis on which the claim could be falsified but has not
+    yet been instrumented.
+    """
+    name: str
+    expected_indicator: str
+    observed_indicator: str
+    threshold_description: str
+    source_refs: List[str] = field(default_factory=list)
+    result: str = "untested"
+    notes: str = ""
+
+    def __post_init__(self):
+        if self.result not in CRITERION_RESULT_VALUES:
+            raise ValueError(
+                f"unknown criterion result: {self.result!r}. "
+                f"valid: {sorted(CRITERION_RESULT_VALUES)}"
+            )
+
+
+@dataclass
+class ComplianceScorecard:
+    """A falsifiable scorecard testing a claim of the form
+    "this system is X" against X's own first-principles compliance set.
+
+    The scorecard's value is in surfacing the structure of the claim:
+    if the system fails the named theory's own criteria, claiming the
+    label without rebuttal is rhetorical, not analytic.
+
+    Mirrored from the Mathematic-economics worked example
+    (Adam-Smith-capitalism scorecard, currently 0/8 against the US
+    system). This data structure stays minimal so concrete scorecards
+    can be co-located with the term audit that motivates them.
+    """
+    claim: str                          # "the US is a capitalist economy", etc.
+    theory_name: str                    # "Smith-style capitalism", "liberal democracy", ...
+    theory_source_refs: List[str]       # primary sources for the criterion set
+    criteria: List[ComplianceCriterion] = field(default_factory=list)
+    notes: str = ""
+
+    def n_total(self) -> int:
+        return len(self.criteria)
+
+    def n_met(self) -> int:
+        return sum(1 for c in self.criteria if c.result == "met")
+
+    def n_not_met(self) -> int:
+        return sum(1 for c in self.criteria if c.result == "not_met")
+
+    def n_ambiguous(self) -> int:
+        return sum(1 for c in self.criteria if c.result == "ambiguous")
+
+    def n_untested(self) -> int:
+        return sum(1 for c in self.criteria if c.result == "untested")
+
+    def fraction_met(self) -> Optional[float]:
+        """Met / (met + not_met). None when no criteria have been tested
+        either way (every criterion is untested or ambiguous)."""
+        decided = self.n_met() + self.n_not_met()
+        if decided == 0:
+            return None
+        return self.n_met() / decided
+
+    def is_falsified(self) -> bool:
+        """The claim is falsified iff at least one decided criterion is
+        `not_met` and zero are `met`. This is intentionally strict: a
+        single counter-example to a foundational claim is enough, but
+        partial compliance does not falsify on its own."""
+        return self.n_not_met() > 0 and self.n_met() == 0
+
+    def summary(self) -> Dict[str, object]:
+        return {
+            "claim": self.claim,
+            "theory_name": self.theory_name,
+            "n_total": self.n_total(),
+            "n_met": self.n_met(),
+            "n_not_met": self.n_not_met(),
+            "n_ambiguous": self.n_ambiguous(),
+            "n_untested": self.n_untested(),
+            "fraction_met": self.fraction_met(),
+            "is_falsified": self.is_falsified(),
+        }
