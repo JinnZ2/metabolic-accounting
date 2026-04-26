@@ -25,3 +25,25 @@ Priority items as they land across the audit trail:
 - **Priority 3 — earth-systems-physics coupling**:
   - Not yet started. Blocked on priorities 1 and 2 being stable per this document's own sequencing.
 
+
+---
+
+## Side-quests landed
+
+- **AUDIT_23 § A — Tier 1 morphism graph**: closes AUDIT_07 § C.2
+  (inheritance invariant as code). `term_audit/morphism_graph.py`
+  + `tests/test_morphism_graph.py`. 9 nodes / 20 edges; weakly
+  connected; inheritance invariant HOLDS over all 5 claim pairs.
+- **AUDIT_23 § B — counts-consistency table**: 15 load-bearing
+  counts declared in `scripts/counts_consistency.py`, tripwired by
+  `tests/test_counts_consistency.py`. Catches silent drift between
+  STATUS.md / audit-doc claims and codebase reality. 15/15 rows
+  match baseline.
+- **AUDIT_24 — name-set consistency (bidirectional)**: pattern
+  borrowed from Geometric-to-Binary-Computational-Bridge's
+  `validate_bridge_contract.py`. `scripts/name_set_consistency.py`
+  + `tests/test_name_set_consistency.py`. 3 declared pairs: Tier 1
+  audits ↔ morphism graph nodes; counts DECLARED ↔ live keys;
+  graph nodes ↔ audit-backed nodes. Complements AUDIT_23 § E
+  (scalar) with structural set-equality. 3/3 pairs agree.
+

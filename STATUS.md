@@ -4,7 +4,7 @@ Status of the metabolic-accounting framework at end of session.
 
 ## Verified (all tests run, all passing)
 
-Fifty-one test suites, every one runs and passes:
+Fifty-four test suites, every one runs and passes:
 
 ```
 # main accounting stack (18, pre-term_audit)
@@ -61,9 +61,12 @@ test_informational_cost_audit: PASS   <-- AUDIT_16: why false certainty costs ex
 test_provenance_study_scope_integration: PASS   <-- AUDIT_17: Provenance optionally carries a StudyScopeAudit
 test_audit_19_integrations:  PASS   <-- AUDIT_19: scope↔cost wiring, PLACEHOLDER deferred_cost, 2 Tier 1 retrofits
 test_scan_soft_gaps:         PASS   <-- AUDIT_21: soft-gap scanner; 14 → 12 gaps after 2 more retrofits
+test_morphism_graph:         PASS   <-- AUDIT_23 § A: Tier 1 graph, 9 nodes / 20 edges, weakly-connected, inheritance invariant HOLDS
+test_counts_consistency:     PASS   <-- AUDIT_23 § B: 15 load-bearing counts declared + tripwired against silent drift
+test_name_set_consistency:   PASS   <-- AUDIT_24: bidirectional name-set checks across 3 pairs (structural complement to scalar counts)
 ```
 
-See `docs/AUDIT_06.md` through `docs/AUDIT_15.md` for the cross-checks
+See `docs/AUDIT_06.md` through `docs/AUDIT_23.md` for the cross-checks
 that landed the most recent tests.
 
 To verify:
