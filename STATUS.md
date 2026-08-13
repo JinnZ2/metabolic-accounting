@@ -4,7 +4,7 @@ Status of the metabolic-accounting framework at end of session.
 
 ## Verified (all tests run, all passing)
 
-Fifty-four test suites, every one runs and passes:
+Fifty-five test suites, every one runs and passes:
 
 ```
 # main accounting stack (18, pre-term_audit)
@@ -64,9 +64,10 @@ test_scan_soft_gaps:         PASS   <-- AUDIT_21: soft-gap scanner; 14 → 12 ga
 test_morphism_graph:         PASS   <-- AUDIT_23 § A: Tier 1 graph, 9 nodes / 20 edges, weakly-connected, inheritance invariant HOLDS
 test_counts_consistency:     PASS   <-- AUDIT_23 § B: 15 load-bearing counts declared + tripwired against silent drift
 test_name_set_consistency:   PASS   <-- AUDIT_24: bidirectional name-set checks across 3 pairs (structural complement to scalar counts)
+test_compliance_scorecard:   PASS   <-- AUDIT_25: 7 cases on the Smith-0/8-pattern data structure (strict falsification boundary)
 ```
 
-See `docs/AUDIT_06.md` through `docs/AUDIT_23.md` for the cross-checks
+See `docs/AUDIT_06.md` through `docs/AUDIT_25.md` for the cross-checks
 that landed the most recent tests.
 
 To verify:
@@ -513,6 +514,64 @@ verdict: sustainable_yield 0.056, trajectory -0.0017, ttr 21.67,
     subsequent commits on this branch, extending `docs/AUDIT_14.md`.
 
 ## AUDIT_14 — Part B (E.2): investment_signal/historical_cases.py
+
+## AUDIT_25 — Mathematic-economics alignment (downstream-consumer + ComplianceScorecard)
+
+51. **Math-econ acknowledged as fifth companion repo.**
+    `JinnZ2/Mathematic-economics`'s `audit/money_signal_bridge.py`
+    already imports `money_signal.dimensions` and
+    `money_signal.coupling` from this repo and exposes the three
+    primitives (minsky coefficient, coupling magnitude, sign-flip)
+    that this repo's `accounting_bridge.signal_quality()` collapses
+    into a `[0, 1]` score. The dependency direction is one-way
+    (math-econ → metabolic-accounting). `docs/RELATED.md` updated
+    from a four-repo to a five-repo table with a new "Relationship
+    to Mathematic-economics (downstream consumer)" section
+    documenting the existing bridge.
+52. **`docs/EXTERNAL_OPERATIONALIZATIONS.md`** shipped as the
+    citation contract mapping committed Tier 1 / Tier 2 audits
+    onto `Mathematic-economics @ equations-v1` measurement
+    equations: money → MSI / MM / BSC; capital → VE/VL / HHI / SID;
+    value → ER / LWR; productivity → VE/VL + LWR + ER in
+    combination; efficiency → HHI + ISR. Doc opens with the
+    signal-quality discount caveat — money-denominated equations
+    must pass through `money_signal/accounting_bridge` before being
+    read as measurements, otherwise the framework re-introduces the
+    currency bias it was built to defend against. Per-module
+    docstring pointers added to money.py, capital.py, value.py,
+    productivity.py, efficiency.py. `docs/TERMS_TO_AUDIT.md`
+    reading-order step 7 added.
+53. **`money_signal-v1` stable-surface tag declared** in
+    `docs/SCHEMAS.md` with explicit lock-list (every
+    `money_signal/dimensions.py` enum, the
+    `compose_coupling_matrix` signature, the identity of the three
+    primitives) and explicit non-lock list (numeric values inside
+    `K_BASE`, per-factor matrix contents, exact
+    `historical_cases.py` ordering, internal helpers). Discipline
+    rule: do not delete or force-move; add `money_signal-v2` for
+    breaking changes.
+54. **`ComplianceScorecard`** dataclass added to
+    `term_audit/falsification.py` (with `ComplianceCriterion`,
+    `CRITERION_RESULT_VALUES = {met, not_met, ambiguous,
+    untested}`). Mirrors math-econ's worked Smith-compliance
+    pattern (Smith-0/8 against the current US system). Strict
+    falsification rule: `is_falsified()` is True iff
+    `n_not_met() > 0 AND n_met() == 0`. Partial compliance does
+    not falsify. `tests/test_compliance_scorecard.py` (7 cases)
+    tripwires the boundary explicitly.
+55. **OSDI cross-reference** added as a docstring "External
+    calibration anchor" paragraph in
+    `money_signal/coupling_state.py`. OSDI (composite of SID, MSI,
+    ISR, BSC, MM into a `[0, 1]` structural-context scalar)
+    constrains which `StateRegime` is reachable, even though it is
+    not itself a regime. Today's enum input is unchanged; a
+    `money_signal-v2` field is the path for full integration.
+56. **Forward hooks** named in AUDIT_25 § F: SD (Semantic Drift
+    Rate) consumer for `term_audit/scoping.py` /
+    `term_audit/contradictions.py`; OSDI as a `DimensionalContext`
+    field; concrete Smith-compliance scorecard for a future
+    `economic_growth` audit; reciprocal `money_signal-v1` pin in
+    math-econ's bridge.
 
 ## AUDIT_22 — three more historical anchors (Todo.md priority 1)
 

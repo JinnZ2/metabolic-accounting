@@ -24,6 +24,13 @@ anti-correlate. Extracting K_A to produce K_B is the operational
 definition of most modern capital 'accumulation'. The accounting
 registers this as growth.
 
+External operationalizations: docs/EXTERNAL_OPERATIONALIZATIONS.md
+maps K_A→K_B substitution to math-econ's VE/VL ratio, K_B
+concentration to HHI, and K_C substrate to SID (pinned at
+Mathematic-economics @ equations-v1). Money-denominated outputs
+must be discounted through money_signal/accounting_bridge before
+reading them as measurements.
+
 CC0. Stdlib only.
 """
 

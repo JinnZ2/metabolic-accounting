@@ -1,12 +1,12 @@
 # RELATED.md
 
-How `metabolic-accounting` sits among its companion frameworks. All four
+How `metabolic-accounting` sits among its companion frameworks. All five
 repos share an author and an ethos — measurement before narrative, physics
 before policy — but they operate at different layers of abstraction and
 across different artifact types. This document maps the relationship so a
 reader can place any one of them in the context of the others.
 
-## The four repos
+## The five repos
 
 | Repo | Layer | What it produces |
 | --- | --- | --- |
@@ -14,6 +14,7 @@ reader can place any one of them in the context of the others.
 | `metabolic-accounting` (this repo) | **Specialization for living systems** | Glucose flow, basin state variables, forced drawdown, verdicts on firm-basin coupling |
 | [`PhysicsGuard`](https://github.com/JinnZ2/PhysicsGuard) | **Verification / guardrail** | CLEAN / SUSPECT / CORRUPTED verdicts on claims checked against first law, second law, mass conservation, resilience thresholds |
 | [`Logic-Ferret`](https://github.com/JinnZ2/Logic-Ferret) | **Narrative audit** | Fallacy detection and annotation in text / transcripts |
+| [`Mathematic-economics`](https://github.com/JinnZ2/Mathematic-economics) | **Downstream consumer** — falsifiable economic measurements | 13 versioned structural equations (VE/VL, SID, RI, DI, LWR, MSI, BSC, MM, ISR, UFR, ER, HHI, SD) and the OSDI composite, each with declared data source and falsification clause; pinned via `equations-v1` tag |
 
 ## Relationship to TAF (parent)
 
@@ -64,6 +65,50 @@ Neither repo imports from the other and neither should — PhysicsGuard is
 a broader claim-verifier; `metabolic-accounting` is a stdlib-only
 accounting pipeline.
 
+## Relationship to Mathematic-economics (downstream consumer)
+
+`Mathematic-economics` already imports from this repo. Its
+`audit/money_signal_bridge.py` selectively imports
+`money_signal.dimensions` and `money_signal.coupling` (deliberately
+skipping `money_signal.accounting_bridge` to avoid the `term_audit`
+sys.path mutation), constructs a `default_context()` neutral
+`DimensionalContext`, and exposes the three primitives — `minsky
+coefficient`, `coupling_magnitude`, `sign_flip` — that this repo's
+`accounting_bridge.signal_quality()` collapses into a `[0, 1]` score.
+
+The dependency direction is one-way:
+
+- `Mathematic-economics` → `metabolic-accounting`: imports
+  `money_signal` leaf modules.
+- `metabolic-accounting` → `Mathematic-economics`: cites equations
+  (see `docs/EXTERNAL_OPERATIONALIZATIONS.md`); does **not** import
+  any code.
+
+There are two practical consequences of this relationship:
+
+1. **Falsifiable per-term operationalizations.** The 13 equations
+   under `equations-v1` are the operational measurement layer the
+   abstract Tier 1/2 audits in this repo's `term_audit/audits/` were
+   waiting for. `docs/EXTERNAL_OPERATIONALIZATIONS.md` maps each
+   audited term to its candidate equation(s), with the explicit
+   caveat that money-denominated equations must pass through
+   `money_signal/accounting_bridge.py` for a signal-quality discount
+   before they are read as measurements. Naively adopting them
+   re-introduces the currency bias the framework is built to defend
+   against.
+2. **Stable-surface obligation.** Because the bridge already exists,
+   this repo owes downstream a versioned surface. `docs/SCHEMAS.md`
+   carries that contract; the working tag for `money_signal` is
+   `money_signal-v1`.
+
+`Mathematic-economics` ships its own thermodynamic essays
+(`ideology-thermodynamics.md`, `thermodynamic-governance.md`,
+`labor_thermodynamics/`) and a vendored `physics_guard/` subtree,
+which means PhysicsGuard-style local invariant checking is reachable
+from a math-econ session without depending on this repo. That is
+the intended topology — none of the five repos depend at runtime on
+any other.
+
 ## Relationship to Logic-Ferret (narrative audit)
 
 Logic-Ferret is philosophically aligned but not a data-level peer.
@@ -110,6 +155,7 @@ reach into or reason about the companion frameworks:
 | Verify a specific claim about conservation or entropy | PhysicsGuard |
 | Detect rhetorical fallacy in a firm's narrative | Logic-Ferret |
 | The accounting pipeline, basins, reserves, verdicts | this repo |
+| Falsifiable measurement equations for Tier 1/2 economic terms (with FRED/BLS/Census data sources) | Mathematic-economics @ `equations-v1`; mapped here in `docs/EXTERNAL_OPERATIONALIZATIONS.md` |
 
 Do not attempt to clone or modify the companion repos from this
 session. GitHub MCP access in this repo's sessions is scoped to

@@ -218,3 +218,49 @@ Companion frameworks asserting any of the above against output from
 this repo should return a clean verdict. A failing assertion indicates
 either a bug here or a configuration mismatch — not a policy
 disagreement.
+
+---
+
+## Stable surface tags
+
+`metabolic-accounting` exports state to other repos. Pinning to a tag
+rather than tracking `main` is the right move for any consumer that
+relies on the shape of the structures documented above. The tags
+below mark a frozen surface; renaming a field or breaking an
+invariant inside one of them is a major-version event.
+
+| Tag | Surface | Pinned by |
+| --- | --- | --- |
+| `money_signal-v1` | `money_signal/dimensions.py` (every Enum: `TemporalScope`, `CulturalScope`, `AttributedValue`, `ObserverPosition`, `Substrate`, `StateRegime`, `MoneyTerm`); `money_signal/coupling.py::compose_coupling_matrix` signature; the three primitives that `accounting_bridge.signal_quality` ingests (minsky coefficient, coupling magnitude, sign-flip status) | [`Mathematic-economics`](https://github.com/JinnZ2/Mathematic-economics) `audit/money_signal_bridge.py` |
+
+What is locked under `money_signal-v1`:
+
+- the **names** of every enum value (renaming
+  `TemporalScope.GENERATIONAL` is a breaking change),
+- the **shape** of the composed coupling matrix returned by
+  `compose_coupling_matrix` (a `Dict[Tuple[MoneyTerm, MoneyTerm],
+  float]`),
+- the **identity** of the three primitives a downstream bridge can
+  read raw — the names and meanings of *minsky coefficient*,
+  *coupling magnitude*, and *sign flip*. Their numerical values are
+  recomputable from the matrix; their identity is what consumers pin.
+
+What is **not** locked under `money_signal-v1` (calibration knobs,
+free to shift in a minor version):
+
+- numeric values inside `K_BASE` and the per-factor matrices,
+- the exact ordering of named historical cases in
+  `historical_cases.py`,
+- internal helpers and any module not named in the table above,
+- the `accounting_bridge` module's exact field names — that bridge
+  is one layer above the surface and may evolve under a separate
+  contract.
+
+**Discipline:** do not delete or force-move `money_signal-v1`. Moving
+a tag silently breaks every downstream pin. Add `money_signal-v2`
+when a breaking change is needed; consumers migrate at their own
+pace.
+
+Reciprocal pins on the math-econ side: pin to `equations-v1` (see
+that repo's `SURFACE.md`) when consuming any of the 13 falsifiable
+equations or the OSDI composite from this repo's audits.

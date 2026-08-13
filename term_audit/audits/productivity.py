@@ -18,6 +18,12 @@ Under the redefinition, a job is productive iff pay >= true_input.
 Otherwise the job is extractive and the apparent productivity gain is
 substrate conversion rate.
 
+External operationalizations: docs/EXTERNAL_OPERATIONALIZATIONS.md
+maps the gap between conventional and redefined productivity onto
+math-econ's VE/VL, LWR, and ER equations in combination (pinned at
+Mathematic-economics @ equations-v1). A falling LWR with a rising
+ER is the population-scale signature of substrate conversion.
+
 CC0. Stdlib only.
 """
 

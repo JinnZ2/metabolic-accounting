@@ -9,6 +9,13 @@ distinct referents 'money' collapses, which is why each signal
 criterion below scores at or below 0.2. The audit states the failure;
 the scoping doc shows the dimensional explosion that causes it.
 
+External operationalizations: docs/EXTERNAL_OPERATIONALIZATIONS.md
+maps the conservation_or_law and referent_stable failure points to
+math-econ's MSI, MM, and BSC equations (pinned at
+Mathematic-economics @ equations-v1). Money-denominated equations
+must pass through money_signal/accounting_bridge.signal_quality()
+for the regime-context discount before being read as measurements.
+
 CC0.
 """
 
