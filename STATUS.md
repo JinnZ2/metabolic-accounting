@@ -513,7 +513,49 @@ verdict: sustainable_yield 0.056, trajectory -0.0017, ttr 21.67,
     historical_cases.py) and C (distributional stub) ship in
     subsequent commits on this branch, extending `docs/AUDIT_14.md`.
 
-## AUDIT_14 — Part B (E.2): investment_signal/historical_cases.py
+## AUDIT_26 — method documentation + legacy precedent shelf
+
+Full suite re-run after every edit below: **55/55 test files passing.**
+Scanners re-run: counts_consistency **15/15**, name_set_consistency
+**3/3**, scan_soft_gaps **12 soft gaps** (unchanged — no code touched).
+
+57. **Hypothesis falsified: there are no aged files safe to relocate.**
+    Citation sweep found **23 of 25** `docs/AUDIT_*.md` cited *by path*
+    from live modules and tests (`AUDIT_07` alone from 20 files,
+    including `term_audit/morphism_graph.py`, `term_audit/schema.py`,
+    `money_signal/accounting_bridge.py`, `scripts/counts_consistency.py`).
+    Dead-module sweep found **none** — every `legacy` marker in source
+    (`accounting/glucose.py`, `distributional/access.py`,
+    `cascade/detector.py`) marks a live backward-compat path with
+    callers and tests. Committed `__pycache__` entries: **0**. Moving
+    audit files would convert ~100 working citations into dangling
+    pointers — the drift mode AUDIT_04 unwound and AUDIT_05 § C caught
+    again. Claim edited: `legacy/` carries superseded *claims*, not aged
+    *files*.
+58. **`legacy/FALSIFIED.md`** shipped — the precedent ledger. 13
+    entries (`L-01`…`L-13`), each recording the claim as made, what
+    falsified it, the edit that followed, and status under a four-term
+    vocabulary (`FIXED` / `SUPERSEDED` / `OPEN` / `STANDING`).
+    Reconstructed from AUDIT_04, 05 § C, 06 § A.1, 07, 11 § B and the
+    STATUS.md bug sections; cited commits `8145548` and `4ea0476`
+    verified to exist with corroborating messages. `legacy/README.md`
+    records the relocation check from item 57 so it is not re-run
+    blind.
+59. **`docs/METHOD.md`** shipped — the hypothesize → run → result →
+    falsified? → edit-the-claim → search-for-unknowns → rerun loop,
+    with each step mapped onto existing machinery rather than described
+    abstractly. States the two failure modes that have actually
+    occurred here: fabricated output skips *run*, drift skips *rerun*.
+60. **STATUS.md structural drift caught and fixed (`L-13`).** The
+    heading `## AUDIT_14 — Part B (E.2): investment_signal/historical_cases.py`
+    appeared **three times**; two were empty orphan stubs with no body,
+    one of them wedging the unrelated AUDIT_25 section into the middle
+    of the AUDIT_14 sequence. Both empty duplicates removed, the
+    content-carrying occurrence retained — **4 deletions, 0 insertions,
+    no content lost**. Note: **no scanner in this repo could have
+    caught it** — counts checks scalars, name-sets checks set equality,
+    scan_soft_gaps checks hedged claims; none inspects document
+    structure. AUDIT_26 § F names the tripwire that would.
 
 ## AUDIT_25 — Mathematic-economics alignment (downstream-consumer + ComplianceScorecard)
 
@@ -752,8 +794,6 @@ verdict: sustainable_yield 0.056, trajectory -0.0017, ttr 21.67,
     9 tripwire tests. NOT applied as a gate anywhere in the framework;
     integration with `term_audit/provenance.py` is named for a
     future pass (docs/AUDIT_15.md § D.2).
-
-## AUDIT_14 — Part B (E.2): investment_signal/historical_cases.py
 
 ## AUDIT_14 — Part C (E.4): distributional/signal_asymmetry stub
 

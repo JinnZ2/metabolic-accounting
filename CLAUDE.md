@@ -72,6 +72,8 @@ Without `site`/`step_result`, `compute_flow` still works (backward-compatible pa
 ## Documentation layout
 
 - `README.md` — thesis and layer diagram (public-facing).
+- `docs/METHOD.md` — **the loop this repo runs**: hypothesize → run → result → falsified? → edit the claim → search for unknowns → rerun. Read this before your first substantive change; it maps each step onto machinery that already exists (provenance kinds, equation tags, the three drift scanners, the never-weaken-an-assertion rule) and explains the two failure modes that have actually occurred here — fabricated output skips *run*, drift skips *rerun*. Added in AUDIT_26.
+- `legacy/` — the precedent shelf. `legacy/FALSIFIED.md` is the append-only ledger of claims that were made, run, and falsified or narrowed (13 entries, `L-01`…`L-13`), each with what falsified it and what replaced it. **Files are not moved here for being old** — 23 of 25 audit docs are cited by path from live code and tests, so relocating them would create dangling pointers; `legacy/README.md` records that check. Superseded *claims* move here; aged *files* stay where their citations point. Added in AUDIT_26.
 - `STATUS.md` — current session state: tests passing, bugs fixed, hidden variables still open, what the framework does NOT do. **Update this** when you change verified behavior.
 - `docs/EQUATIONS.md` — every equation in the scaffold, tagged `[CORE] / [PLACEHOLDER] / [HEURISTIC] / [FRAGILE]`. Read before changing any formula; `[PLACEHOLDER]` and `[FRAGILE]` are explicitly waiting to be replaced.
 - `docs/AUDIT_01..04.md` — audit reports. `AUDIT_04.md` covers the tier-vector Bug 1/4 fixes and scopes the still-open Bugs 2 (regulatory crosswalk has no social/labor frameworks) and 3 (mitigation has no community-specific leverage patterns). New audits append (`AUDIT_05.md`, etc.); do not overwrite prior ones.
@@ -86,6 +88,8 @@ Land on the right file without grepping blind. Each row lists the primary file a
 
 | If you want to... | Start here | Then |
 | --- | --- | --- |
+| **Know how to work in this repo at all** (the falsification loop) | `docs/METHOD.md` | `legacy/FALSIFIED.md`, `STATUS.md § Test-first discipline` |
+| Find out whether an idea was already tried and fell over | `legacy/FALSIFIED.md` (13 entries, claim → what falsified it → replacement) | the `docs/AUDIT_*.md` cited on the entry |
 | See the pipeline end-to-end | `tests/test_integration.py` | `tests/test_scaffold.py` |
 | Change regeneration cost math | `accounting/regeneration.py` | `tests/test_regeneration.py`, `tests/test_registry_safety.py` |
 | Add a new basin type | `basin_states/base.py` + one of the type files | `reserves/defaults.py` (`SECONDARY_SPECS`) + register regen fn in `accounting/regeneration.py` |
