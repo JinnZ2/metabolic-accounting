@@ -12,7 +12,7 @@ Core tests:
      the distributional invariant, not waste)
   5. Waste ratio computed correctly
   6. Amplification ratio computed correctly
-  7. Kavik scenario: one person doing 3 full-time jobs (70 hr driving
+  7. Self-structured scenario: one person doing 3 full-time jobs (70 hr driving
      + 35 hr coding) vs a neurotypical operating at standard fit —
      the neurodivergent person shows UP to 3x available capacity
      while the neurotypical shows 0.7 baseline
@@ -194,19 +194,19 @@ def test_6_amplification_ratio():
     print("PASS")
 
 
-def test_7_kavik_scenario():
-    """Kavik: one neurodivergent member operating at ~3x baseline
+def test_7_self_structured_scenario():
+    """Scenario: one neurodivergent member operating at ~3x baseline
     capacity in self-structured work, doing both driving + coding.
 
     Compare to hypothetical neurotypical in standard 35-hr job.
     """
-    print("\n--- TEST 7: Kavik scenario — self-structured hyperfocus ---")
-    kavik_cohort = PopulationCohort(
-        cohort_name="kavik",
+    print("\n--- TEST 7: self-structured hyperfocus ---")
+    self_structured_cohort = PopulationCohort(
+        cohort_name="self_structured",
         members_buffers=[0.9],  # one person, high buffer
     )
-    kavik_profile = InstitutionalFitProfile(
-        cohort_name="kavik",
+    self_structured_profile = InstitutionalFitProfile(
+        cohort_name="self_structured",
         # 70hr driving + 35hr coding ≈ 3x a standard 35hr work week
         # actual_capacity 3.0 reflects hyperfocus + intrinsic motivation
         # + environmental fit (self-designed pacing, self-chosen domain)
@@ -226,49 +226,49 @@ def test_7_kavik_scenario():
     )
 
     report = compute_waste_report(
-        {"kavik": kavik_cohort, "standard_worker": neurotyp_cohort},
-        {"kavik": kavik_profile, "standard_worker": neurotyp_profile},
+        {"self_structured": self_structured_cohort, "standard_worker": neurotyp_cohort},
+        {"self_structured": self_structured_profile, "standard_worker": neurotyp_profile},
     )
     print(report.summary_text())
 
-    # Kavik's realized output is roughly 4.3x the neurotypical's
-    kavik_realized = report.per_cohort["kavik"]["realized"]
+    #   realized output is roughly 4.3x the neurotypical's
+    self_structured_realized = report.per_cohort["self_structured"]["realized"]
     neurotyp_realized = report.per_cohort["standard_worker"]["realized"]
-    ratio = kavik_realized / neurotyp_realized
-    print(f"\n  kavik realized output:   {kavik_realized:.2f}")
+    ratio = self_structured_realized / neurotyp_realized
+    print(f"\n  self_structured realized output:   {self_structured_realized:.2f}")
     print(f"  neurotyp realized:       {neurotyp_realized:.2f}")
     print(f"  ratio:                   {ratio:.2f}x")
 
-    # Now show what happens if Kavik were in a standard job instead
+    # Now show what happens if the same worker were in a standard job instead
     # (institutional_fit drops because mismatch; trauma tax appears)
-    kavik_mismatched_profile = InstitutionalFitProfile(
-        cohort_name="kavik_forced",
+    self_structured_mismatched_profile = InstitutionalFitProfile(
+        cohort_name="self_structured_forced",
         member_available_capacity=[3.0],  # capacity unchanged
         member_fit_multipliers=[0.2],    # institution fights neurology
         member_trauma_tax=[0.3],         # burning energy to survive
     )
     report_mismatched = compute_waste_report(
-        {"kavik_forced": kavik_cohort},
-        {"kavik_forced": kavik_mismatched_profile},
+        {"self_structured_forced": self_structured_cohort},
+        {"self_structured_forced": self_structured_mismatched_profile},
     )
-    forced_realized = report_mismatched.per_cohort["kavik_forced"]["realized"]
-    forced_wasted = report_mismatched.per_cohort["kavik_forced"]["wasted"]
-    forced_trauma = report_mismatched.per_cohort["kavik_forced"]["trauma"]
-    print(f"\n  IF SAME KAVIK WERE FORCED INTO STANDARD INSTITUTION:")
+    forced_realized = report_mismatched.per_cohort["self_structured_forced"]["realized"]
+    forced_wasted = report_mismatched.per_cohort["self_structured_forced"]["wasted"]
+    forced_trauma = report_mismatched.per_cohort["self_structured_forced"]["trauma"]
+    print(f"\n  IF THE SAME WORKER WERE FORCED INTO STANDARD INSTITUTION:")
     print(f"    realized:   {forced_realized:.2f} "
-          f"(collapse from {kavik_realized:.2f})")
+          f"(collapse from {self_structured_realized:.2f})")
     print(f"    wasted:     {forced_wasted:.2f} "
           f"(capacity institution destroys)")
     print(f"    trauma tax: {forced_trauma:.2f} "
           f"(energy burned defending against structure)")
     print(f"\n  THE INSTITUTIONAL DECISION CHANGES:")
-    print(f"    realized output from {kavik_realized:.2f} to {forced_realized:.2f}")
-    print(f"    delta {kavik_realized - forced_realized:.2f} "
+    print(f"    realized output from {self_structured_realized:.2f} to {forced_realized:.2f}")
+    print(f"    delta {self_structured_realized - forced_realized:.2f} "
           f"lost to institutional mismatch.")
     print(f"    (This is the WASTE that conventional accounting treats as")
     print(f"     'person is low-capacity' rather than 'institution is failing')")
 
-    assert forced_realized < kavik_realized, \
+    assert forced_realized < self_structured_realized, \
         "FAIL: institutional mismatch should reduce realized output"
     assert forced_wasted > 0, \
         "FAIL: mismatch should produce waste"
@@ -282,5 +282,5 @@ if __name__ == "__main__":
     test_4_collapsed_members_excluded()
     test_5_waste_ratio()
     test_6_amplification_ratio()
-    test_7_kavik_scenario()
+    test_7_self_structured_scenario()
     print("\nall institutional waste tests passed.")
