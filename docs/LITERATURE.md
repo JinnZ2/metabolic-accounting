@@ -169,7 +169,7 @@ Encoded as: secondary[basin][metric_key] -> individual SecondaryReserve.
   Airshed reserve: regional air-quality-and-ecosystem coupling
   (EPA/WHO syntheses).
   Organizational reserve: couples to labor-thermodynamics repo;
-  see Kavik's own work on competence extinction and attribution
+  see JinnZ2's own work on competence extinction and attribution
   capture as an upstream metrology failure.
 
 Encoded as: four default tertiary pools at each site, with different

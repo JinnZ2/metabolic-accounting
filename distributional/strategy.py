@@ -32,7 +32,7 @@ it computes expected outcomes under each strategy:
   - churn risk (workers leaving due to mismatch)
   - output per management unit
 
-Empirical framing: when Kavik ran multiple companies, he found that
+Empirical framing: from operating multiple companies:
 hiring for neurodivergent fit consistently outperformed standard
 hiring. This is not anecdote — it reflects the thermodynamic reality
 that capacity is heterogeneous and compliance-based measurement

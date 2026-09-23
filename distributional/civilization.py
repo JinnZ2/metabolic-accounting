@@ -37,7 +37,7 @@ categories of capacity dissipation that only become visible at scale:
      Result: the Leonardos born in rust belts who become assembly-line
      workers because no one showed them their own capacity.
 
-The innovation crisis Kavik identifies — per-capita innovation lower
+The innovation crisis JinnZ2 identifies — per-capita innovation lower
 now than Bronze Age or Renaissance despite 100x population — is
 explained by the civilization-scale sum of these four waste categories.
 
