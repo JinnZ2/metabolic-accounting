@@ -216,3 +216,17 @@ operational, not optional.
 ## Things the framework intentionally does NOT do
 
 Do not "fix" these by adding them unprompted — they are scoped out. In particular: no pricing, no external-data adapters (USDA/EPA/USGS are a future layer), no multi-period `simulate()` wrapper, no directional inter-basin coupling over time, no geographic-proximity model for cohort exposure, no trust hysteresis. See `STATUS.md § "What the framework does NOT do"` for the authoritative list.
+
+<!-- clone-refspec-note v1 -->
+## Cloning and pushing
+Shallow clones are single-branch by default.
+Before pushing any branch other than main, run:
+
+    git config remote.origin.fetch '+refs/heads/*:refs/remotes/origin/*'
+    git fetch --depth 1
+
+Or clone with: git clone --depth 1 --no-single-branch <url>
+Without this, the first push of a new branch
+fails the tracking-ref check even when the
+commit landed.
+<!-- /clone-refspec-note v1 -->
