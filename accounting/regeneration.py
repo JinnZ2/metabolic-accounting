@@ -369,7 +369,7 @@ def regen_vegetation_cover(basin: BasinState, key: str, deg: float) -> RegenCost
 # rebuild as comparable environmental stocks).
 #
 # Cliff-crossing triggers irreversibility for TWO metrics in particular:
-#   - generational_knowledge: competence extinction, per Kavik's
+#   - generational_knowledge: competence extinction, per JinnZ2's
 #     labor-thermodynamics work. Once the Mighty Atoms are gone,
 #     no amount of firm spend reconstitutes their knowledge within
 #     a generation.

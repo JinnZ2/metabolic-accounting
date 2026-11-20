@@ -131,18 +131,18 @@ def test_5_crossover_analysis():
     print("PASS")
 
 
-def test_6_kavik_scenario_ten_workers():
-    """Kavik's observation: when he found neurodivergent workers and
+def test_6_self_structured_scenario_ten_workers():
+    """Observation: when neurodivergent workers were hired and
     structured work around them, they outperformed everyone. Simulate:
     10 workers, average capacity 1.5, fit_quality 0.85."""
-    print("\n--- TEST 6: Kavik's 10-worker company ---")
-    # 10 workers Kavik hired for fit, with average capacity 1.5
+    print("\n--- TEST 6: JinnZ2's 10-worker company ---")
+    # 10 workers hired for fit, with average capacity 1.5
     # (mix of neurotypical 0.7 and various neurodivergent high-capacity)
     capacities = [2.5, 2.0, 1.8, 1.6, 1.5, 1.3, 1.2, 1.0, 0.9, 0.7]
     comparison = compare_strategies(capacities)
     print(comparison.summary_text())
     print()
-    print("  Kavik-style capacity_fit captures the full range.")
+    print("  fit-based capacity_fit captures the full range.")
     print(f"  Output captured that compliance would have wasted:")
     print(f"    +{comparison.waste_delta():.2f} capacity units/period")
     assert comparison.output_delta() > 0
@@ -155,5 +155,5 @@ if __name__ == "__main__":
     test_3_poor_fit_quality_erodes_advantage()
     test_4_churn_differential()
     test_5_crossover_analysis()
-    test_6_kavik_scenario_ten_workers()
+    test_6_self_structured_scenario_ten_workers()
     print("\nall strategy tests passed.")
